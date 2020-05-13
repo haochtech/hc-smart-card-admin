@@ -1,0 +1,46 @@
+{extend name="base"/}
+{block name="main"}
+<link rel="stylesheet" href="/public/static/bast/xenon-forms.css">
+<script src="/public/static/layer/2.4/layer.js"></script>
+<div class="Hui-article"><style>.tabBar a:hover {color:#fff !important; text-decoration: none !important;}</style>
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div class="tabBar clearfix">
+            <span onclick="load_page('__CONF_SITE__admin/card/send_card')">名片分发</span>
+            <span onclick="load_page('__CONF_SITE__admin/card/all_user')" class="current" >用户列表</span><style>.tabBar a:hover {color:#fff;}</style>
+        </div>
+        <div>
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-bg table-hover table-sort" id="mains">
+                    <thead>
+                    <tr class="text-c">
+                        <th>活动名称</th>
+                        <th>用户头像</th>
+                        <th>用户昵称</th>
+                        <th>员工名称</th>
+                        <th>关注时间</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    {foreach name="list" item="vo"}
+                    <tr class="text-c va-m">
+                        <td>{$vo.name}</td>
+                        <td><img src="{$vo.user_headimg}" style="max-width: 50px;" alt="用户头像"></td>
+                        <td>{$vo.nick_name}</td>
+                        <td>{$vo.user_name}</td>
+                        <td>{:date('Y-m-d H:i:s',$vo.update_time)}</td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </article>
+    <div class="n_page_no" id="page">
+        {$page}
+    </div>
+        {/block}
+        {block name="script"}
+        <script type="text/javascript">
+        </script>
+        {/block}

@@ -1,0 +1,139 @@
+{extend name="base"/}
+{block name="main"}
+<style>
+.formControls {float:left;margin-right:15px;}
+.form-label {font-weight: bold;}</style>
+<div class="Hui-article">
+<article class="cl pd-20">
+	<h3 id="dont_touch_this"></h3>
+	<div class="tabBar clearfix" style="position:relative;">
+		<span onclick="load_page('__CONF_SITE__admin/activity/user_share')">分销商列表</span>
+		<span onclick="load_page('__CONF_SITE__admin/activity/share_order')">订单列表</span>
+		<span onclick="load_page('__CONF_SITE__admin/distribute/index')">单商品分销</span>
+		<span onclick="load_page('__CONF_SITE__admin/activity/share_cash')">分销商提现</span>
+		<span class="current" onclick="load_page('__CONF_SITE__admin/activity/share_set')" >基础设置</span>
+		<span onclick="load_page('__CONF_SITE__admin/activity/share_pay')" >佣金设置</span>
+		<span onclick="load_page('__CONF_SITE__admin/activity/share_other')">自定义设置</span>
+	</div>
+	<div class="form form-horizontal">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>分销层级：</label>
+			<div class="formControls col-xs-8 col-sm-9" style="height:30px; line-height:30px;">
+				<input type="radio" value="0" name="level" <?php if($share['level']=='0') echo("checked");?> id="wa0"><label
+					for="wa0">不开启&nbsp;&nbsp;</label>
+				<input type="radio" value="1" name="level" <?php if($share['level']=='1') echo("checked");?> id="wa1"><label
+					for="wa1">一级分销&nbsp;&nbsp;</label>
+				<input type="radio" value="2" name="level" <?php if($share['level']=='2') echo("checked");?> id="wa2"><label
+					for="wa2">二级分销&nbsp;&nbsp;</label>
+				<input type="radio" value="3" name="level" <?php if($share['level']=='3') echo("checked");?> id="wa3"><label
+					for="wa3">三级分销&nbsp;&nbsp;</label>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>分销内购：</label>
+			<div class="formControls col-xs-8 col-sm-9"><div style="float:left;">
+				<input type="radio" value="0" name="is_rebate" <?php if($share['is_rebate']=='0') echo("checked");?> >不开启&nbsp;&nbsp;
+				<input type="radio" value="1" name="is_rebate" <?php if($share['is_rebate']=='1') echo("checked");?>>开启&nbsp;&nbsp;</div>
+				<div style="float:left;padding-left:10px;"><p>提示：开启分销内购，分销商自己购买商品，享受一级佣金</p></div>
+				<div style="clear:both;"></div>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>分销审核：</label>
+			<div class="formControls col-xs-8 col-sm-9"><div style="float:left;">
+				<input type="radio" value="0" name="share_condition" <?php if($share['share_condition']=='0') echo("checked");?> >不审核&nbsp;&nbsp;
+				<input type="radio" value="1" name="share_condition" <?php if($share['share_condition']=='1') echo("checked");?>>审核&nbsp;&nbsp;</div>
+				<div style="float:left;padding-left:10px;"><p>提示：分销申请是否需要审核</p></div>
+				<div style="clear:both;"></div>
+			</div>
+		</div>
+		<div class="row cl" style="margin-top:2px;">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>提现方式：</label>
+			<div class="formControls col-xs-8 col-sm-9"><div style="float:left;">
+				<input type="checkbox" name="pay_type" value="wxpay" <?php if($share['pay_type']['wxpay']==1) echo("checked");?> > 微信支付
+				<input type="checkbox" name="pay_type" value="alipay" <?php if($share['pay_type']['alipay']==1) echo("checked");?> > 支付宝支付
+				<input type="checkbox" name="pay_type" value="bankpay" <?php if($share['pay_type']['bankpay']==1) echo("checked");?> > 银行卡支付
+				<input type="checkbox" name="pay_type" value="ownpay" <?php if($share['pay_type']['ownpay']==1) echo("checked");?> > 余额支付</div>
+				<!--<div style="float:left;padding-left:10px;"><p>提示：微信自动支付，需要申请微信支付的企业付款到零钱功能</p></div>-->
+				<div style="clear:both;"></div>
+			</div>
+		</div>
+		<div class="row cl" style="">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>最低提现额度：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" name="min_money" value="{$share['min_money']}" class="input-text" > 元
+			</div>
+		</div>
+		<div class="row cl" style="">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>每日提现上限：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" name="max_money" value="{$share['max_money']}" class="input-text" placeholder="0元表示不限制每日提现金额"> 元
+			</div>
+		</div>
+		<div class="row cl" style="">
+			<label class="form-label col-xs-4 col-sm-2">用户须知：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<textarea name="content" id="content" cols="80" rows="10" style="border: solid 1px #ddd;">{$share['content']}</textarea>
+			</div>
+		</div>
+		<div class="row cl" style="">
+			<label class="form-label col-xs-4 col-sm-2">分销协议：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<textarea name="agree" id="agree" cols="80" rows="10" style="border: solid 1px #ddd;">{$share['agree']}</textarea>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+				<input class="btn btn-primary radius" onclick="share_set()" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+			</div>
+		</div>
+	</div>
+</article>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    function share_set() {
+        var level=$("input[name='level']:checked").val();
+        var share_condition=$("input[name='share_condition']:checked").val();
+        var is_rebate=$("input[name='is_rebate']:checked").val();
+        var pay_type='';
+        $("input[name='pay_type']").each(function () {
+            if($(this).prop('checked')){
+                pay_type+='"'+$(this).val()+'":"1",';
+            }else {
+                pay_type+='"'+$(this).val()+'":"0",';
+            }
+        });
+        pay_type=pay_type.substring(0,pay_type.length-1);
+        pay_type='{'+pay_type+'}';
+        var min_money=$("input[name='min_money']").val();
+        var max_money=$("input[name='max_money']").val();
+        var content=$("#content").val();
+        var agree=$("#agree").val();
+        $.ajax({
+            type : "post",
+            url : "{:url('activity/share_set')}",
+            data : {
+                'level' : level,
+                'pay_type' : pay_type,
+                'min_money' : min_money,
+                'max_money' : max_money,
+                'share_condition' : share_condition,
+                'content' : content,
+                'agree' : agree,
+                'is_rebate' : is_rebate,
+            },
+            success : function(data) {
+                if (data == '2') {
+                    layer.msg('修改成功!',{icon:1,time:1000},function () {
+                        parent_flash("{:url('activity/share_set')}");
+                    });
+                }else{
+                    layer.msg(data,{icon:5,time:1000});
+                }
+            }
+        });
+    }
+</script>
+{/block}

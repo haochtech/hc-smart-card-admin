@@ -1,0 +1,60 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div class="tabBar clearfix" style="position:relative;">
+            <span onclick="load_page('__CONF_SITE__admin/user/user_list')">微信会员</span>
+            <span onclick="load_page('__CONF_SITE__admin/user/level')">等级列表</span>
+            <span class="current" onclick="load_page('__CONF_SITE__admin/user/integral_details')">积分详情</span>
+            <span onclick="load_page('__CONF_SITE__admin/user/integral_rule')">积分规则设置</span>
+        </div>
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+                <div class="text-c">
+                    会员名称：
+                    <input type="text" class="input-text" value="{$soname}" style="width:250px" placeholder="输入名称"
+                           name="soname">
+                    <button onclick="send_submit()" class="btn btn-search radius" name=""><i class="Hui-iconfont">&#xe665;</i>
+                        搜索会员
+                    </button>
+                </div>
+            </form>
+        </div>
+        <table class="table table-border table-bordered table-bg">
+            <thead>
+            <tr class="text-c">
+                <th>会员名称</th>
+                <th>可用积分</th>
+                <th>累计积分</th>
+                <th>说明</th>
+                <th>更改时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="vo"}
+            <tr class="text-c">
+                <td>{$vo.nick_name}</td>
+                <td>{if $vo.itype==1}+{else}-{/if}{$vo.integral}</td>
+                <td>{if $vo.ctype==1}+{else}-{/if}{$vo.consume}</td>
+                <td>{$vo.explain}</td>
+                <td>
+                    {$vo.time|date='Y-m-d H:i:s',###}
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </article>
+    <div class="n_page_no">
+        {$list->render()}
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript" src="/public/js/jquery-2.1.1.js"></script>
+<script type="text/javascript">
+    function send_submit() {
+        load_page("__CONF_SITE__admin/user/integral_details",'',{soname:$("input[name=soname]").val()})
+    }
+</script>
+{/block}

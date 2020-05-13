@@ -1,0 +1,170 @@
+<script type='text/javascript' src='/public/goods/js/sample.js'></script>
+<script src="/public/js/BootstrapMenu.min.js"></script>
+<input type="hidden" id="goodsId" value="{$goods_id}"/>
+<input type="hidden" id="shop_type" value="{$shop_type}"/>
+{if condition="$goods_id neq 0"}
+<input type="hidden" id="hidQRcode" value="0"/>
+<input type="hidden" id="hidden_sort" value="{$goods_info.sort}"/>
+{else/}
+<input type="hidden" id="hidQRcode" value="1"/>
+<input type="hidden" id="hidden_qrcode" value=""/>
+<input type="hidden" id="hidden_sort" value="0"/>
+{/if}
+<script type="text/javascript">
+    var app = new Vue({
+        el: '#get_all',
+        data: {
+            goods_name: '',
+            goods_cuxiao: '',
+            goods_price: 0,
+            goods_xiao: 0,
+            goods_desc: '',
+            goods_sku: [],
+            goods_img: []
+        }
+    })
+    /*ue.addListener("contentChange", function () {
+        app.goods_desc = ue.getContent();
+    });*/
+    $(function () {
+        var swiper = new Swiper('.swiper-container', {
+            spaceBetween: 30,
+            centeredSlides: true,
+            observer: true,
+            autoplay: {
+                delay: 2500,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+        });
+    })
+    function PopUpCallBack(id, src, upload_type, spec_id, spec_value_id) {
+        var idArr, srcArr;
+        if (id.indexOf(",")) {
+            idArr = id.split(',');
+            srcArr = src.split(',');
+        } else {
+            idArr = new Array(id);
+            srcArr = new Array(src);
+        }
+        switch (speciFicationsFlag) {
+            case 0:
+                //商品主图
+                if (srcArr.length >= 1) {
+                    html = "";
+                    for (var i = 0; i < srcArr.length; i++) {
+                        if (upload_type == 2) {
+                            html += '<div class="upload-thumb sku-draggable-element' + spec_id + '-' + spec_value_id + ' sku-draggable-element"  >';
+                            html += '<img  src="' + srcArr[i] + '">';
+                            html += '<input type="hidden"  class="sku_upload_img_id" spec_id="' + spec_id + '" spec_value_id="' + spec_value_id + '" value="' + idArr[i] + '">';
+                            html += '<div class="black-bg" onclick="remlong(this);">';
+                            html += '<div class="sku-off-box">&times;</div>';
+                            html += '</div>';
+                            html += '</div>';
+                            //将规格图片记录存入临时数组
+                            var pic_id = idArr[i];
+                            var pic_cover_mid = srcArr[i];
+                            for (var t = 0; t < $sku_goods_picture.length; t++) {
+                                if ($sku_goods_picture[t].spec_id == spec_id && $sku_goods_picture[t].spec_value_id == spec_value_id) {
+                                    $sku_goods_picture[t]["sku_picture_query"].push({
+                                        "pic_id": pic_id,
+                                        "pic_cover_mid": pic_cover_mid
+                                    });
+                                }
+                            }
+                        } else if (upload_type == 1) {
+                            var item = {};
+                            item['url'] = srcArr[i];
+                            item['id'] = idArr[i];
+                            app.goods_img.push(item);
+                            html += '<div class="upload-thumb draggable-element"  >';
+                            html += '<img  src="' + srcArr[i] + '">';
+                            html += '<input type="hidden"  class="upload_img_id"  value="' + idArr[i] + '">';
+                            html += '<div class="black-bg" onclick="remlong(this);">';
+                            html += '<div class="off-box">&times;</div>';
+                            html += '</div>';
+                            html += '</div>';
+                        } else {
+                            var span_obj = $(".js-goods-sku").find("span[data-spec-id='" + spec_id + "'][data-spec-value-id='" + spec_value_id + "']");
+                            span_obj.next().next().find("input").val(idArr[i]);
+                            span_obj.next().next().find("img").attr("src", srcArr[i]);
+                            //规格spec图片返回并specObj对象
+                            var spec = {
+                                flag: span_obj.hasClass("selected"),
+                                spec_id: span_obj.attr("data-spec-id"),
+                                spec_name: span_obj.attr("data-spec-name"),
+                                spec_value_id: span_obj.attr("data-spec-value-id"),
+                                spec_value_data: idArr[i]
+                            };
+                            editSpecValueData(spec);//修改图片对应的修改SKU数据
+                        }
+                    }
+                    if (upload_type == 2) {
+                        $(".sku-img-box[spec_id='" + spec_id + "'][spec_value_id='" + spec_value_id + "'] #sku_default_uploadimg").remove();
+                        $(".sku-img-box[spec_id='" + spec_id + "'][spec_value_id='" + spec_value_id + "']").html(html);
+                        $('.sku-draggable-element' + spec_id + '-' + spec_value_id).arrangeable();
+                    } else if (upload_type == 1) {
+                        $("#default_uploadimg").remove();
+                        $(html).appendTo('.img-box');
+                        $('.draggable-element').arrangeable();
+                    }
+                }
+                //模块可拖动事件
+                /* $(goodsFigure).children("a").show(); */
+                break;
+            case 1:
+                //商品详情
+                for (var i = 0; i < srcArr.length; i++) {
+                    var description = "<img src='" + srcArr[i] + "' />";
+// 				ue.setContent(description, true);
+                    UM.getEditor('editor').focus();
+                    UM.getEditor('editor').execCommand('inserthtml', description);
+                }
+                break;
+        }
+    }
+    function setGoodsFigure(goodsFigure) {
+        this.goodsFigure = goodsFigure;
+    }
+    /*
+     * 判断资源文件是否存在
+     */
+    function isResourcesExist(resources_url) {
+        var exist = false;
+        if (resources_url != "") {
+            $.ajax(resources_url, {
+                type: 'get',
+                timeout: 100,
+                success: function () {
+                    exist = true;
+                },
+                error: function () {
+                    exist = false;
+                }
+            });
+        }
+        return exist;
+    }
+    function remlong(obj) {
+        if ($(obj).parent().parent().find('.upload-thumb').length == 1) {
+            var html = "";
+            html += '<div class="upload-thumb" id="default_uploadimg">';
+            html += '<img nstype="goods_image" src="/public/images/default_goods_image_240.gif">';
+            html += '<input type="hidden" name="image_path" id="image_path" nstype="goods_image" value="">';
+            html += '</div>';
+            $($(obj).parent().parent()).html(html);
+        } else {
+            $(obj).parent().remove();
+        }
+       var src= $(obj).parent().parent().children().eq(0).attr('src');
+        var item=app.goods_img;
+        $.each(item, function(index, val) {
+           if (src==obj['url']){
+               app.goods_img.splice(index,1);
+           }
+        });
+    }
+</script>

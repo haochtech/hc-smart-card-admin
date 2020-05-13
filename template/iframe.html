@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>{if $site_name != '' || !empty($site_name)}{$site_name}{else}请在版权设置里配置您的站点名称{/if}</title>
+    <script src="/public/js/jquery-2.1.1.js"></script>
+    <script type="text/javascript" src="/public/js/vue.js"></script>
+    <link href="./favicon.ico?v=1.2" rel="shortcut icon" type="image/x-icon"/>
+    <link rel="stylesheet" href="/public/css/linecons.css">
+    <link rel="stylesheet" href="/public/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/public/static/bast/bootstrap.css">
+    <link rel="stylesheet" href="/public/static/bast/xenon-core.css?v=1.0">
+    <link rel="stylesheet" href="/public/static/bast/font-awesome.min.css">
+    <link rel="stylesheet" href="/public/static/h-ui-{$skin}/css/H-ui.min.css"/>
+    <link rel="stylesheet" href="/public/static/h-ui-{$skin}/css/style.css"/>
+    <link rel="stylesheet" href="/public/static/Hui-iconfont/1.0.8/iconfont.css"/>
+    <style>.new_logo .logo-expanded { color: #fff; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100px; display: block; margin-left: 10px; background: #000; border-radius: 4px; height: 30px; line-height: 30px; text-align: center; padding: 0 5px; margin-top: 15px; margin-bottom: 5px; } .input-text { margin-bottom: 0 !important; } .top_menu { height: 50px; line-height: 50px; background: #fff; width: calc(100% - 200px); position: fixed; z-index: 1; top: 0; left: 200px; border-bottom: 1px solid #eeeeee; } .top_menu a { display: block; float: right; height: 50px; line-height: 50px; width: 100px; text-align: center; border-left: 1px solid #eeeeee; } .clear { clear: both; } .btn { margin-bottom: 0; } body { line-height: 1.6 !important; overflow-x: hidden; } .left_cur a i:before, .left_cur ul li .cur_s .title, .left_cur .cur_tit, li.left_cur > a:before { color: #444 !important; } .left_cur { background: rgba(55, 87, 109, 0.05); } .logo-env .new_logo { padding-left: 36px; } .logo-env .new_logo .wq_logo { margin-left: -36px; width: 28px; height: 28px; float: left; border-radius: 50%; } .logo-env .new_logo:after { clear: both; } .tool_box a span, .tool_box a:hover span { color: #666 !important; } .left_btn_box { padding: 3px 10px 0 10px; justify-content: center; display: flex; } .left_btn_box a { display: block; height: 28px; line-height: 26px; width: 80px; color: #fff; text-align: center; border-radius: 2px; } .left_btn_box a.btn_li01 { background: rgb(25, 200, 91); border-bottom-right-radius: 0; border-top-right-radius: 0; } .left_btn_box a.btn_li02 { background: rgb(0, 193, 222); border-bottom-left-radius: 0; border-top-left-radius: 0; } .left_btn_box a.btn_li01:hover { background: rgb(21, 186, 93); } .left_btn_box a.btn_li02:hover { background: rgb(2, 182, 209); } .wq_bottom_btn { position: fixed; bottom: 0; left: 230px; width: 100%; background: #fff; justify-content: center; display: flex; height: 80px; line-height: 80px; } .sidebar-menu { min-width: 220px !important; width: 220px !important; overflow: hidden; background: #fff !important; } .main-menu-scroll { height: calc(100% - 130px); overflow-x: hidden; width: 200px; overflow-y: scroll; } .main-menu-scroll::-webkit-scrollbar { display: none; } .new_left_menu { width: 220px; height: 100%; display: table-cell; position: relative; z-index: 1; background: #f8f9fb; } .sidebar-menu.fixed .sidebar-menu-inner { left: 86px !important; border-right: 1px solid #eeeeee; } .f_name_box { display: block; height: 50px; line-height: 50px; } .f_name_box.cur_name { background: rgba(255, 255, 255, 1) !important } .new_left_menu a { text-decoration: none; } .new_left_menu a span { color: #b3b3b3; font-size: 13px; } .new_left_menu a i { margin-left: 17px; display: inline-block; color: #b3b3b3; margin-right: 5px; } .new_left_menu a.cur_name i, .new_left_menu a.cur_name .big_class_name { color: #1aad19; } .big_class_name { display: inline-block; height: 56px; line-height: 56px; font-size: 16px; margin-left: 5px; } .main-menu-scroll { width: 220px !important; } /*		.sidebar-menu .main-menu a {color: #444 !important;background: rgba(55, 87, 109, 0.05);}*/ .sidebar-menu .main-menu a { color: #444 !important; padding-left: 20px !important; } .sidebar-menu .main-menu .cur_s a, .sidebar-menu .main-menu .cur_s a:visited, .sidebar-menu .main-menu .left_cur ul li.cur_s a > span { background: rgba(255, 255, 255, 1) !important; color: #1aad19 !important; border-right: 1px solid #eeeeee; } .title.cur_tit { color: #444 !important; font-weight: bold; } /*		.left_cur {background:#fff !important;}*/ .cur_s .sidebar-menu .main-menu a { background: #fff !important; } .sidebar-menu .main-menu ul li a { padding-left: 20px !important; } /*		.left_cur ul li a {background:#fff !important;}*/ .left_cur ul li { background: #fff !important; } .sidebar-menu .main-menu { margin-top: 0 !important; } .top_big_class_name { height: 50px; line-height: 50px; text-align: center; overflow: hidden; border-bottom: 1px solid; white-space: nowrap; text-overflow: ellipsis; border-bottom: 1px solid #eeeeee; font-size: 13px; } .new_logo { display: block !important; } .sidebar-menu .main-menu .left_cur ul li a > span { color: #777777 !important; } .sidebar-menu .main-menu li.has-sub > a:before { content: '\f0d7' !important; } .main-menu-scroll { height: 100% !important; } .page-container { position: absolute; padding-top: 68px; box-sizing: border-box; } .new_page_top { position: fixed; box-sizing: border-box; width: 100%; height: 68px; font-size: 26px; line-height: 70px; padding-left: 15px; color: #fff; background-color: #fff; box-shadow: 2px 2px 2px hsla(0, 0%, 90%, .5); z-index: 999; } .sidebar-menu.fixed .sidebar-menu-inner { top: 44px !important; } .new_logo { width: 40px; height: 40px; float: left; margin-top: 15px; margin-left: 18px; border-radius: 5px; overflow: hidden; line-height: 40px; } .new_logo img { width: 40px; height: 40px; vertical-align: inherit; } .app_name { color: #333; font-size: 26px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; height: 68px; line-height: 68px; margin-left: 8px; float: left; } .new_page_top a, .new_page_top a:visited { color: #333; text-decoration: none; } .new_page_top a:hover { color: #b3b3b3; text-decoration: none; } .sidebar-menu.fixed .sidebar-menu-inner { position: fixed !important; } .new_top_right { float: right; width: 200px; height: 68px; line-height: 68px; } .logout_box { width: 200px; height: 68px; float: left; font-size: 13px; margin-left: 0px; } .left_menu_box { position: relative; width: 220px; top: 0px; left: 0; padding-left: 20px; overflow-y: scroll; z-index: 10000; padding-top: 0px; overflow-x: hidden; } .left_menu_box::-webkit-scrollbar { width: 0px; } .back_sys { width: 100px; text-align: center; color: #fff; margin: 0 10px; } .select_second { color: #1aad19; } .second_menu li { font-size: 14px; max-width: 183px; min-width: 180px; height: 50px; line-height: 50px; padding: 0 45px; text-align: left; cursor: pointer; } .second_menu li:hover { background: #eaeaea; color: #1aad19; } ul.first_menu > :first-child { padding: 0 20px; transition: border-color .3s, background-color .3s, color .3s; box-sizing: border-box; position: relative; cursor: pointer; white-space: nowrap; list-style: none; } ul.first_menu li i { color: #c1c1c1; font-size: 2.2rem; } ul.first_menu { position: relative; width: 160px; overflow: hidden; } ul.first_menu:after { content: ""; position: absolute; left: 60px; bottom: 0; width: 100%; height: 0; right: 50px; border-bottom: 1px solid #e6e6e6; -webkit-transform-origin: 0 100%; transform-origin: 0 100%; -webkit-transform: scaleY(1); transform: scaleY(1); } .table-bg { background: #ffffff; box-shadow: 0 1px 2px hsla(0, 0%, 59%, .3); } /*.second_menu:last-child li {border-bottom:1px solid #eaeaea;}*/ .Hui-article article h3 { text-align: left; font-size: 22px; line-height: 55px; font-weight: 500; padding-top: 0 !important; } #think_page_trace_open { top: 150px !important; z-index: 9999999999 !important; }
+    </style>
+    <link rel="stylesheet" type="text/css" href="/public/css/dashboard.css">
+    <link rel="stylesheet" type="text/css" href="/public/css/{$skin}/yb_index.css?v=1.0"/>
+    <style> .page-container .main-content { height: calc(100% - 51px) !important; background: #f8f9fb !important; } .new_index_tit { height: 37px; line-height: 37px; } .new_tit_box { border-left: 5px solid #3bd98c; height: 19px; font-size: 16px; font-weight: bold; color: #4fa2ff; margin-top: 18px; padding-left: 10px; line-height: 19px; } .index_icon_box { height: 67px; line-height: 67px; } .goods-state ul li { justify-content: center; display: flex; } .index_info_box { width: 60px; } .card_group { display: flex; justify-content: space-between; margin-left: 0px; position: relative; } .card_box:first-child { width: 55%; margin-right: 15px !important; } .card_box, .card_box02 { position: relative; margin-bottom: 30px; margin-right: 63px; margin-left: 20px; border: 1px solid #f0f0f0; -webkit-box-shadow: 0 2px 8px 0 hsla(0, 0%, 89%, .5); box-shadow: 0 2px 8px 0 hsla(0, 0%, 89%, .5); background-color: #fff; color: #303133; border-radius: 4px; overflow: hidden; } .card_box02 { width: 100%; } .card_body { padding: 0 20px 20px 20px; } .state_body { padding: 0 20px 20px 40px; } .card_header { padding: 18px 20px; box-sizing: border-box; } .card_title { margin-left: 20px; font-size: 20px; display: block; margin-top: 20px; } .count_no_box { text-align: center; height: 70px; line-height: 70px; } .count_no { font-family: PingFangSC-Medium; font-size: 30px; color: #4877c1; letter-spacing: 0; } .card_li { justify-content: center; display: flex; } .card_li p { height: 30px; line-height: 30px; font-size: 16px; color: #484848 !important; padding-left: 10px; } .card_li img { height: 30px; width: 30px; display: inline-block; } .card_body { justify-content: center; display: flex; } .card_li_h { width: 50%; } .state_li { justify-content: flex-start; display: flex; } .state_li p { white-space: nowrap; line-height: 21px; font-size: 16px; } .state_li p:first-child { width: 40%; font-family: PingFangSC-Regular; font-size: 16px; color: #484848; letter-spacing: 0; } .state_li p:nth-child(2) { width: 30%; font-family: PingFangSC-Medium; letter-spacing: 0; } .state_li p:nth-child(3) { font-family: PingFangSC-Regular; font-size: 14px; color: #7d7d7d; letter-spacing: 0 } .radio_group { justify-content: flex-start; display: flex; padding: 0 40px; } .radio_group a { display: block; width: 70px; height: 40px; line-height: 40px; text-align: center; font-size: 14px; white-space: nowrap; background: #fff; border: 1px solid #dcdfe6; font-weight: 500; border-left: 0; color: #606266; box-sizing: border-box; transition: all .3s cubic-bezier(.645, .045, .355, 1); } .radio_group a:hover { color: #1aad19; text-decoration: none; } .radio_group a.selected { color: #fff; background-color: #1aad19; border-color: #1aad19; box-shadow: -1px 0 0 0 #1aad19; } .radio_group a:first-child { border-left: 1px solid #dcdfe6; border-radius: 4px 0 0 4px; box-shadow: none !important; } .radio_group a:last-child { border-radius: 0 4px 4px 0; } .group_box { justify-content: flex-start; display: flex; padding: 40px; } .group_li { margin-right: 3%; border: 2px solid #91adda; min-height: 105px; width: 22%; padding: 15px 0; } .group_li p:first-child { font-family: PingFangSC-Regular; font-size: 16px; color: #484848; letter-spacing: 0; line-height: 24px; text-align: center; } .group_li p:nth-child(2) { font-family: PingFangSC-Semibold; font-size: 30px; color: #4e4e4e; line-height: 50px; text-align: center; } .fun_body { justify-content: flex-start; display: flex; -ms-flex-wrap: wrap; flex-wrap: wrap; margin-top: 5px; padding: 0 30px 30px 30px; } .fun_body a { display: block; width: 47%; height: 120px; border: 1px solid #e1e1e1; margin-left: 1%; margin-right: 1%; margin-bottom: 32px; } .fun_body a:hover { text-decoration: none; } .fun_li { width: 100%; display: -webkit-box; display: -ms-flexbox; display: flex; -webkit-box-pack: start; -ms-flex-pack: start; justify-content: flex-start; cursor: pointer; height: 120px; } .fun_li:hover { background-color: hsla(220, 3%, 78%, .3); } .fun_li img { margin-left: 50px; width: 60px; height: 60px; -ms-flex-item-align: center; align-self: center; } .fun_li_content { margin-left: 20px; -ms-flex-item-align: center; align-self: center; } .fun_li_content p:first-child { color: #6487bd; font-size: 18px; } .fun_li_content p:nth-child(2) { color: #646464; font-size: 14px; margin-top: 10px !important; }
+    </style>
+    <script>
+//        function load_page(url,div_class){
+//            div_class=div_class||"main-content";
+//            $("div[class="+div_class+"]").load(url);
+//        }
+    </script>
+</head>
+<body class="page-body">
+{$grant_check|default=''}
+{$check_corp|default=''}
+{$grant_check_2|default=''}
+<div class="new_page_top">
+    <div class="new_logo">
+        {if $about.logo != ''}
+        <img src="{$about.logo}" class="wq_logo">
+        {else}
+        <img src="/public/static/bast/img/wq_shop_logo.png" class="wq_logo">
+        {/if}
+    </div>
+    <a href="javascript:void(0);" class="app_name">{$xcx_name}</a>
+    <div class="new_top_right">
+        <div class="logout_box">
+            <a href="javascript:;" onclick="clear__a()" class="back_sys">清理缓存</a>
+            {if !empty($last_visit_url)}
+            <a href="{$last_visit_url}" class="back_sys">
+                {else}
+                <a href="{$siteroot}web/index.php?c=wxapp&a=version&do=home&version_id={$version_id}" class="back_sys">
+                    {/if}返回系统
+                </a>
+                <a href="{:url('login/logout')}" class="right_logout">退出</a></div>
+        <div class="clear"></div>
+    </div>
+    <div class="clear"></div>
+</div>
+<div class="page-container" style="border-collapse:inherit;">
+    <div class="new_left_menu" id="top_menu">
+        <div class="left_menu_box">
+            <ul v-for="x in list" class="first_menu">
+                <li v-if="x.sub!=''" :id="x.module_id">
+                    <img :src="x.test_log" style="display: inline-block;margin-top: -3px;vertical-align: middle;"><span
+                        class="big_class_name" @click="show_first(-1,x.module_id,-1)" v-text="x.module_name"></span>
+                    <ul v-for="y in x.sub" class="second_menu">
+                        <li @click="show_second(y.url,x.module_id,y.module_id,x.module_name)" :id="y.module_id">
+                            <span class="small_class_name" v-text="y.module_name"></span>
+                        </li>
+                    </ul>
+                </li>
+                <li v-else @click="show_first(x.url,x.module_id,-1)" :id="x.module_id">
+                    <img src="/public/icon/admin_left_icon01.png"
+                         style="display: inline-block;margin-top: -3px;vertical-align: middle;"><span
+                        class="big_class_name" v-text="x.module_name"></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="Hui-article">
+            <article class="cl pd-20" style="padding-top:32px;">
+                {if $corp.card_num==0}
+                {else}
+                <div class="card_group">
+                    <div class="card_box">
+                        <div class="card_header"><span class="card_title">名片状态</span></div>
+                        <div class="card_body">
+                            <div class="card_li_h">
+                                <div class="card_li"><img src="/public/icon/admin_icon01.png">
+                                    <p>员工总数：</p></div>
+                                <div class="count_no_box"><span class="count_no">{$card_sum}</span></div>
+                            </div>
+                            <div class="card_li_h">
+                                <div class="card_li"><img src="/public/icon/admin_icon02.png">
+                                    <p> 已开通数/ 剩余开通数</p></div>
+                                <div class="count_no_box"><span class="count_no">{$is_card}/{$sur_card}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card_box" style="width:39%;">
+                        {if $corp.card_num==0}
+                        {else}
+                        <div class="card_header"><span class="card_title">账号状态</span></div>
+                        <div class="state_body">
+                            <div class="state_li"><p>已使用天数：</p>
+                                <p><span class="count_no">{$diff}</span>天</p>
+                                <p>{:date('Y年m月d日',$corp['create_time'])}开通</p></div>
+                            <div class="state_li"><p>剩余可用天数：</p>
+                                <p><span class="count_no">{$sheng}</span>天</p>
+                                <p>{:date('Y年m月d日',$corp['card_etime'])}截止</p></div>
+                            <div class="state_li"><p>获得客户：<span class="count_no">{$cus}</span>人</p></div>
+                        </div>
+                        {/if}
+                    </div>
+                </div>
+                {/if}
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        var $tab_li = $('#radio_group a');
+                        $tab_li.click(function () {
+                            $(this).addClass('selected').siblings().removeClass('selected');
+                            var index = $tab_li.index(this);
+                            $('div.tab_box > div').eq(index).show().siblings().hide();
+                        });
+                    });
+                </script>
+                <div class="card_group">
+                    <div class="card_box02">
+                        <div class="card_header"><span class="card_title">数据概览</span></div>
+                        <div class="radio_group" id="radio_group">
+                            <a onclick="get_info('8384')" class="selected">汇总</a>
+                            <a onclick="get_info('3')">近三日</a>
+                            <a onclick="get_info('7')">近一周</a>
+                            <a onclick="get_info('30')">近一月</a></div>
+                        <div class="group_box">
+                            <div class="group_li"><p>客户总数</p>
+                                <p><span id="customer">{$info.customer}</span></p></div>
+                            <div class="group_li"><p>点赞总数</p>
+                                <p><span id="likes">{$info.likes}</span></p></div>
+                            <div class="group_li"><p>阅读总数</p>
+                                <p><span id="click">{$info.click}</span></p></div>
+                            <div class="group_li"><p>转发总数</p>
+                                <p><span id="forward">{$info.forward}</span></p></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card_group">
+                    <div class="card_box02">
+                        <div class="card_header"><span class="card_title">常用功能</span></div>
+                        <div class="fun_body">
+                            <a href="__CONF_SITE__admin/article/add_article&dynamic=1">
+                                <div class="fun_li">
+                                    <img src="/public/icon/admin_icon03.png">
+                                    <div class="fun_li_content"><p>发布企业动态</p>
+                                        <p>快速发布企业最新动态、资讯</p></div>
+                                </div>
+                            </a>
+                            <a href="__CONF_SITE__admin/offweb/product&type=1">
+                                <div class="fun_li">
+                                    <img src="/public/icon/admin_icon04.png">
+                                    <div class="fun_li_content"><p>公司产品管理</p>
+                                        <p>快速上传、编辑公司产品</p></div>
+                                </div>
+                            </a>
+                            <a href="__CONF_SITE__admin/menu/guan">
+                                <div class="fun_li">
+                                    <img src="/public/icon/admin_icon05.png">
+                                    <div class="fun_li_content"><p>官网编辑</p>
+                                        <p>对小程序官网进行模块化编辑</p></div>
+                                </div>
+                            </a>
+                            <a href="__CONF_SITE__admin/offweb/structure">
+                                <div class="fun_li">
+                                    <img src="/public/icon/admin_icon06.png">
+                                    <div class="fun_li_content"><p>新增员工</p>
+                                        <p>在企业通讯录快速新增员工</p></div>
+                                </div>
+                            </a>
+                            <a href="__CONF_SITE__admin/offweb/radar">
+                                <div class="fun_li">
+                                    <img src="/public/icon/admin_icon07.png">
+                                    <div class="fun_li_content"><p>雷达权限管理</p>
+                                        <p>管理员工名片和雷达的启用/停用状态</p></div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+    <script src="/public/js/highcharts.js"></script>
+    <script>
+        function get_info(dd) {
+            $.ajax({
+                data: {
+                    date: dd,
+                    type: 3296
+                },
+                url: "{:url('index/count_info')}",
+                type: "post",
+                success: function (res) {
+                    res = JSON.parse(res);
+                    $("#customer").html(res.customer);
+                    $("#likes").html(res.likes);
+                    $("#click").html(res.click);
+                    $("#forward").html(res.forward);
+                }
+            })
+        }
+    </script>
+    <footer class="footer" style="background: #FFFFFF;height: 25px;margin-top: -5px;padding-top: 10px;line-height: 25px;">
+        <p>{$copyright.content}</p>
+    </footer>
+    <script src="/public/static/bast/xenon-custom.js"></script>
+    <script src="/public/static/bast/TweenMax.min.js"></script>
+    <script src="/public/js/clipboard.js"></script>
+    <script src="/public/static/bast/resizeable.js"></script>
+    <script src="/public/static/layer/2.4/layer.js"></script>
+    <script src="/public/js/public_js.js"></script>
+    <script type="text/javascript" src="/public/static/My97DatePicker/4.8/WdatePicker.js"></script>
+</div>
+</div>
+<script>
+    var str;
+    str = '<?php header("Content-type: text/html; charset=utf-8"); echo json_encode($all_menu); ?>';
+    var all_menu = eval(decodeURIComponent(str));
+    var root_url = "<?php global $_W; echo $_W['siteroot'].'addons/yb_mingpian/core/index.php?s=/admin/'; ?>";
+    var top_mid = '<?php echo $top_mid; ?>';
+    var now_first = '<?php echo $now_first; ?>';
+    var now_second = '<?php echo $now_second; ?>';
+    var now_key = '<?php echo $now_key; ?>';
+    var sub_menu_arr = [];
+    $(document).ready(function () {
+        if (now_first == '-1') {
+            $(".second_menu").hide();
+        } else {
+            $(".second_menu").hide();
+            $("#" + now_first).children().show();
+        }
+        if (now_second != '-1') {
+            $('').removeClass("select_second");
+            $("#" + now_second).addClass("select_second");
+        }
+        if (now_key != -1) {
+            $("#dont_touch_this").text(now_key)
+        }
+    });
+    all_menu.forEach(function (item, index) {
+        if (item.module_id == top_mid) {
+            item.class = 'f_name_box cur_name';
+            sub_menu_arr = item.sub ? item.sub : [];
+        }
+        else {
+            item.class = 'f_name_box';
+        }
+    });
+    var top_menu = new Vue({
+        el: '#top_menu',
+        data: {
+            list: all_menu,
+            top_mid: top_mid,
+            root_url: root_url,
+            old_first: 0,
+            now_first: now_first,
+            now_second: now_second,
+            now_key: now_key,
+        },
+        watch: {
+            old_first: function (n, o) {
+                var ta = this;
+                if (n == this.now_first) {
+                    $(".second_menu").hide();
+                    this.old_first = -1;
+                }
+            }
+        },
+        methods: {
+            show_first: function (url, x, y) {
+                var ta = this;
+                if (ta.old_first == -1) {
+                    ta.old_first = 0;
+                } else {
+                    ta.old_first = ta.now_first;
+                }
+                ta.now_first = x;
+                ta.now_second = y;
+                document.cookie = "now_first=" + x;
+                if (url != '-1') {
+                    window.location.href = ta.root_url + url;
+                } else {
+                    $(".second_menu").hide();
+                    $("#" + x).children('ul').show();
+                    return true;
+                }
+            },
+            show_second: function (url, x, y, k) {
+                var ta = this;
+                ta.now_first = x;
+                ta.now_second = y;
+                ta.now_key = k;
+                document.cookie = "now_second=" + y;
+                document.cookie = "now_key=" + k;
+                if (url != '-1') {
+                    $("div[class=main-content]").empty();
+                    $("div[class=main-content]").load(this.root_url + url);
+//                    window.location.href = this.root_url+url;
+                }
+            },
+            top_click: function (top_item) {
+                if (this.top_mid != top_item.module_id) {
+                    var val = top_item.module_id;
+                    this.top_mid = val;
+                    sub_menu.expanded = false;
+                    document.cookie = "top_mid=" + val;
+                    if (top_item.sub.length > 0) {
+                        this.list.forEach(function (item, index) {
+                            if (item.module_id == val) {
+                                item.class = 'f_name_box cur_name';
+                                sub_menu.list = item.sub;
+                                sub_menu.sub_mid = 0;
+                                sub_menu.three_mid = 0;
+                                if (sub_menu.list != null && sub_menu.list != undefined) {
+                                    if (sub_menu.list.length > 0) {
+                                        sub_menu.expanded = true;
+                                        sub_menu.sub_mid = sub_menu.list[0]['module_id'];
+                                    }
+                                }
+                            }
+                            else {
+                                item.class = 'f_name_box';
+                            }
+                        });
+                    }
+                    else {
+                        window.location.href = this.root_url + top_item.url;
+                    }
+                }
+            }
+        },
+    });
+    function clear__a() {
+        $.ajax({
+            type: "post",
+            url: "__CONF_SITE__admin/base/clear_cache",
+            success: function () {
+                layer.msg("清理成功");
+            }
+        })
+    }
+</script>
+</body>
+</html>
+
+{block name="resources"/}{/block}
+{block name="main"}{/block}
+{block name="script"}{/block}

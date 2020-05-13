@@ -1,0 +1,206 @@
+{extend name="base"/}
+{block name="main"}
+<link media="all" href="/public/menu/css/{$skin}/index_mod.css?v=1.2" type="text/css" rel="stylesheet">
+<link media="all" href="/public/menu/css/{$skin}/index_module.css?v=1.2" type="text/css" rel="stylesheet">
+<link media="all" href="/public/menu/css/{$skin}/formconfig_index.css?v=1.3" type="text/css" rel="stylesheet">
+<link href="/public/static/umedito/themes/default/_css/umeditor.css" type="text/css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/public/menu/css/{$skin}/defau.css">
+<link rel="stylesheet" type="text/css" href="/public/menu/css/{$skin}/custom.css">
+<script type="text/javascript" src="/public/static/umedito/third-party/template.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="/public/static/umedito/umeditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="/public/static/umedito/_examples/editor_api2.js"></script>
+<script type="text/javascript" src="/public/static/umedito/lang/zh-cn/zh-cn.js"></script>
+<script type="text/javascript" src="/public/js/vue.js"></script>
+<script type="text/javascript" src="/public/js/vue-dragging.es5.js"></script>
+<script src="/public/js/html2canvas.js"></script>
+<script>
+    Vue.use(VueDragging);
+</script>
+<style>
+    .input-text {padding-left:10px !important;}
+    .row cl .formControls i span a{
+        color: #333333;}
+</style>
+<div class="Hui-article">
+<article class="cl pd-20">
+    <!--<h3 id="dont_touch_this0"></h3>-->
+    <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+        <div class="tabBar clearfix">
+            <span class="current">商家信息</span>
+        </div>
+    </div>
+    <form method="post" action="" id="mymp3" class="form form-horizontal" enctype="multipart/form-data">
+        <input type="hidden" id="id" value="{$info['id']}">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">公司名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" value="{$info['name']}" class="input-text"
+                      id="names" >
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">公司简称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" value="{$info['e_name']}" placeholder="公司简称" class="input-text"
+                       id="e_name" >
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">公司英文名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" value="{$info['english_name']}" placeholder="公司英文名称"
+                       class="input-text" id="english_name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>联系电话：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" value="{$info['phone']}" class="input-text" id="tel">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">公司地址：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" value="{$info['address']}" class="input-text" placeholder="公司地址"
+                       id="address">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">公司QQ：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" value="{$info['qq']}" class="input-text" placeholder="公司QQ"
+                       id="qq">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>支付方式：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <div class="skin-minimal">
+                    <div class="radio-box" style="padding-left:0;">
+                        <input type="checkbox" name="mention" value="1" <?php if(strpos($info["mention"],"1")!==false) echo("checked"); ?> id="radio-1" name="is_mention">
+                        <label for="radio-1">邮寄</label>
+                    </div>
+                    <div class="radio-box">
+                        <input type="checkbox" name="mention" value="2" <?php if(strpos($info["mention"],"2")!==false) echo("checked"); ?> id="radio-2" name="is_mention">
+                        <label for="radio-2">用户自提</label>
+                    </div>
+                    <div class="radio-box">
+                        <input type="checkbox" name="mention" value="4" <?php if(strpos($info["mention"],"4")!==false) echo("checked"); ?> id="radio-4" name="is_mention">
+                        <label for="radio-4">货到付款</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">快递API：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" value="{$info['exp']}" class="input-text" placeholder="阿里云快递查询AppCode" id="exp">
+                <br>
+                <i><span>用于物流状态查询,如有需要请点此申请：<a href="https://market.aliyun.com/products/56928004/cmapi021863.html?spm=5176.10695662.1996646101.searchclickresult.7609b8efxC86yh#sku=yuncode1586300000" target="_blank">申请地址</a></span></i>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">LOGO图片：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <p style="height: 150px;width:150px;border: dashed 1px #e5e5e5">
+                    <img src="{$info['logo']}" style="width: 150px;height: 150px;" onerror="this.src='/public/goods/img/default_goods_image_240.gif'" alt="" id="imglogo_pic" class="thumbnail">
+                </p>
+                <input type="file" name="mp3file" id="mp3file">
+                <div style="position: absolute;top:50px;left:200px;color: #ccc;">
+                    <div class="upload-btn">
+				<span>
+					<input type="hidden" value="{$info['logo']}" id="logo_pic"/>
+				</span>
+                        <br>
+                        建议图片尺寸：150*150px<br>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row cl" style="">
+            <label class="form-label col-xs-4 col-sm-2">简介：</label>
+            <div class="formControls col-xs-8">
+                <div id="editor" type="text/plain" style="width: 80%; height: 400px;">{$info['desc']}</div>
+            </div>
+        </div>
+    </form>
+    <br>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+                <input class="btn btn-primary radius" onclick="addSuppAjax()" type="button"
+                       value="编辑">
+            </div>
+        </div>
+</article>
+</div>
+{/block}
+{block name="script"}
+<script src="/public/menu/js/jquery.artdialog.js"></script>
+<script src="/public/menu/js/iframetools.js"></script>
+<script type="text/javascript">
+    $(function(){
+        var ue =UM.getEditor('editor',{
+            imageUrl:"__CONF_SITE__app/Umupload/uploadFile", //处理图片上传的接口
+            imageFieldName:"upfile", //上传图片的表单的name
+            imagePath: ""
+        });
+    });
+    var flag = false;//防止重复提交
+    //添加用户
+    function addSuppAjax() {
+        var desc = UM.getEditor('editor').getContent();
+        var formFile = new FormData($("#mymp3")[0]);
+        var id = $("#id").val();
+        var e_name = $("#e_name").val();
+        var address = $("#address").val();
+        var english_name = $("#english_name").val();
+        var logo_pic = $("#logo_pic").val();
+        var names = $("#names").val();
+        var tel = $("#tel").val();
+        var qq = $("#qq").val();
+        var exp = $("#exp").val();
+        var is_mention = 0;
+        $("input[name=mention]:checked").each(function () {
+                is_mention+=parseInt($(this).val());
+        });
+        if(is_mention==0){
+            layer.msg('请选择支付方式', {icon: 5, time: 1000});
+            return false;
+        }
+        formFile.append("id",id);
+        formFile.append("e_name",e_name);
+        formFile.append("address",address);
+        formFile.append("english_name",english_name);
+        formFile.append("logo_pic",logo_pic);
+        formFile.append("names",names);
+        formFile.append("is_mention",is_mention);
+        formFile.append("tel",tel);
+        formFile.append("desc",desc);
+        formFile.append("exp",exp);
+        formFile.append("qq",qq);
+        if (!flag) {
+            flag = true;
+            $.ajax({
+                type: "post",
+                url: "{:url('about/index')}",
+                cache: false,
+                processData: false,
+                contentType: false,
+                dataType:'json',
+                data: formFile,
+                success: function (data) {
+                    if (data['code'] > 0) {
+                        layer.msg('修改成功!', {icon: 1, time: 1000}, function () {
+                            parent_flash();
+                        });
+                    }
+                    else {
+                        flag = false;
+                        layer.msg('修改失败', {icon: 5, time: 1000});
+                    }
+                }
+            });
+        }
+    }
+</script>
+{/block}

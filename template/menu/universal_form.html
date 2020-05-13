@@ -1,0 +1,145 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+            <div class="tabBar clearfix">
+                <span class="current">表单列表</span>
+                <span onclick="load_page('__CONF_SITE__admin/menu/get_form_list')">表单反馈</span>
+                <div onclick="load_page('__CONF_SITE__admin/menu/universal_form_add','','',3)"  class="n_tab_add"><i class="Hui-iconfont">&#xe600;</i>添加表单</div>
+            </div>
+        </div>
+        <div>
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-bg table-hover table-sort">
+                    <thead>
+                    <tr class="text-c">
+                        <th>标题</th>
+                        <th>缩略图</th>
+                        <th>表单类型</th>
+                        <th>限制提交次数(0为不限制)</th>
+                        <th>添加时间</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    {volist name="list" id="r"}
+                    <tr class="text-c va-m">
+                        <td>
+                            <input type="text" onchange="set_form_title('{$r.id}',this.value)" value="{$r['title']}" class="input-common" style="text-align: center">
+                        </td>
+                        <td><a target="_blank" href="{$r.img}"><img src="{$r.img}" style="width: 100px;height: 120px;"></a></td>
+                        <td>
+                            {if $r['type']==1}
+                            <span class="label label-secondary">普通表单</span>
+                            {else}
+                            <span class="label badge-warning">预约表单</span>
+                            {/if}
+                        </td>
+                        <td>
+                            <input type="text" class="sort input-common" onchange="set_form_tijiao('{$r.id}',this.value)" value="{$r.limit_num}" size="1"><br>
+                        </td>
+                        <td>{$r['create_time']|date="Y-m-d H:i:s",###}</td>
+                        <td>
+                            {if $r.is_del==1}
+                            <span class="label label-success radius">正常</span>
+                            {else}
+                            <span class="label label-danger radius">已禁用</span>
+                            {/if}
+                        </td>
+                        <td>
+                            <a style="text-decoration:none;color:#0066cc;" title="编辑" href="javascript:;" onclick="load_page('__CONF_SITE__admin/menu/universal_form_add&id={$r.id}')">编辑</a>
+                            {if $r.is_del==1}
+                            <a style="text-decoration:none;color:#0066cc;" title="禁用" href="javascript:void(0);" onclick="universal_del('{$r.id}','off')">禁用</a>
+                            {else}
+                            <a style="text-decoration:none;color:#0066cc;" title="启用" href="javascript:void(0);" onclick="universal_del('{$r.id}','on')">启用</a>
+                            {/if}
+                        </td>
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+                <div class="n_page_no">
+                    {$list->render()}
+                </div>
+            </div>
+        </div>
+        {/block}
+        {block name="script"}
+        <script type="text/javascript">
+            function set_form_tijiao(id,val) {
+                $.ajax({
+                    type : "post",
+                    url : "__CONF_SITE__admin/menu/set_universal_limet",
+                    data : {
+                        "id" : id.toString(),
+                        "val" : val,
+                    },
+                    success : function(data) {
+                        if (data['code'] >0) {
+                            layer.msg('成功!',{icon:1,time:1000},function () {
+                                parent_flash();
+                            });
+                        }
+                        else
+                        {
+                            layer.msg('失败', {icon: 2, time: 1000});
+                        }
+                    }
+                })
+            }
+            function universal_del(id,key){
+                var msg='';
+                if (key=='on'){
+                    msg='确定要启用吗？';
+                }else {
+                    msg='确定要禁用吗？';
+                }
+                layer.confirm(msg,function(index){
+                    //后台处理
+                    $.ajax({
+                        type : "post",
+                        url : "__CONF_SITE__admin/menu/del_universal_form",
+                        data : {
+                            "id" : id.toString(),
+                            'key':key
+                        },
+                        success : function(data) {
+                            if (data['code'] >0) {
+                                layer.msg('成功!',{icon:1,time:1000},function () {
+                                    parent_flash();
+                                });
+                            }
+                            else
+                            {
+                                layer.msg('失败', {icon: 2, time: 1000});
+                            }
+                        }
+                    })
+                });
+            }
+     function set_form_title(id,val) {
+         $.ajax({
+             type : "post",
+             url : "__CONF_SITE__admin/menu/set_form_title",
+             data : {
+                 "id" : id.toString(),
+                 'val':val
+             },
+             success : function(data) {
+                 if (data['code'] >0) {
+                     layer.msg('成功!',{icon:1,time:1000},function () {
+                         parent_flash();
+                     });
+                 }
+                 else
+                 {
+                     layer.msg('失败', {icon: 2, time: 1000});
+                 }
+             }
+         })
+     }
+        </script>
+        {/block}

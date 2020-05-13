@@ -1,0 +1,393 @@
+<!--
+{extend name="base"/}
+{block name="main"}
+<link rel="stylesheet" type="text/css" href="/public/css/defau.css">
+<div class="Hui-article">
+<article class="cl pd-20">
+	<h3 id="dont_touch_this"></h3>
+    <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+        <div class="tabBar clearfix">
+            <span class="current" onclick="load_page('__CONF_SITE__admin/config/send_sms')">短信通知</span>
+        </div>
+    </div>
+	{foreach name="data" item="v" key="k"}
+	<span>{$v.title}</span>
+	<form action="" method="post" class="form form-horizontal" id="">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>是否开启:</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<div class="skin-minimal">
+					<div class="radio-box" style="padding-left:0;">
+						<input type="radio" value="2" {if condition="$v.info.status==2"} checked {/if} id="radio-{$k}-0" name="status{$k}">
+						<label for="radio-{$k}-0">不开启</label>
+					</div>
+					<div class="radio-box">
+						<input type="radio" value="1" {if condition="$v.info.status==1"} checked {/if} id="radio-{$k}-1" name="status{$k}">
+						<label for="radio-{$k}-1">开启</label>
+					</div>
+				</div>
+				<i><a href="https://help.aliyun.com/document_detail/55451.html?spm=a2c4g.11186623.6.572.379c3a76T2gaeo" target="_blank">参数获取请参照官网详情<span style="color: red">[请及时保存ID和Secret]</span></a></i><br>
+				<i><a href="https://help.aliyun.com/knowledge_detail/57717.html?spm=a2c4g.11186623.6.598.57003a76JyzSzw" target="_blank">测试报错信息请参考官方修改建议</a></i>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>阿里云AccessKeyId :</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="{$v.info.ali_id}" placeholder="阿里云AccessKeyId" class="input-text" id="ali_id{$k}">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>阿里云AccessKeySecret:</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="{$v.info.ali_token}" placeholder="阿里云AccessKeySecret" class="input-text" id="ali_token{$k}">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>阿里云短信签名 :</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="{$v.info.ali_name}" placeholder="阿里云短信签名" class="input-text" id="ali_name{$k}">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>阿里云短信模板Id :</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="{$v.info.ali_code}" placeholder="阿里云短信模板Id" class="input-text" id="ali_code{$k}"><br>
+				<span>模板内容: {$v.msg}</span><br>
+				<span style="color: red;">注意：请不要修改变量字段</span>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>接收人电话:</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="{$v.info.phone}" class="input-text" placeholder="接收人电话,多个请用英文逗号隔开" id="phone{$k}">
+			</div>
+		</div>
+		{if $v.info.ok_use>0}
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">已使用量:</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="{$v.info.ok_use}" class="input-text" disabled>
+			</div>
+		</div>
+		{/if}
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+				<input class="btn btn-primary radius" onclick="addSuppAjax('{$k}')" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+				<input type="hidden" id="id{$k}" value="{$v.info.id|default=''}">
+				<input class="btn btn-primary radius" onclick="test_sms('{$k}')" type="button" value="&nbsp;&nbsp;测试&nbsp;&nbsp;">
+			</div>
+		</div>
+	</form>
+	{/foreach}
+</article>
+	{/block}
+	{block name="script"}
+	<script type="text/javascript">
+        function addSuppAjax(t) {
+            var status=$("input[name=status"+t+"]:checked").val(),
+                ali_id=$("#ali_id"+t).val(),
+                ali_token=$("#ali_token"+t).val(),
+                ali_name=$("#ali_name"+t).val(),
+                ali_code=$("#ali_code"+t).val(),
+                phone=$("#phone"+t).val(),
+                id=$("#id"+t).val();
+
+            $.ajax({
+                type:"post",
+                data:{
+                    status:status,
+                    ali_id:ali_id,
+                    ali_token:ali_token,
+                    ali_name:ali_name,
+                    ali_code:ali_code,
+                    phone:phone,
+                    id:id,
+                    type:t
+                },
+                url:"{:url('config/send_sms')}",
+                success:function (res) {
+                    if(res["code"]>0){
+                        layer.msg('保存成功',{icon:1,time:1000},function () {
+                            parent_flash();
+                        });
+                    }else {
+                        layer.msg('保存失败',{icon:2,time:1000});
+                    }
+                }
+            })
+        }
+        function test_sms(t) {
+            var ali_id = $("#ali_id"+t).val(),
+                ali_token = $("#ali_token"+t).val(),
+                ali_name = $("#ali_name"+t).val(),
+                ali_code = $("#ali_code"+t).val(),
+                phone = $("#phone"+t).val();
+            if(phone=="" || phone.length<5){
+                layer.msg("手机号不能为空",{icon:2,time:1000});
+                return false;
+            }
+            layer.confirm("多个手机号将只发送第一个手机号,发送变量为ABCDEF",function () {
+                $.ajax({
+                    type:"post",
+                    data:{
+                        ali_id:ali_id,
+                        ali_token:ali_token,
+                        ali_name:ali_name,
+                        ali_code:ali_code,
+                        phone:phone
+                    },
+                    url:"{:url('config/test_sms')}",
+                    success:function (res) {
+                        if(res["Code"]=="OK"){
+                            layer.msg('已发送，请查收',{icon:1,time:1000});
+                        }else {
+                            layer.msg(res["Message"],{icon:2,time:1000});
+                        }
+                    }
+                })
+            })
+        }
+</script>
+{/block}-->
+
+{extend name="base"/}
+{block name="main"}
+<link rel="stylesheet" type="text/css" href="/public/css/defau.css">
+<article class="cl pd-20">
+	<div class="tabBar clearfix">
+		<span {$type==1?'class="current"':''} onclick="load_page('__CONF_SITE__admin/config/send_sms&type=1')">下单成功通知</span>
+		<span {$type==2?'class="current"':''} onclick="load_page('__CONF_SITE__admin/config/send_sms&type=2')" >付款成功通知</span>
+	</div>
+	<form action="" method="post" class="form form-horizontal" id="sms_">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>是否开启:</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<div class="skin-minimal">
+					<div class="radio-box" style="padding-left:0;">
+						<input type="radio" value="2" {if condition="$info.status==2"} checked {/if} id="radio-1" name="status">
+						<label for="radio-1">不开启</label>
+					</div>
+					<div class="radio-box">
+						<input type="radio" value="1" {if condition="$info.status==1"} checked {/if} id="radio-2" name="status">
+						<label for="radio-2">开启</label>
+					</div>
+				</div>
+				<i><a href="https://help.aliyun.com/document_detail/55451.html?spm=a2c4g.11186623.6.572.379c3a76T2gaeo" target="_blank">参数获取请参照官网详情<span style="color: red">[请及时保存ID和Secret]</span></a></i>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>阿里云AccessKeyId :</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="{$info['ali_id']}" placeholder="阿里云AccessKeyId" class="input-text" id="ali_id">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>阿里云AccessKeySecret:</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="{$info['ali_token']}" placeholder="阿里云AccessKeySecret" class="input-text" id="ali_token">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>阿里云短信签名 :</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="{$info['ali_name']}" placeholder="阿里云短信签名" class="input-text" id="ali_name">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>阿里云短信模板Id :</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="{$info['ali_code']}" placeholder="阿里云短信模板Id" class="input-text" id="ali_code"><br>
+				{if $type==1}
+				<span>模板内容: 您有一个新的订单，订单号：${order}</span>
+				{elseif $type==2}
+				<span>模板内容: 您有一个订单支付成功，订单号：${order}，请及时处理。</span>
+				{/if}
+				<br>
+				<span style="color: red;">注意：请不要修改变量字段</span>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>接收人电话:</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="{$info['phone']}" class="input-text" placeholder="接收人电话,多个请用英文逗号隔开" id="phone">
+			</div>
+		</div>
+		{if $info.ok_use>0}
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">已使用量:</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="{$info['ok_use']}" class="input-text" disabled>
+			</div>
+		</div>
+		{/if}
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+				<input class="btn btn-primary radius" onclick="addSuppAjax()" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+				<input type="hidden" id="id" value="{$info.id|default=''}">
+				<input type="hidden" id="type" value="{$type|default='1'}">
+				<input class="btn btn-primary radius" onclick="test_sms()" type="button" value="&nbsp;&nbsp;测试&nbsp;&nbsp;">
+			</div>
+		</div>
+	</form>
+
+	<!--<form action="" method="post" class="form form-horizontal" id="">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>是否开启:</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<div class="skin-minimal">
+					<div class="radio-box" style="padding-left:0;">
+						<input type="radio" value="2" {if condition="!empty($info) && $info.status==2"} checked {/if} id="radio-3" name="status2">
+						<label for="radio-3">不开启</label>
+					</div>
+					<div class="radio-box">
+						<input type="radio" value="1" {if condition="!empty($info) && $info.status==1"} checked {/if} id="radio-4" name="status2">
+						<label for="radio-4">开启</label>
+					</div>
+				</div>
+				<i><a href="https://help.aliyun.com/document_detail/55451.html?spm=a2c4g.11186623.6.572.379c3a76T2gaeo" target="_blank">参数获取请参照官网详情<span style="color: red">[请及时保存ID和Secret]</span></a></i>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>阿里云AccessKeyId :</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="{$info['ali_id']|default=''}" placeholder="阿里云AccessKeyId" class="input-text" id="ali_id2">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>阿里云AccessKeySecret:</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="{$info['ali_token']|default=''}" placeholder="阿里云AccessKeySecret" class="input-text" id="ali_token2">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>阿里云短信签名 :</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="{$info['ali_name']|default=''}" placeholder="阿里云短信签名" class="input-text" id="ali_name2">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>阿里云短信模板Id :</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="{$info['ali_code']|default=''}" placeholder="阿里云短信模板Id" class="input-text" id="ali_code2"><br>
+				<span>模板内容: 您有一个订单支付成功，订单号：${order}，请及时处理。</span><br>
+				<span style="color: red;">注意：请不要修改变量字段</span>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>接收人电话:</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="{$info['phone']|default=''}" class="input-text" placeholder="接收人电话,多个请用英文逗号隔开" id="phone2">
+			</div>
+		</div>
+		{if $info.ok_use>0}
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">已使用量:</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="{$info['ok_use']|default=0}" class="input-text" disabled>
+			</div>
+		</div>
+		{/if}
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+				<input class="btn btn-primary radius" onclick="addSuppAjax(2)" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+				<input type="hidden" id="id2" value="{$info.id|default=''}">
+				<input class="btn btn-primary radius" onclick="test_sms(2)" type="button" value="&nbsp;&nbsp;测试&nbsp;&nbsp;">
+			</div>
+		</div>
+	</form>-->
+</article>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    var  type='1';
+    $(document).ready(function () {
+        type=$('#type').val();
+    });
+
+    function addSuppAjax() {
+        var status=$("input[name=status]:checked").val(),
+            ali_id=$("#ali_id").val(),
+            ali_token=$("#ali_token").val(),
+            ali_name=$("#ali_name").val(),
+            ali_code=$("#ali_code").val(),
+            phone=$("#phone").val(),
+            id=$("#id").val();
+        /*if(type==1){
+
+        }
+        if(type==2){
+            var status=$("input[name=status2]:checked").val(),
+                ali_id=$("#ali_id2").val(),
+                ali_token=$("#ali_token2").val(),
+                ali_name=$("#ali_name2").val(),
+                ali_code=$("#ali_code2").val(),
+                phone=$("#phone2").val(),
+                id=$("#id2").val();
+        }*/
+        $.ajax({
+            type:"post",
+            data:{
+                'status':status,
+                'ali_id':ali_id,
+                'ali_token':ali_token,
+                'ali_name':ali_name,
+                'ali_code':ali_code,
+                'phone':phone,
+                'id':id,
+                'type':type
+            },
+            url:"{:url('config/send_sms')}",
+            success:function (res) {
+                if(res["code"]>0){
+                    layer.msg('保存成功',{icon:1,time:1000},function () {
+                        parent_flash();
+                    });
+                }else {
+                    layer.msg('保存失败',{icon:2,time:1000});
+                }
+            }
+        })
+    }
+    function test_sms() {
+        var ali_id = $("#ali_id").val(),
+            ali_token = $("#ali_token").val(),
+            ali_name = $("#ali_name").val(),
+            ali_code = $("#ali_code").val(),
+            phone = $("#phone").val();
+        /*if(type==1) {
+
+        }
+        if(type==2){
+            var ali_id = $("#ali_id2").val(),
+                ali_token = $("#ali_token2").val(),
+                ali_name = $("#ali_name2").val(),
+                ali_code = $("#ali_code2").val(),
+                phone = $("#phone2").val();
+        }*/
+        if(phone=="" || phone.length<5){
+            layer.msg("手机号不能为空",{icon:2,time:1000});
+            return false;
+        }
+        layer.confirm("多个手机号将只发送第一个手机号,发送变量为ABCDEF",function () {
+            $.ajax({
+                type:"post",
+                data:{
+                    'ali_id':ali_id,
+                    'ali_token':ali_token,
+                    'ali_name':ali_name,
+                    'ali_code':ali_code,
+                    'phone':phone
+                },
+                url:"{:url('config/test_sms')}",
+                success:function (res) {
+                    if(res["Code"]=="OK"){
+                        layer.msg('已发送，请查收',{icon:1,time:1000});
+                    }else {
+                        layer.msg(res["Message"],{icon:2,time:1000});
+                    }
+                }
+            })
+        })
+    }
+</script>
+{/block}

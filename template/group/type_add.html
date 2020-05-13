@@ -1,0 +1,98 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="/public/static/h-ui-{$skin}/css/H-ui.min.css" />
+
+</head>
+<script src="/public/js/all.js"></script>
+<body>
+<article class="cl pd-20">
+    <form action="" method="post" class="form form-horizontal" id="">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">分类名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" value="" placeholder="分类名称" class="input-text" name="name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>封面图片：</label>
+            <div class="formControls col-xs-8 col-sm-8">
+                <p style="height: 165px;width:165px;border: dashed 1px #e5e5e5">
+                    <img src="" alt="" id="logo_show" class="thumbnail">
+                </p>
+                <div style="position: absolute;top:50px;left:200px;color: #ccc;">
+                </div>
+                <div class="upload-btn">
+				<span>
+					<input type="hidden" value="" id="logo"/>
+				</span>
+                    <input onclick="select_img('1','zhu');" class="btn btn-default" type="button" value="选择图片">
+                </div>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">排序：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" value="0" class="input-text" placeholder="排序" name="sort">
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" onclick="resve()" type="button"
+                       value="&nbsp;&nbsp;保存&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</article>
+<script type="text/javascript" src="/public/js/jquery-2.1.1.js"></script>
+<script type="text/javascript" src="/public/static/layer/2.4/layer.js"></script>
+<link rel="stylesheet" type="text/css" href="/public/css/defau.css">
+<script src="/public/menu/js/jquery.artdialog.js"></script>
+<script src="/public/menu/js/iframetools.js"></script>
+<script type="text/javascript">
+    function zhu_images(id,path) {
+        $("#logo").val(path);
+        $("#logo_show").attr('src',path);
+    }
+    function select_img(number,type) {
+        layer_open("我的图片001",'__CONF_SITE__admin/images/dialogalbumlist&number=' + number + '&type=' + type,900,620);
+//        art.dialog.open(('__CONF_SITE__admin/images/dialogalbumlist&number=' + number + '&type=' + type), {
+//            lock : true,
+//            title : "我的图片",
+//            width : 900,
+//            height:620,
+//            drag : false,
+//            background : "#000000",
+//            scrollbar:false,
+//        }, true);
+    }
+    var flag = false;//防止重复提交
+    //添加用户
+    function resve() {
+        if (!flag) {
+            flag = true;
+            $.ajax({
+                type : "post",
+                url : "{:url('Group/type_add')}",
+                data: {
+                    name: $("[name='name']").val(),
+                    img: $("#logo").val(),
+                    sort: $("[name='sort']").val(),
+                },
+                success : function(data) {
+                    if (data["code"] > 0) {
+                        layer.msg('保存成功',{icon:1,time:1000},function () {
+                            layer_close('__CONF_SITE__admin/Group/type');
+                        });
+                    }else{
+                        layer.msg('保存失败', {icon: 2, time: 1000});
+                        flag = false;
+                    }
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>

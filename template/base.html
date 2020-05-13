@@ -1,0 +1,57 @@
+<div id="newks"></div>
+<div id="newks2"></div>
+<!--<script src="/public/js/art_dialog.source.js"></script>-->
+<!--<script src="/public/js/iframe_tools.source.js"></script>-->
+<script>
+    var UM_SITE_ROOT = '__CONF_SITE__';
+    var SSSS = "";
+    function check_users(fun) {
+        $.ajax({
+            type: "post",
+            url: "__CONF_SITE__admin/Offweb/check_auth_code",
+            async: false,
+            dataType: 'json',
+            success: function (data) {
+            if(data.code==1){
+                var is_auth_ok = '<?php echo $is_auth_ok; ?>';
+                if ($("#check_auth_ok").val() == 1 || $("#needauth").val() == 1 || is_auth_ok > 0) {
+                    fun();
+                } else {
+                    layer.prompt({title: '请输入授权码,汉字用*代替', formType: 1}, function (pass, index) {
+                        $.ajax({
+                            type: "post",
+                            url: "__CONF_SITE__admin/role/check__auth",
+                            async: false,
+                            data: {"pass": pass},
+                            dataType: 'json',
+                            success: function (data) {
+                                if (data == 2) {
+                                    layer.msg('未设置授权码,无法使用此功能,请联系管理员!', {icon: 4, time: 3000});
+                                    return false;
+                                }
+                                if (data == 1) {
+                                    $("#check_auth_ok").attr("value", 1);
+                                    fun();
+                                }
+                                if (data == 3) {
+                                    layer.msg('授权码错误!', {icon: 2, time: 3000});
+                                    return false;
+                                }
+                            }
+                        });
+                        layer.close(index);
+                    });
+                }
+            }else {
+                fun();
+            }
+            }
+        });
+    }
+</script>
+{$grant_check|default=''}
+{$check_corp|default=''}
+{$grant_check_2|default=''}
+{block name="resources"/}{/block}
+{block name="main"}{/block}
+{block name="script"}{/block}

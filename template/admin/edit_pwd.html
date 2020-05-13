@@ -1,0 +1,91 @@
+{extend name="base"/}
+{block name="main"}
+<article class="cl pd-20">
+    <div class="n_tab_line">
+        <a href="javascript:;" class="n_tab_list">密码修改</a>
+        <div class="cl"></div>
+    </div>
+    <form action="" method="post" class="form form-horizontal" id="">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>旧密码：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" value="" placeholder="旧密码" class="input-text" id="old_pwd">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>新密码：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" value="" placeholder="新密码" class="input-text" id="new_pwd">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>再次输入新密码：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" value="" placeholder="再次输入新密码" class="input-text" id="new_pwd2">
+            </div>
+        </div>
+                    <div class="row cl">
+                    <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+                    <input class="btn btn-primary radius" onclick="addSuppAjax()" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+                    </div>
+                    </div>
+                    </form>
+                    </article>
+                    {/block}
+                {block name="script"}
+                <script type="text/javascript">
+                    //模块输入信息验证
+                    function verify(old_pwd,new_pwd,new_pwd2) {
+                        if (old_pwd == '') {
+                            layer.msg('旧密码不能为空',{icon:5,time:1000});
+                            return false;
+                        }
+                        if(new_pwd == ''){
+                            layer.msg('新密码不能为空',{icon:5,time:1000});
+                            return false;
+                        }
+                        if (new_pwd2 == '') {
+                            layer.msg('请输入确认密码',{icon:5,time:1000});
+                            return false;
+                        }
+                        if (new_pwd2 !=new_pwd) {
+                            layer.msg('两次密码输入不一致',{icon:5,time:1000});
+                            return false;
+                        }
+                        return true;
+                    }
+                    var flag = false;//防止重复提交
+                    //添加用户
+                    function addSuppAjax() {
+                        var old_pwd = $("#old_pwd").val();
+                        var new_pwd = $("#new_pwd").val();
+                        var new_pwd2 = $("#new_pwd2").val();
+                        if(verify(old_pwd,new_pwd,new_pwd2) && !flag){
+                            flag = true;
+                            $.ajax({
+                                type : "post",
+                                url : "{:url('Admin/edit_pwd')}",
+                                data : {
+                                    'old_pwd' : old_pwd,
+                                    'new_pwd' : new_pwd
+                                },
+                                success : function(data) {
+                                    if(data['code']==2){
+                                        layer.msg('旧密码错误!',{icon:2,time:1000});
+                                        flag = false;
+                                        return false;
+                                    }
+                                    else if(data['code']==1){
+                                        layer.msg('修改成功!',{icon:1,time:1000},function () {
+                                            window.location.reload();
+                                        });
+                                    }else {
+                                        layer.msg('修改失败',{icon:2,time:1000});
+                                        flag = false;
+                                    }
+                                }
+                            });
+                        }
+                    }
+                </script>
+                {/block}

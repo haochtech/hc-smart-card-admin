@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/public/js/all.js"></script>
+</head>
+<body>
+<div id="content">
+    {$msg}(5秒后返回)
+</div>
+<script>
+    var msg = "<?php echo $msg;?>"
+    settime(5);
+    function settime(i) {
+        setTimeout(function(){
+                i -= 1;
+                if(i <= 1)
+                {
+                    layer_close("__CONF_SITE__admin/config/wq_upload");
+                }
+                else
+                {
+                    document.getElementById("content").innerHTML = msg+"("+i+"秒后返回)";
+                    settime(i);
+                }
+            },1000
+        );
+    }
+</script>
+</body>
+</html>

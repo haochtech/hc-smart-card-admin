@@ -1,0 +1,185 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div class="tabBar clearfix" style="position:relative;">
+            <span onclick="load_page('__CONF_SITE__admin/activity/user_share')">分销商列表</span>
+            <span onclick="load_page('__CONF_SITE__admin/activity/share_order')">订单列表</span>
+            <span onclick="load_page('__CONF_SITE__admin/distribute/index')">单商品分销</span>
+            <span class="current" onclick="load_page('__CONF_SITE__admin/activity/share_cash')">分销商提现</span>
+            <span onclick="load_page('__CONF_SITE__admin/activity/share_set')" >基础设置</span>
+            <span onclick="load_page('__CONF_SITE__admin/activity/share_pay')" >佣金设置</span>
+            <span onclick="load_page('__CONF_SITE__admin/activity/share_other')">自定义设置</span>
+        </div>
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+                <div class="text-c"> 分销商名称：
+                    <input type="text" class="input-text" value="{$search_text}" style="width:250px" placeholder="输入名称或微信昵称"  name="search_text">
+                    <button onclick="send_submit()" class="btn btn-search radius"  name=""><i class="Hui-iconfont">&#xe665;</i> 搜索</button>
+                </div>
+        </div>
+        <div id="tab_demo" class="HuiTab" style="margin-top: 15px;">
+            <div class="tabBar clearfix">
+                <span {if condition="$status==''"} class="current" {/if} onclick="load_page('__CONF_SITE__admin/activity/share_cash')">全部</span>
+                <span {if condition="$status==-1"} class="current" {/if} onclick="load_page('__CONF_SITE__admin/activity/share_cash&status=-1')">未审核</span>
+                <span {if condition="$status==1"} class="current" {/if} onclick="load_page('__CONF_SITE__admin/activity/share_cash&status=1')">待付款</span>
+                <span {if condition="$status==2"} class="current" {/if} onclick="load_page('__CONF_SITE__admin/activity/share_cash&status=2')">已完成</span>
+                <span {if condition="$status==3"} class="current" {/if} onclick="load_page('__CONF_SITE__admin/activity/share_cash&status=3')">拒绝</span>
+            </div>
+        </div>
+        <table class="table table-border table-bordered table-hover table-bg">
+            <thead>
+            <tr class="text-c">
+                <th>微信信息</th>
+                <th>提现帐号<br/>提现类型</th>
+                <th>可用金额<br/>提现金额</th>
+                <th>申请时间</th>
+                <th>当前状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody id="tbody">
+            {foreach name="cash" item="vo"}
+            <tr class="text-c">
+                <td>{$vo['nick_name']}</td>
+                <td>{$vo['mobile']}<br/>{$vo['type']}</td>
+                <td>{$vo['total']}  ￥<br/>{$vo['price']}  ￥</td>
+                <td>{$vo['create_time']}</td>
+                {if $vo['status']==0}
+                <td>申请中</td>
+                <td>
+                    <a href="javascript:;" onclick="is_pass('{$vo.id}')" title="通过" style="text-decoration:none;color:#0066cc;" class="ml-5">接受</a>
+                    <a href="javascript:;" onclick="no_pass('{$vo.id}')" title="不通过" style="text-decoration:none;color:#0066cc;" class="ml-5">拒绝</a>
+                </td>
+                {elseif $vo['status']==1}
+                <td>待打款</td>
+                <td>
+                    <a href="javascript:;" onclick="pay_ok('{$vo.id}')" title="通过" style="text-decoration:none;color:#0066cc;" class="ml-5">已打款</a>
+                    <a href="javascript:;" onclick="roll_back('{$vo.id}')" title="不通过" style="text-decoration:none;color:#0066cc;" class="ml-5">撤销</a>
+                </td>
+                {elseif $vo['status']==2}
+                <td>已完成</td>
+                <td>
+                    <a href="javascript:;" onclick="is_del(this,'{$vo.id}')" title="不通过" style="text-decoration:none;color:#0066cc;" class="ml-5">删除</a>
+                </td>
+                {else}
+                <td>已拒绝</td>
+                <td>
+                    <a href="javascript:;" onclick="is_del(this,'{$vo.id}')" title="不通过" style="text-decoration:none;color:#0066cc;" class="ml-5 caozuo">删除</a>
+                </td>
+                {/if}
+            </tr>
+            {/foreach}
+            </tbody>
+        </table>
+    </article>
+    <div class="n_page_no">
+        {$page}
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script>
+    function send_submit() {
+        load_page("__CONF_SITE__admin/activity/share_cash",'',{search_text:$("input[name=search_text]").val()});
+    }
+    function is_pass(id) {
+        $.ajax({
+            type:'post',
+            url:"{:url('activity/share_cash_edit')}",
+            data:{
+                "id":id,
+                "status":1,
+                "types":'is_pass'
+            },
+            success:function (data) {
+                if(data>0){
+                    layer.msg('操作成功', {icon: 1, time: 500});
+                    parent_flash('__CONF_SITE__admin/activity/share_cash');
+                }else{
+                    layer.msg('操作失败', {icon: 2, time: 1000});
+                }
+            }
+        });
+    }
+    function no_pass(id) {
+        $.ajax({
+            type:'post',
+            url:"{:url('activity/share_cash_edit')}",
+            data:{
+                "id":id,
+                "status":3,
+                "types":'no_pass'
+            },
+            success:function (data) {
+                if(data>0){
+                    layer.msg('操作成功', {icon: 1, time: 500});
+                    parent_flash('__CONF_SITE__admin/activity/share_cash');
+                }else{
+                    layer.msg('操作失败', {icon: 2, time: 1000});
+                }
+            }
+        });
+    }
+    function pay_ok(id) {
+        $.ajax({
+            type:'post',
+            url:"{:url('activity/share_cash_edit')}",
+            data:{
+                "id":id,
+                "status":2,
+                "types":'pay_ok'
+            },
+            success:function (data) {
+                if(data>0){
+                    layer.msg('操作成功', {icon: 1, time: 500});
+                    parent_flash('__CONF_SITE__admin/activity/share_cash');
+                }else{
+                    layer.msg('操作失败', {icon: 2, time: 1000});
+                }
+            }
+        });
+    }
+    function is_del(e,id) {
+        $.ajax({
+            type:'post',
+            url:"{:url('activity/share_cash_edit')}",
+            data:{
+                "id":id,
+                "status":4,
+                "types":'is_del'
+            },
+            success:function (data) {
+                if(data>0){
+                    $(e).remove();
+                    layer.msg('操作成功', {icon: 1, time: 500});
+                    parent_flash('__CONF_SITE__admin/activity/share_cash');
+                }else{
+                    layer.msg('操作失败', {icon: 2, time: 1000});
+                }
+            }
+        });
+    }
+    function roll_back(id) {
+        $.ajax({
+            type:'post',
+            url:"{:url('activity/share_cash_edit')}",
+            data:{
+                "id":id,
+                "status":'0',
+                "types":'roll_back'
+            },
+            success:function (data) {
+                if(data>0){
+                    layer.msg('操作成功', {icon: 1, time: 500});
+                    parent_flash('__CONF_SITE__admin/activity/share_cash');
+                }else{
+                    layer.msg('操作失败', {icon: 2, time: 1000});
+                }
+            }
+        });
+    }
+
+
+</script>
+{/block}

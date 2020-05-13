@@ -1,0 +1,718 @@
+<html style="font-size: 48px;">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <title>报表统计</title>
+    <link rel="stylesheet" href="./vue/css/mychart.css?v=1.3">
+    <link rel="stylesheet" type="text/css" href="https://res.wx.qq.com/open/libs/weui/0.4.1/weui.css">
+    <link rel="stylesheet" href="./vue/css/iosSelect.css">
+    <link rel="stylesheet" href="./vue/css/iconfont.css">
+    <link rel="stylesheet" href="./vue/css/swiper.min.css">
+    <link rel="stylesheet" href="./vue/css/boss.css?v=1.2">
+    <script src="./vue/js/jquery-2.1.1.min.js"></script>
+    <script src="./vue/js/vue.js"></script>
+    <script src="./vue/js/vue-resource.js"></script>
+    <script src="./vue/js/common.js"></script>
+    <script type="text/javascript" src="./vue/js/clipboard.min.js"></script>
+    <script src="./vue/js/swiper.min.js"></script>
+    <script src="./vue/js/iosSelect.js"></script>
+    <script src="./vue/js/areaData_v2.js"></script>
+    <script src="./vue/js/exif.js"></script>
+    <script src="./vue/js/iscroll-zoom.js"></script>
+    <script src="./vue/js/hammer.js"></script>
+    <script type="text/ecmascript">
+        var winWidth = 750
+        window.onresize = function () {
+            getRem(winWidth, 100)
+        }
+        function getRem(pwidth, prem) {
+            var html = document.getElementsByTagName('html')[0]
+            var oWidth = document.documentElement.clientWidth
+            html.style.fontSize = oWidth / pwidth * prem + 'px'
+        }
+        (function () {
+            if (typeof WeixinJSBridge == "object" && typeof WeixinJSBridge.invoke == "function") {
+                handleFontSize();
+            } else {
+                document.addEventListener("WeixinJSBridgeReady", handleFontSize, false);
+            }
+            function handleFontSize() {
+                // 设置网页字体为默认大小
+                WeixinJSBridge.invoke('setFontSizeCallback', {
+                    'fontSize': 0
+                });
+                // 重写设置网页字体大小的事件
+                WeixinJSBridge.on('menu:setfont', function () {
+                    WeixinJSBridge.invoke('setFontSizeCallback', {
+                        'fontSize': 0
+                    });
+                });
+            }
+            function onBridgeReady() {
+                WeixinJSBridge.call('hideOptionMenu');
+            }
+            if (typeof WeixinJSBridge == "undefined") {
+                if (document.addEventListener) {
+                    document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+                } else if (document.attachEvent) {
+                    document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                    document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+                }
+            } else {
+                onBridgeReady();
+            }
+        })()
+        getRem(winWidth, 100)
+    </script>
+    <link rel="stylesheet" href="./vue/css/mychart.css">
+    <style> .custom_table_num li { display: flex; flex-direction: column; justify-content: center; align-items: center; align-content: center; } .custom_table_num li p:first-of-type { margin-top: 0; } .custom_table_num li p:nth-of-type(2) { margin-top: 0; font-size: 30px; line-height: 40px; height: 40px; padding-top: 8px; } .custom_table_num li p:last-of-type { margin-top: 0; } .table_wrapper { bottom: 0 !important; position: relative !important; } .overview_nav { width: 100%; height: .7rem; box-shadow: inset 0 -0.01rem 0 0 #e5e5e5;} .overview_nav li { position: relative; float: left; width: 50%; height: .9rem; font-size: .28rem; color: #999999; text-align: center; line-height: .7rem; box-sizing: border-box;} .overview_nav li span:last-of-type { position: absolute; bottom: 0; left: .44rem; display: inline-block; width: 3.1rem; height: .06rem; } .choose_type2 { color: #fff;} .choose_type1 { color: #0eb799; }
+    </style>
+    <script src="./vue/js/echarts.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <div class="table_wrapper" style="overflow:auto;display: none;" id="main" v-show="show">
+        <div style="transition-property: transform; transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1); transition-duration: 0ms; transform: translate(0px, 0px) scale(1) translateZ(0px);">
+            <div class="table_container" style="margin-bottom: 1.2rem; pointer-events: auto;">
+                <div class="mask" style="display: none;">
+                    <div class="mask_main"><p>提示</p>
+                        <p>数据报表每晚凌晨1:00更新</p>
+                        <div class="mask_bottom"><span>我知道了</span> <span>下次不再提示</span></div>
+                    </div>
+                </div>
+                <div>
+                    <div style="    width: 6.7rem;margin: .3rem auto;
+    height: .7rem;
+    background-color: #f5f5f5;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    line-height: .7rem;
+    border-radius: .4rem;
+    box-shadow: 0px 5px 10px 0.2px #ddd;">
+                        <ul data-v-6e30d4c9="" class="overview_nav">
+                            <style> .wadaxiwa{background-color: #0eb799;border-radius: .4rem;margin-top: 1px;height: .7rem !important;}</style>
+                            <li @click="re_all()" :class="{'wadaxiwa':title_show_all}"><span :class="{'choose_type2':title_show_all}">总览</span>
+                                <span ></span>
+                            </li>
+                            <li @click="get_order()" :class="{'wadaxiwa':!title_show_all}"><span :class="{'choose_type2':!title_show_all}">销售排行</span>
+                                <span ></span>
+                            </li>
+                            <!--<li><span class="">AI分析</span><span class=""></span></li>-->
+                        </ul>
+                    </div>
+                </div>
+                <div v-show="show_all">
+                    <div class="table_tab">
+                        <div :class="type == 0 ? 'choose_type1' : ''" @click="get_my_chart(v_uid,0)">汇总</div>
+                        <div :class="type == 1 ? 'choose_type1' : ''" @click="get_my_chart(v_uid,1)">昨日</div>
+                        <div :class="type == 2 ? 'choose_type1' : ''" @click="get_my_chart(v_uid,2)">近7天</div>
+                        <div :class="type == 3 ? 'choose_type1' : ''" @click="get_my_chart(v_uid,3)">近30天</div>
+                    </div>
+                    <div class="custom_table_num clearfix">
+                        <ul>
+                            <li>
+                                <p class="" v-text="type == 0 ? '客户总数' : '新增客户数'">
+                                </p>
+                                <p v-text="now.khsum"></p>
+                            </li>
+                            <li><p class="" v-text="type == 0 ? '跟进总数' : '跟进客户数'"></p>
+                                <p v-text="now.gjsum">1</p></li>
+                            <li><p class="" v-text="type == 0 ? '浏览总数' : '浏览客户数'"></p>
+                                <p v-text="now.viewsum">15</p></li>
+                            <li><p class="" v-text="type == 0 ? '被转发总数' : '被转发次数'"></p>
+                                <p v-text="now.zfsum">2</p></li>
+                            <li><p class="" v-text="type == 0 ? '被保存总数' : '被保存次数'"></p>
+                                <p v-text="now.savesum">0</p></li>
+                            <li><p class="" v-text="type == 0 ? '被点赞总数' : '被点赞次数'"></p>
+                                <p v-text="now.likesum">0</p></li>
+                        </ul>
+                    </div>
+                    <div class="table_title" style="display: none">成交率漏斗</div>
+                    <div class="per_filter" style="display: none">
+                        <div class="filter_item" v-text="now.success50"></div>
+                        <div class="filter_item" v-text="now.success80"></div>
+                        <div class="filter_item" v-text="now.success99"></div>
+                        <div class="filter_item1" v-text="now.success100"></div>
+                        <ul class="lenged">
+                            <li><span style="background: rgb(255, 95, 26);"></span> <span>≤50%</span></li>
+                            <li><span style="background: rgb(254, 171, 43);"></span> <span>≤80%</span></li>
+                            <li><span style="background: rgb(15, 211, 93);"></span> <span>≤99%</span></li>
+                            <li><span style="background: rgb(62, 196, 210);"></span> <span>100%</span></li>
+                        </ul>
+                    </div>
+                    <div class="table_title">客户兴趣占比</div>
+                    <div id="table_echarts1" class="table_echarts1"
+                         style="-webkit-tap-highlight-color: transparent; user-select: none;">
+                        <div id="khxqzb" style="width: 100%;height:100%;"></div>
+                    </div>
+                    <div class="table_title">近15日客户活跃次数</div>
+                    <div id="table_echarts2" class="table_echarts2"
+                         style="-webkit-tap-highlight-color: transparent; user-select: none;">
+                        <div id="khhyd" style="width: 100%;height:100%;"></div>
+                    </div>
+                    <div class="table_title">客户与我的互动</div>
+                    <div id="table_echarts3" class="table_echarts3"
+                         style="-webkit-tap-highlight-color: transparent; user-select: none;">
+                        <div id="khhd" style="width: 100%;height:100%;"></div>
+                    </div>
+                </div>
+                <div v-show="show_order">
+                    <div data-v-6e30d4c9="" class="salerank_wrapper" style="position:none;">
+                        <div data-v-6e30d4c9="" style="transition-property: transform; transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1); transition-duration: 0ms; transform: translate(0px, 0px) translateZ(0px);">
+                            <div data-v-6e30d4c9="" class="nav" style="width: 100%;text-align: center">
+                                <ul data-v-6e30d4c9="" class="overview_nav" style="background: #fff;border-radius: 0px">
+                                    <li>
+                                        <span :class="{'chengjiao':!show_deal && show_order}" @click="get_order">客户人数</span>
+                                        <span :class="{'chengjiao1':!show_deal && show_order}"></span>
+                                    </li>
+                                    <li>
+                                        <span :class="{'chengjiao':show_deal}" @click="deal_list">成交人数</span>
+                                        <span :class="{'chengjiao1':show_deal}"></span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <ul data-v-6e30d4c9="" class="saler_list" style="pointer-events: auto;" v-if="!show_deal && show_order">
+                                <li data-v-6e30d4c9="" class="myInfo" @click="get_user_list(own.id)"><span data-v-6e30d4c9="">{{own.order}}</span><img data-v-6e30d4c9="" :src="own.head_photo" onerror="this.src='./vue/img/defaultlogo.png'" alt="头像"><span data-v-6e30d4c9="">{{own.user_name}}</span><span data-v-6e30d4c9="">{{own.all_num}}</span>
+                                </li>
+                                <li data-v-6e30d4c9="" v-for="(k,x) in order_list" @click="get_user_list(x.id)"><span data-v-6e30d4c9="">{{k+1}}</span><img data-v-6e30d4c9="" :src="x.head_photo" onerror="this.src='./vue/img/defaultlogo.png'" alt="头像" style=""><span data-v-6e30d4c9="">{{x.user_name}}</span><span data-v-6e30d4c9="">{{x.all_num}}</span>
+                                </li>
+                            </ul>
+                            <ul data-v-6e30d4c9="" class="saler_list" style="pointer-events: auto;" v-if="show_deal && show_order">
+                                <li data-v-6e30d4c9="" class="myInfo"><span data-v-6e30d4c9="">{{own.order}}</span><img data-v-6e30d4c9="" :src="own.head_photo" onerror="this.src='./vue/img/defaultlogo.png'" alt="头像"><span data-v-6e30d4c9="">{{own.user_name}}</span><span data-v-6e30d4c9="">{{own.num}}</span>
+                                </li>
+                                <li data-v-6e30d4c9="" v-for="(s,xs) in deal_data"><span data-v-6e30d4c9="">{{s+1}}</span><img data-v-6e30d4c9="" :src="xs.head_photo" onerror="this.src='./vue/img/defaultlogo.png'" alt="头像" style=""><span data-v-6e30d4c9="">{{xs.user_name}}</span><span data-v-6e30d4c9="">{{xs.num}}</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div v-show="show_list" @touchstart="touchStart($event)" @touchmove="touchMove($event)" @touchend="touchEnd($event)" style="width: 7.5rem;overflow: hidden;">
+                    <div data-v-6905da28="" class="tabledetial salerrankdetial_wrapper">
+                        <section data-v-6905da28=""
+                                 style="transition-property: transform; transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1); transition-duration: 0ms; transform: translate(0px, 0px) translateZ(0px);">
+                            <div data-v-6905da28="" class="tabledetial_top" style="pointer-events: auto;">
+                                <span data-v-6905da28="">
+                                    共有
+                                    <span data-v-6905da28="" style="color: #0eb799;">
+                                        {{nums}}
+                                    </span>
+                                    位客户
+                                </span>
+                            </div>
+                            <ul data-v-6905da28="" class="tabledetial_list">
+                                <li data-v-6905da28="" v-for="x in staff_user_list" @click="url('people',x.user_id)">
+                                    <img data-v-6905da28="" :src="x.user_headimg" alt="" style="max-width: 50px;" onerror="this.src='./vue/img/defaultlogo.png'">
+                                    <div data-v-6905da28="" class="tabledetial_mid">
+                                        <p data-v-6905da28="" class="name">
+                                            {{x.name}}
+                                        </p>
+                                        <section data-v-6905da28="">
+                                            <span data-v-8017bd18="" class="right_span custom_genjin_sign" v-if="x.num>0">跟进中</span>
+                                            <span data-v-8017bd18="" class="right_span custom_genjin_sign" v-else>未跟进</span>
+                                        </section>
+                                    </div>
+                                    <div data-v-6905da28="" class="tabledetial_right">
+                                        <span data-v-8017bd18="" class="custom_gen" v-if="x.num>0" style="color: #666;font-size: 13px;width: 98%;height: 0.5rem;display: inline-block;margin-top: 0.9rem;margin-left: -2.8rem;position: absolute">
+                                            {{x.num}}次互动
+                                        </span>
+                                        <span data-v-8017bd18="" class="custom_gen" v-else style="display: none"></span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="display: none" id="show_jurisdiction" v-show="show_jurisdiction">
+        <!--<div>该名片已被禁用，请联系公司管理员</div>-->
+        <div class="weui_msg">
+            <div class="weui_icon_area"><i class="weui_icon_info weui_icon_msg"></i></div>
+            <div class="weui_text_area">
+                <h4 class="weui_msg_title">该名片已被禁用，请联系公司管理员</h4>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var theRequest = GetRequest();
+    var __MCH_ID__ = theRequest['mch_id'];
+    var __UUID__ = theRequest['uid'];
+    var domain = window.location.host;
+    var path_name = window.location.pathname;
+    var child_name = path_name.split("/addons");
+    var url = "https://" + domain + child_name[0] + "/addons/yb_mingpian/core/index.php?mch_id=" + __MCH_ID__ + "&s=/web/";
+    var vue_obj = new Vue({
+        el: '#main',
+        data: {
+            //下拉刷新
+            type: 0,
+            show: false,
+            page:1,
+            down:false,
+            startY: 0,
+            top: 0,
+            touching: false,
+            enableRefresh:true,
+            show_jurisdiction: false,
+            loaded: false,
+            now: {
+                khsum: 0,
+                gjsum: 0,
+                viewsum: 0,
+                zfsum: 0,
+                savesum: 0,
+                likesum: 0,
+                success50: 0,
+                success80: 0,
+                success99: 0,
+                success100: 0,
+                kfxqzb: {},
+                khhyd: {},
+                khhd: [],
+                khhycs: {}
+            },
+            show_all:true,
+            show_order:false,
+            show_list:false,
+            show_deal:false,
+            deal_data:{},
+            title_show_all:true,
+            order_list:{},
+            staff_user_list:[],
+            own:{},
+            list: {},
+            cards: [],
+            now_show_staff:0,
+            v_uid: "",
+            nums:0
+        },
+        watch: {
+            //nv 新的type
+            type: function (v) {
+            }
+        },
+        created: function () {
+            this.get_info();
+        },
+        methods: {
+            url:function(e,id){
+                if (e=='people'){
+                    window.location.href = e + ".html?uid=" + __UUID__+"&mch_id="+__MCH_ID__+"&UID="+id+"&histor=mychart_boss";
+                }
+            },
+            re_all:function () {
+                this.get_info();
+                this.get_my_chart("", 0);
+            },
+            get_info: function () {
+                var that = this;
+                that.loaded = true;
+                that.show_all=true;
+                that.title_show_all=true;
+                that.show_order=false;
+                that.show_list=false;
+                this.$http.get(url + 'Webindex/GetCards', {mch_id: __MCH_ID__, uid: __UUID__}).then(function (res) {
+                    if (typeof res.data == 'string') {
+                        res.data = json_parse(res.data);
+                    }
+                    that.loaded = false;
+                    if (res.data.code != 2) {
+                        that.show = true;
+                        if (res.data.code == 0) {
+                            that.cards = res.data.info;
+                        } else {
+                            msg(res.data.msg);
+                            that.loaded = false;
+                        }
+                    } else {
+                        $("#show_jurisdiction").css('display', 'block');
+                        that.show_jurisdiction = true;
+                    }
+                }, function (res) {
+                    that.loaded = false;
+                });
+            },
+            get_my_chart: function (uid, type) {
+                var that = this;
+                that.v_uid = uid;
+                that.type = type;
+                this.$http.get(url + 'Webindex/my_chart_boss', {
+                    mch_id: __MCH_ID__,
+                    uid: uid,
+                    type: type
+                }).then(function (res) {
+                    if (typeof res.data == 'string') {
+                        res.data = json_parse(res.data);
+                    }
+                    that.loaded = false;
+                    if (res.data.code == 0) {
+                        that.now.khsum = res.data.info.khsum;
+                        that.now.gjsum = res.data.info.gjsum;
+                        that.now.viewsum = res.data.info.viewsum;
+                        that.now.zfsum = res.data.info.zfsum;
+                        that.now.savesum = res.data.info.savesum;
+                        that.now.likesum = res.data.info.likesum;
+                        that.now.khhd = res.data.info.khhd;
+                        that.now.kfxqzb = res.data.info.kfxqzb;
+                        that.now.khhycs = res.data.info.khhycs;
+                        khhycs();
+                        kfxqzb();
+                        khhd();
+                    } else {
+                        that.loaded = false;
+                    }
+                }, function (res) {
+                    that.loaded = false;
+                });
+            },
+            get_my_chart_userid: function (ele) {
+                this.get_my_chart(ele.target.value, 0);
+            },
+            deal_list:function () {
+                var ta=this;
+                ta.show_deal=true;
+                ta.order_list=[];
+                this.$http.get(url+"People/deal_list_order",{mch_id:__MCH_ID__,uid:__UUID__}).then(function (res) {
+                    if (typeof res.data == 'string') {
+                        res.data = json_parse(res.data);
+                        ta.deal_data = res.data.info;
+                        ta.own = res.data.own;
+                    }
+                })
+            },
+            get_order:function () {
+                var ta=this;
+                ta.loaded = true;
+                ta.show_all=false;
+                ta.show_deal=false;
+                ta.show_order=true;
+                ta.show_list=false;
+                ta.title_show_all=false;
+                ta.deal_data=[];
+                this.$http.get(url + 'People/get_order', {mch_id: __MCH_ID__, uid: __UUID__}).then(function (res) {
+                    if (typeof res.data == 'string') {
+                        res.data = json_parse(res.data);
+                    }
+                    ta.loaded = false;
+                    if (res.data.code != 2) {
+                        ta.show = true;
+                        if (res.data.code == 0) {
+                            ta.order_list = res.data.info;
+                            ta.own = res.data.own;
+                        } else {
+                            msg(res.data.msg);
+                            ta.loaded = false;
+                        }
+                    } else {
+                        $("#show_jurisdiction").css('display', 'block');
+                        ta.show_jurisdiction = true;
+                    }
+                }, function (res) {
+                    ta.loaded = false;
+                });
+            },
+            get_user_list:function (staff_id) {
+                var ta=this;
+                if(ta.now_show_staff==0){
+                    ta.now_show_staff=staff_id;
+                    ta.staff_user_list=[];
+                }
+                if(ta.now_show_staff!=staff_id || ta.page==1){
+                    ta.staff_user_list=[];
+                }
+                ta.loaded = true;
+                ta.show_all=false;
+                ta.show_order=false;
+                ta.show_list=true;
+                ta.title_show_all=false;
+                this.$http.get(url + 'People/get_staff_user', {mch_id: __MCH_ID__, staff_id: staff_id,page:ta.page}).then(function (res) {
+                    if (typeof res.data == 'string') {
+                        res.data = json_parse(res.data);
+                    }
+                    ta.loaded = false;
+                    if (res.data.code != 2) {
+                        ta.show = true;
+                        if (res.data.code == 0) {
+                            ta.staff_user_list = ta.staff_user_list.concat(res.data.info);
+                            ta.page= res.data.info.length < 10 ? ta.page : (ta.page + 1);
+                            ta.nums= res.data.nums;
+                            ta.down=res.data.info.length< 10 ? false : true;
+                        } else {
+                            msg(res.data.msg);
+                            ta.loaded = false;
+                        }
+                    } else {
+                        $("#show_jurisdiction").css('display', 'block');
+                        ta.show_jurisdiction = true;
+                    }
+                }, function (res) {
+                    ta.loaded = false;
+                });
+            },
+            touchStart(e) {
+                this.startY = e.targetTouches[0].pageY;
+                this.touching = true;
+            },
+            touchMove(e) {
+                if(this.touching){
+                    this.top =  e.changedTouches[0].pageY-this.startY;
+                }
+            },
+            touchEnd(e) {
+                if (!this.enableRefresh) return
+                this.touching = false;
+                this.top=0;
+                if(e.changedTouches[0].pageY-this.startY>60){
+                    console.log('下拉刷新中')
+                }else if(this.startY-e.changedTouches[0].pageY>60){
+                    console.log('上拉加载更多');
+                    if(this.down){
+                        if(this.show_list){
+                            this.get_user_list(this.now_show_staff);
+                        }
+                    }
+                }
+            },
+        }
+    });
+    $(document).ready(function () {
+        var counter = 0;
+        if (window.history && window.history.pushState) {
+            $(window).on('popstate', function () {
+                window.history.pushState('forward', null, '#');
+                counter++;
+                if(counter>0){
+                    window.history.forward(1);
+                    if (vue_obj.show_list) {
+                        vue_obj.show_order = true;
+                        vue_obj.show_list = false;
+                        vue_obj.title_show_all=false;
+                    }else if(vue_obj.show_order){
+                        vue_obj.show_all=true;
+                        vue_obj.show_order =false;
+                        vue_obj.title_show_all=true;
+                    }else {
+                        window.location.href = "mychart_boss.html?uid=" + __UID__+"&mch_id="+MCHID;
+                    }
+                }
+            })
+        }
+        window.history.pushState('forward', null, '#'); //在IE中必须得有这两行
+        window.history.forward(1);
+        setTimeout(
+            function(){
+                var that=vue_obj;
+                that.v_uid = "";
+                that.type = 0;
+                $.ajax({
+                    type: "post",
+                    url: url + 'Webindex/my_chart_boss',
+                    data: {
+                        mch_id: __MCH_ID__,
+                        uid: "",
+                        type: 0
+                    },
+                    success: function (res) {
+                        data = json_parse(res);
+                        that.now.khsum = data.info.khsum;
+                        that.now.gjsum = data.info.gjsum;
+                        that.now.viewsum =data.info.viewsum;
+                        that.now.zfsum = data.info.zfsum;
+                        that.now.savesum = data.info.savesum;
+                        that.now.likesum = data.info.likesum;
+                        that.now.khhd = data.info.khhd;
+                        that.now.kfxqzb = data.info.kfxqzb;
+                        that.now.khhycs = data.info.khhycs;
+                        khhycs();
+                        kfxqzb();
+                        khhd();
+                    }
+                });
+            },1500
+        );
+
+    })
+    function kfxqzb() {
+        //数据
+        var data = vue_obj.now.kfxqzb;
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('khxqzb'));
+        // 指定图表的配置项和数据
+        var option = {
+            tooltip: {},
+            legend: {
+                y: 'bottom',
+                itemWidth: 14,
+                itemHeight: 14,
+                icon: 'circle',
+                data: ['对我感兴趣', '对产品感兴趣', '对公司感兴趣']
+            },
+            color: ['#ec6a34', '#f2af4a', '#68c1d0'],
+            series: [{
+                label: {
+                    normal: {
+                        formatter: '{d}%',
+                        textStyle: {
+                            fontWeight: 'normal',
+                            fontSize: 15
+                        }
+                    }
+                },
+                radius: '73%',
+                center: ['50%', '45%'],
+                name: '销量',
+                type: 'pie',
+                data: [
+                    {name: '对我感兴趣', value: data.me},
+                    {name: '对产品感兴趣', value: data.product},
+                    {name: '对公司感兴趣', value: data.company}
+                ]
+            }]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    }
+    function khhycs() {
+        var data = vue_obj.now.khhycs;
+        var date_arr = [];
+        var value_arr = [];
+        for (var key in data) {
+            date_arr.push(key);
+            value_arr.push(data[key]);
+        }
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('khhyd'));
+        // 指定图表的配置项和数据
+        var option = {
+            tooltip: {},
+            grid: {
+                top: "10%",
+                right: "10%",
+                bottom: "10%",
+                left: "10%"
+            },
+            xAxis: {
+                gridIndex: 0,
+                data: date_arr,
+                axisTick: {
+                    interval: 0,
+                },
+                boundaryGap: false,
+                splitArea: {
+                    show: true,
+                },
+                axisLabel: {
+                    textStyle: {
+                        fontSize: 11
+                    }
+                }
+            },
+            yAxis: {
+                type: "value"
+            },
+            series: [{
+                type: 'line',
+                smooth: !0,
+                symbol: "circle",
+                symbolSize: 8,
+                data: value_arr,
+                itemStyle: {
+                    normal: {
+                        label: {
+                            show: !0,
+                            fontSize: 15,
+                            color: "#0d1e39",
+                            fontWeight: "540",
+                            textBorderColor: "#fff",
+                            textBorderWidth: 5
+                        },
+                        borderColor: "rgb(255,255,255)",
+                        borderWidth: 2,
+                        color: "#1c3d71",
+                        lineStyle: {color: "#4978C3", width: 2}
+                    }
+                },
+                textStyle: {color: "#54657E"}
+            }]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    }
+    function khhd() {
+        //["保存电话","拨打电话","添加印象","咨询产品","评论","点赞"]
+        var data = vue_obj.now.khhd;
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('khhd'));
+        // 指定图表的配置项和数据
+        var option = {
+            tooltip: {},
+            grid: {
+                top: "10%",
+                right: "20%",
+                bottom: "10%",
+                left: "20%"
+            },
+            xAxis: [
+                {
+                    show: true,
+                    type: 'value',
+                    boundaryGap: [0, 0],
+                    axisTick: {
+                        show: false
+                    },
+                    axisLabel: {
+                        show: false
+                    },
+                    axisLine: {lineStyle: {color: "#d3d3d3"}},
+                }
+            ],
+            yAxis: {
+                axisLine: {lineStyle: {color: "#d3d3d3"}},
+                data: ["保存电话", "拨打电话", "添加印象", "咨询产品", "评论", "点赞"],
+                axisTick: {
+                    show: false
+                },
+                axisLabel: {
+                    color: "#54657E"
+                },
+            },
+            color: ['#ec6a34', '#f2af4a', '#68c1d0'],
+            series: [{
+                type: 'bar',
+                data: data,
+                barWidth: 20,  //柱宽度
+                itemStyle: {
+                    normal: {
+                        // 随机显示颜色
+                        color: function (d) {
+                            return "#" + Math.floor(Math.random() * (256 * 256 * 256 - 1)).toString(16);
+                        },
+                        // 定制显示（按顺序）
+//                        color: function(params) {
+//                            var colorList = ["#B2B2B2", "#B2B2B2", "#B2B2B2", "#B2B2B2", "#fec846", "#FEAB2B"];
+//                            return colorList[params.dataIndex]
+//                        },
+                        label: {
+                            show: true,
+                            position: 'right',
+                        }
+                    },
+                },
+                textStyle: {color: "#54657E"}
+            }]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    }
+</script>
+<sctipt>
+
+</sctipt>
+</body>
+</html>

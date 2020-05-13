@@ -1,0 +1,94 @@
+{extend name="base"/}
+{block name="main"}
+<style>
+    .table-bordered>tbody>tr>td {padding: 22px 8px;}
+</style>
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+            <div class="tabBar clearfix">
+                <span onclick="load_page('__CONF_SITE__admin/offweb/structure')">部门成员列表</span>
+                <span class="current">部门管理</span>
+                <div class="n_tab_add" onclick="layer_open('添加部门','__CONF_SITE__admin/offweb/add_depart','600px','300px')" ><i class="Hui-iconfont">&#xe600;</i>添加部门</div>
+            </div>
+        </div>
+        <div>
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-bg table-hover table-sort">
+                    <thead>
+                    <tr class="text-c">
+                        <th>部门名称</th>
+                        <th>部门人数</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {foreach name="list" item="a"}
+                    <tr class="pid_0" style="height: 30px;">
+                        <td style="text-align: center;">{$a.name}</td>
+                        <td style="text-align: center;"> {$a.num}</td>
+                        <td style="text-align: center;">
+
+                            <a style="text-decoration:none;margin-right: 15px;" class="show_layer" title="编辑" onclick="layer_open('更改名称','__CONF_SITE__admin/offweb/add_depart&add_id={$a.id}&add_name={$a.name}','600','300')" href="javascript:;">编辑</a>
+                            <a style="text-decoration:none;margin-right: 15px;"  title="删除" class="caozuo" href="javascript:void(0);" onclick="depart_del('{$a.num}','{$a.id}')"  >删除</a>
+                            <a style="text-decoration:none;" title="添加子部门" class="show_layer" href="javascript:void(0);" onclick="layer_open('添加部门','__CONF_SITE__admin/offweb/add_depart&ss={$a.id}','600px','300px')" >添加子部门</a>
+
+                        </td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+                <div class="n_page_no" id="new_page">
+                    {$page}
+                </div>
+            </div>
+        </div>
+        {/block}
+        {block name="script"}
+        <script type="text/javascript">
+            function pickrsve(depart,now,child,add_id) {
+                $.ajax({
+                    type: "post" ,
+                    url: "{:url('admin/offweb/add_depart')}",
+                    data: {
+                        depart: depart,
+                        now: now,
+                        child: child,
+                        add_ids: add_id
+                    },
+                    success: function (data) {
+                        if (data['code'] > 0) {
+                            layer.msg('操作成功', {icon: 1, time: 500});
+                            parent_flash("__CONF_SITE__admin/offweb/depart_list");
+                        } else {
+                            layer.msg('操作失败', {icon: 2, time: 1000});
+                        }
+                    }
+                });
+            }
+            function depart_del(num,id) {
+                if (num>0){
+                    layer.msg('该部门下有成员不可删除', {icon: 2, time: 1000});
+                }
+                layer.confirm("确认删除该部门?",function () {
+                    $.ajax({
+                        type: "post",
+                        url: "{:url('admin/offweb/on_del')}",
+                        data: {
+                            id: id,
+                            type:"depart"
+                        },
+                        success: function (data) {
+                            if (data > 0) {
+                                layer.msg('操作成功', {icon: 1, time: 500});
+                                parent_flash("__CONF_SITE__admin/offweb/depart_list");
+                            } else {
+                                layer.msg('该部门下因有成员或子部门而不可删除', {icon: 2, time: 5000});
+                            }
+                        }
+                    });
+                })
+            }
+        </script>
+        {/block}

@@ -1,0 +1,78 @@
+<script src="/public/goods/js/material_managedialog.js?v=1"></script>
+<script src="/public/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="/public/js/file_upload.js" type="text/javascript"></script>
+<script>
+    function PopUpCallBack(id, src, upload_type, spec_id, spec_value_id) {
+        speciFicationsFlag=0;
+        var idArr, srcArr;
+        if (id.indexOf(",")) {
+            idArr = id.split(',');
+            srcArr = src.split(',');
+        } else {
+            idArr = new Array(id);
+            srcArr = new Array(src);
+        }
+        //商品主图
+        if (srcArr.length >= 1) {
+            html = "";
+            for (var i = 0; i < srcArr.length; i++) {
+                if (upload_type == 2) {
+                    html += '<div class="upload-thumb sku-draggable-element' + spec_id + '-' + spec_value_id + ' sku-draggable-element"  >';
+                    html += '<img  src="' + srcArr[i] + '">';
+                    html += '<input type="hidden"  class="sku_upload_img_id" spec_id="' + spec_id + '" spec_value_id="' + spec_value_id + '" value="' + idArr[i] + '">';
+                    html += '<div class="black-bg" onclick="remlong(this);">';
+                    html += '<div class="sku-off-box">&times;</div>';
+                    html += '</div>';
+                    html += '</div>';
+                    //将规格图片记录存入临时数组
+                    var pic_id = idArr[i];
+                    var pic_cover_mid = srcArr[i];
+                    for (var t = 0; t < $sku_goods_picture.length; t++) {
+                        if ($sku_goods_picture[t].spec_id == spec_id && $sku_goods_picture[t].spec_value_id == spec_value_id) {
+                            $sku_goods_picture[t]["sku_picture_query"].push({
+                                "pic_id": pic_id,
+                                "pic_cover_mid": pic_cover_mid
+                            });
+                        }
+                    }
+                    console.log($sku_goods_picture);
+                } else if (upload_type == 1) {
+                    var item = {};
+                    item['url'] = srcArr[i];
+                    html += '<div class="upload-thumb draggable-element"  >';
+                    html += '<img  src="' + srcArr[i] + '">';
+                    html += '<input type="hidden"  class="upload_img_id"  value="' + idArr[i] + '">';
+                    html += '<div class="black-bg" onclick="remlong(this);">';
+                    html += '<div class="off-box">&times;</div>';
+                    html += '</div>';
+                    html += '</div>';
+                } else {
+                    var span_obj = $(".js-goods-sku").find("span[data-spec-id='" + spec_id + "'][data-spec-value-id='" + spec_value_id + "']");
+                    span_obj.next().next().find("input").val(idArr[i]);
+                    span_obj.next().next().find("img").attr("src", srcArr[i]);
+                    //规格spec图片返回并specObj对象
+                    var spec = {
+                        flag: span_obj.hasClass("selected"),
+                        spec_id: span_obj.attr("data-spec-id"),
+                        spec_name: span_obj.attr("data-spec-name"),
+                        spec_value_id: span_obj.attr("data-spec-value-id"),
+                        spec_value_data: idArr[i]
+                    };
+                }
+            }
+            if (upload_type == 2) {
+                $(".sku-img-box[spec_id='" + spec_id + "'][spec_value_id='" + spec_value_id + "'] #sku_default_uploadimg").remove();
+                $(".sku-img-box[spec_id='" + spec_id + "'][spec_value_id='" + spec_value_id + "']").html(html);
+                $('.sku-draggable-element' + spec_id + '-' + spec_value_id).arrangeable();
+            } else if (upload_type == 1) {
+                $("#default_uploadimg").remove();
+                $(html).appendTo('.img-box');
+                $('.draggable-element').arrangeable();
+            }
+        }
+    }
+    function remlong(obj) {
+        $(obj).parent().remove();
+    }
+</script>
+<script src="/public/menu/js/iframetools.js"></script>

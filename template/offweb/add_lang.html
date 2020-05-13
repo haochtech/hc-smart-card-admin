@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="/public/static/h-ui-{$skin}/css/H-ui.min.css"/>
+    <script src="/public/js/jquery-2.1.1.js"></script>
+</head>
+
+<body>
+<article class="cl pd-20">
+    <div class="row cl" style="margin-top: 20px;">
+        {if $type=="w_update" || $type=="w_insert"}
+        <label class="form-label col-xs-3 col-sm-2" style="margin-bottom:15px;">
+            <span class="c-red">*</span>
+            话术分类：</label>
+        <div class="formControls col-xs-9 col-sm-8"  style="margin-bottom:15px;">
+            <select name="clas" id="clas" style="height: 40px;line-height: 40px;padding: 0 15px;border-radius: 3px;">
+                <option value="-1">请选择</option>
+                {foreach name="clas" item="v"}
+                <option value="{$v.id}" {if $info.class_id==$v.id}selected{/if}>{$v.name}</option>
+                {/foreach}
+            </select>
+        </div>
+        <label class="form-label col-xs-3 col-sm-2">
+            <span class="c-red">*</span>
+            话术：</label>
+        <div class="formControls col-xs-9 col-sm-8">
+            <input type="text" autocomplete="off" value="{$info.value|default=''}"  class="input-text" id="new_val">
+        </div>
+        {else}
+        <label class="form-label col-xs-3 col-sm-2">
+            <span class="c-red">*</span>
+            分类名：</label>
+        <div class="formControls col-xs-9 col-sm-8">
+            <input type="text" autocomplete="off" value="{$class.name|default=''}"  class="input-text" id="new_val">
+        </div>
+        {/if}
+        <input type="hidden" value="{$info.id|default=''}" id="wid">
+        <input type="hidden" value="{$class.id|default=''}" id="cid">
+        <input type="hidden" value="{$type}" id="type">
+    </div>
+    <div class="row cl" style="margin-top: 30px;">
+        <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+            <input class="btn btn-primary radius" onclick="rsave()" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+        </div>
+    </div>
+</article>
+ <script type="text/javascript" src="/public/static/layer/2.4/layer.js"></script>
+<script type="text/javascript">
+    function rsave() {
+        var wid = $('#wid').val();
+        var cid = $('#cid').val();
+        var type = $('#type').val();
+        var vals = $('#new_val').val();
+        var clas = $('#clas :selected').val();
+        if (type=="w_insert" || type=="w_update"){
+            if(clas==-1){layer.msg('请选择分类', {icon: 2, time: 1000});return false;}
+        }
+        parent.pickrsve(wid,cid,vals,clas,type);
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);
+    }
+</script>
+</body>
+</html>

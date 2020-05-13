@@ -1,0 +1,101 @@
+{extend name="base"/}
+{block name="main"}
+<style>
+    .table-bordered>tbody>tr>td {padding: 22px 8px;}
+    .formControls {
+        position: relative;
+        margin-top: 6px;
+    }
+    button, html input[type="button"], input[type="reset"], input[type="submit"] {-webkit-appearance: button;cursor: pointer;margin-top: 10px;}
+    .user{display: inline-block;border: 1px solid #666;border-radius: 4px;padding: 10px 12px;font-size: 14px;margin-left: 20px;padding-right: 10px;margin-top: 20px;}
+    #show_user{margin-left: -20px;margin-top: -20px;}
+    .nu_cha{width: 18px;height: 18px;margin-top: -48px;margin-left: -14px;}
+</style>
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+            <div class="tabBar clearfix">
+                <span>商家通知</span>
+            </div>
+        </div>
+        <div class="form form-horizontal">
+            <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-2">推送人：</label>
+                <div class="formControls col-xs-8 col-sm-9">
+                    <div id="show_user">
+                    {foreach name="user" item="s"}
+                    <span data-id="{$s.id}" class="user" id="user{$s.id}"> {$s.user_name}</span>
+                         <img class="nu_cha" src="public/images/member/cha.png" id="img_user{$s.id}" alt="" onclick="del_user('user{$s.id}')">
+                    {/foreach}
+                    </div>
+                    <input type="button" onclick="layer_open('选择用户','__CONF_SITE__admin/offweb/select_user','700',600)" value="选择成员">
+                </div>
+            </div>
+
+            <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-2">推送选项：</label>
+                <div class="formControls col-xs-8 col-sm-9">
+                    {foreach name="list" item="v" key="k" index="va"}
+                    <div {if $va%3!=0}style="float:left;padding-right: 20px;"{/if}>
+                    <input type="checkbox" name="sub_send" {if $v.status==1}checked{/if} value="{$k}" id="sub_send_{$k}" data-name="{$v.name}" data-type="{$k}" data-status="{$v.status}"><label for="sub_send_{$k}" style="margin-right: 15px;">{$v.name}</label>
+                    </div>
+                    {/foreach}
+                </div>
+            </div>
+            <div class="row cl">
+                <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+                    <input class="btn btn-primary radius" onclick="addAjax()" type="button" value="确认提交" style="width: 73px">
+                </div>
+            </div>
+        </div>
+    </article>
+        {/block}
+        {block name="script"}
+        <script type="text/javascript">
+            function del_user(id) {
+                $("#"+id).remove();
+                $("#img_"+id).remove();
+            }
+            function pickrsve(item) {
+                console.log(item);
+                layer.closeAll();
+                var html="";
+                for (var i=0;i<item.length;i++){
+                    html+='<span data-id="'+item[i]["id"]+'" class="user" id="user'+item[i]["id"]+'">'+item[i]["name"]+'</span>';
+                    html+='<img class="nu_cha" src="public/images/member/cha.png" id="img_user'+item[i]["id"]+'" alt="" onclick="del_user(\'user'+item[i]["id"]+'\')">';
+                }
+                $("#show_user").empty();
+                $("#show_user").html(html);
+            }
+            function addAjax() {
+                var a=new Object;
+                $("input[name=sub_send]").each(function () {
+                    var b=$(this).attr("data-type");
+                    a[b]=new Object;
+                    a[b]["name"]=$(this).attr("data-name");
+                    a[b]["status"]=$(this).prop("checked")?1:0;
+                });
+                var b="";
+                $(".user").each(function () {
+                    b+=$(this).attr("data-id")+",";
+                });
+                $.ajax({
+                    type: "post" ,
+                    url: "{:url('admin/offweb/edit_send')}",
+                    data: {
+                        list:JSON.stringify(a),
+                        user:b.substr(0,b.length-1)
+                    },
+                    success: function (data) {
+                        if (data['code'] > 0) {
+                            layer.msg('操作成功', {icon: 1, time: 500});
+                            parent_flash("__CONF_SITE__admin/offweb/sub_send");
+                        } else {
+                            layer.msg('操作失败或未修改', {icon: 2, time: 1000});
+                        }
+                    }
+                });
+            }
+        </script>
+        {/block}

@@ -1,0 +1,92 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+            <div class="tabBar clearfix">
+                <span onclick="load_page('__CONF_SITE__admin/offweb/product')">产品列表</span>
+                <span class="current">产品分类</span>
+                <span onclick="load_page('__CONF_SITE__admin/offweb/product&type=1')" {if $type==1}class="current"{/if}>公司产品</span>
+                <span onclick="load_page('__CONF_SITE__admin/offweb/product&type=2')" {if $type==2}class="current"{/if}>个人产品</span>
+                <div onclick="layer_open('添加类型','__CONF_SITE__admin/offweb/pro_class&caodan=1','600px','300px')"  class="n_tab_add"><i class="Hui-iconfont">&#xe600;</i>添加类型</div>
+            </div>
+        </div>
+        <div>
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-bg table-hover table-sort">
+                    <thead>
+                    <tr class="text-c">
+                        <th>分类名称</th>
+                        <th>创建时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {foreach name="clas" item="v1"}
+                    <tr class="pid_0" style="height: 30px;">
+                        <td style="text-align: center; padding:22px 0;">{$v1['name']}</td>
+                        <td style="text-align: center; padding:22px 0;"> {$v1.ctime|date='Y-m-d H:i:s',###}  </td>
+                        <td style="text-align: center; padding:22px 0;">
+                            <a  style="text-decoration:none;margin-right:15px;" title="编辑" onclick="layer_open('类型编辑','__CONF_SITE__admin/offweb/pro_class&id={$v1.id}','600','300')"  class="show_layer" href="javascript:;">
+                                编辑
+                            </a>
+                            <a style="text-decoration:none;"  class="caozuo" title="删除" href="javascript:void(0);" onclick="class_del('{$v1['id']}')">
+                                删除
+                            </a>
+                        </td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+                <div class="n_page_no">
+                    {$page}
+                </div>
+            </div>
+        </div>
+        {/block}
+        {block name="script"}
+        <script type="text/javascript">
+            /*分类-删除*/
+            function class_del(id){
+                layer.confirm('确认要删除吗？',function(index){
+                    //此处请求后台程序
+                    //后台处理
+                    $.ajax({
+                        type : "post",
+                        url : "{:url('admin/offweb/del_pro_class')}",
+                        data : {
+                            "class_id" : id,
+                        },
+                        success : function(data) {
+                            if(data['code'] > 0){
+                                layer.msg('删除成功', {icon: 1, time: 1000},function () {
+                                    parent_flash("__CONF_SITE__admin/offweb/pro_class");
+                                });
+                            }else {
+                                layer.msg('删除失败', {icon: 2, time: 1000});
+                            }
+                        }
+                    })
+                });
+            }
+            function pickrsve(id,name) {
+                $.ajax({
+                    type: "post",
+                    url: "{:url('admin/offweb/pro_class')}",
+                    data: {
+                        name:name,
+                        id:id
+                    },
+                    success: function (data) {
+                        if (data['code'] > 0) {
+                            layer.msg('操作成功', {icon: 1, time: 1000});
+                            parent_flash("__CONF_SITE__admin/offweb/pro_class");
+                        } else {
+                            layer.msg('操作失败', {icon: 2, time: 1000});
+                        }
+                    }
+                });
+            }
+        </script>
+        {/block}

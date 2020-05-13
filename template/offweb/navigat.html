@@ -1,0 +1,111 @@
+{extend name="base"/}
+{block name="main"}
+<style>.input-common {    height: 40px;
+        line-height: 40px;
+        border-radius: 3px;
+        color: #666;}
+    .s_btn {background: #ebebeb;
+        height: 38px;
+        line-height: 38px;
+        display: inline-block;
+        width: 60px;
+        border-radius: 3px;border:1px solid #ebebeb;}
+    .s_btn:hover {color:#333; text-decoration: none;}
+    .s_input {height: 38px; line-height: 38px;padding-left:5px;color: #666;border:1px solid #ddd;background: #fff !important;}
+</style>
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+            <div class="tabBar clearfix">
+                <span onclick="load_page('__CONF_SITE__admin/config/WAppPay')">小程序管理</span>
+                <span class="current">底部导航</span>
+                <span onclick="load_page('__CONF_SITE__admin/Menu/user_center')">会员中心</span>
+                <span onclick="load_page('__CONF_SITE__admin/config/wxrefund')">微信退款设置</span>
+            </div>
+        </div>
+        <div>
+            <div class="mt-20">
+                <form action="" method="post" id="navigat">
+                <table class="table table-border table-bordered table-bg table-hover table-sort">
+                    <thead>
+                    <tr class="text-c">
+                        <th>导航名称</th>
+                        <th>未选中图标</th>
+                        <th>选中图标</th>
+                        <th>页面地址</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    {foreach name="list" item="a" key="k"}
+                    <tr class="text-c va-m">
+                        <td>
+                            <input type="text" placeholder="请不要超过5个汉字" name="name{$k}" value="{$a['name']}" class="input-common" style="text-align: center">
+                        </td>
+                        <td>
+                            <!--<a onclick="layer_open('选择图标','__CONF_SITE__admin/offweb/select_img&id=no_select{$k}&value={$a.no_select}',900,700)" href="javascript:;">-->
+                                <img src="{$a.no_select}" style="width: 30px;height: 30px;" data-a="no_select{$k}">
+                                <input type="hidden" id="no_select{$k}" name="no_select{$k}" value="{$a.no_select}">
+                            <!--</a>-->
+                        </td>
+                        <td>
+                            <!--<a onclick="layer_open('选择图标','__CONF_SITE__admin/offweb/select_img&id=is_select{$k}&value={$a.is_select}',900,700)" href="javascript:;">-->
+                                <img src="{$a.is_select}" style="width: 30px;height: 30px;" data-a="is_select{$k}">
+                                <input type="hidden" id="is_select{$k}" name="is_select{$k}" value="{$a.is_select}">
+                            <!--</a>-->
+                        </td>
+                        <td>
+                            {if $k==1 || $k==3}<div style="justify-content:center;display: flex;">
+                            <input type="hidden" id="page_id{$k}" name="page_id{$k}" value="{$a.page_id}">
+                            <input type="hidden" id="page_name{$k}" name="page_name{$k}" value="{$a.page_name}" data-a="page_id{$k}">
+                            <div><input type="text" class="s_input" value="{$a.page_name}" data-a="page_id{$k}" disabled></div>
+                            <div><a style="border-radius: 2px;" class="s_btn selecta" onclick="layer_open('选择页面','__CONF_SITE__admin/offweb/select_page&key={$k}&id=page_id{$k}&name={$a.page_name}',900,700)">选择</a></div>
+                            </div>{/if}
+                        </td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+                </form>
+               <div style="text-align: center;"> <a style="border-radius: 2px;height: 40px;width: 110px;color: #fff;line-height: 30px;color: #fff;text-align: center;cursor: pointer;border-radius: 4px;" class="btn selecta" onclick="save()">保存</a></div>
+            </div>
+        </div>
+        {/block}
+        {block name="script"}
+        <script type="text/javascript">
+            function pickrsve(id,val) {
+                $("img[data-a="+id+"]").attr("src",val);
+                $("#"+id).attr("value",val);
+            }
+            function pickrsve2(old_id,id,na) {
+                $("input[data-a="+old_id+"]").each(function () {
+                    $(this).attr("value",na);
+                });
+                $("#"+old_id).attr("value",id);
+            }
+            function save() {
+                check_users(do_send_navi);
+            }
+            var do_send_navi=function () {
+                var wada=new FormData($("#navigat")[0]);
+                $.ajax({
+                    type : "post",
+                    url : "__CONF_SITE__admin/offweb/navigat_save",
+                    data : wada,
+                    contentType: false,
+                    processData: false,
+                    success : function(data) {
+                        if (data['code'] >0) {
+                            layer.msg('成功!',{icon:1,time:1000},function () {
+                                parent_flash('__CONF_SITE__admin/offweb/navigat');
+                            });
+                        }
+                        else
+                        {
+                            layer.msg('失败', {icon: 2, time: 1000});
+                        }
+                    }
+                })
+            }
+        </script>
+        {/block}

@@ -1,0 +1,363 @@
+<div class="diypage-content">
+    <div style="width:  380px; margin:  0 auto;">
+        <div style="border:0;">
+            <div style="padding-top:0;">
+                <div class="msgWrap form">
+                    <form action="" method="post" class="layui-form" id="custom_form">
+                        <div class="tableContent">
+                            <div class="content"  style="padding-top:0;">
+                                <div class="DL-Main" id="content" crossOrigin="Anonymous">
+                                    <div class="mainPanel clearfix">
+                                        <div class="leftPhonewrap" id="leftPhonewrap">
+                                            <div class="holderPhone">
+                                                <div v-on:click="now_type = 'head_a'" :style="'cursor: pointer;background: url('+nv_bg_url+') '+page.nv_color+' no-repeat scroll center top / 100% auto'" class="wxHd">
+                                                    <div  id="actName" class="phoneTitle" style="bottom: 15px;width: 100%;left: 0;padding: 0 65px;"><h2 :style="'color:'+page.text_color"><span id="bus_select_up_name_but">{{page.name}}</span></h2></div>
+                                                </div>
+                                                <div id="anythingContent" style="background: #fff;">
+                                                    <!--底部菜单-->
+                                                    <ul  v-if="page.show_tabbar == 'true'" v-on:click="now_type = 'tabbar'" class="form_component style_1 clearfix ui-sortable" style="position: absolute;bottom:0;left:0;">
+                                                        <li class="ui-draggable" id="com1"
+                                                            name="id_bottom" title="" style="width:320px;cursor: pointer;height:50px;">
+                                                            <ul :style="'height:50px;justify-content:space-between;display:flex;flex-wrap:wrap;background-color:'+tabbar.bg_color"
+                                                                class="bottom-nav bottom-style-1 outCom column-3 clearfix'">
+                                                                <li style="height: 50px;" class="bottom-nav-item mod-Alink mlr"
+                                                                    v-for="(item,index) in tabbar.list">
+                                                                    <a class="bottom-navALink aFrame" href="javascript:;"
+                                                                    ></a>
+                                                                    <div class="li_content">
+                                                                        <div class="bottom-cmg objCom">
+                                                                            <img :src="index == 0 ? item.tabbar_select_icon : item.tabbar_icon"
+                                                                                 :alt="item.name"
+                                                                                 class="bottom-Cmge mCS_img_loaded"
+                                                                            >
+                                                                        </div>
+                                                                        <span :style="'color: '+(index == 0 ? tabbar.select_color : tabbar.text_color)"
+                                                                              class="bottom-text texCom"
+                                                                              id="com1banner0_url">{{ item.name }}</span>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                    <!--主体内容-->
+                                                    <div class="mianMod mCustomScrollbar _mCS_1 mCS-autoHide mCS_no_scrollbar"
+                                                         data-mcs-theme="minimal-dark"
+                                                         :style="'visibility: visible; overflow: visible;height:'+(page.show_tabbar == 'true' ? '520' : '570')+'px;'">
+                                                        <div id="mCSB_1"
+                                                             class="mCustomScrollBox mCS-minimal-dark mCSB_vertical mCSB_outside"
+                                                             style="max-height: none;" tabindex="0">
+                                                            <div id="mCSB_1_container"
+                                                                 class="mCSB_container mCS_y_hidden mCS_no_scrollbar_y"
+                                                                 style="position: relative; top: 0px; left: 0px;" dir="ltr">
+                                                                <div :style="'height:'+(page.show_tabbar == 'true' ? 520 : 570)+'px;background-color:'+page.bg_color+';background-image: url('+page.bg_img+');background-repeat:no-repeat;background-size:100%;-moz-background-size:100%;'"
+                                                                     class="activeMod">
+                                                                    <ul class="form_component style_1 clearfix ui-sortable">
+                                                                        <li :class="'ui-draggable ' + (index == now_index ? 'yb_select ' : '') + (item.type == 'search' && item.style_type == 1 ? 'search_style1' : '')"
+                                                                            v-for="(item,index) in all_data"
+                                                                            :name="item.type"
+                                                                            v-dragging="{ list: all_data, item: item, group: 'index' }"
+                                                                            :style="(item.type == 'navigation' || item.type == 'advert' || item.type == 'edit_button' ? 'background: transparent;':'') + (item.type == 'search' && item.style_type == 1 ? 'position: absolute;' : '') + (item.type == 'floaticon' || item.type == 'customer' ? 'left:auto; bottom:'+item.form_bottom+'%; right:'+item.form_margin+'%;': '')"
+                                                                            :key="item.time_key"
+                                                                        >
+                                                                            <banner v-if="item.type=='banner'"
+                                                                                    :jiaodian_dots="item.jiaodian_dots"
+                                                                                    :list="item.list"
+                                                                                    :ly_height="item.ly_height"
+                                                                                    :topimg="item.topimg"
+                                                                                    :jiaodian_color="item.jiaodian_color"
+                                                                                    :bg_color="item.bg_color"
+                                                                                    :index="index">
+                                                                            </banner>
+                                                                            <advert v-if="item.type=='advert'"
+                                                                                    :list="item.list"
+                                                                                    :ly_width="item.ly_width"
+                                                                                    :ly_height="item.ly_height"
+                                                                                    :imgurl="item.list.imgurl"
+                                                                                    :bg_color="item.bg_color"
+                                                                                    :index="index">
+                                                                            </advert>
+                                                                            <navigation v-if="item.type=='navigation'"
+                                                                                        :style_type="item.style_type"
+                                                                                        :list="item.list"
+                                                                                        :radian="item.radian"
+                                                                                        :text_color="item.text_color"
+                                                                                        :bg_color="item.bg_color"
+                                                                                        :font_size="item.font_size"
+                                                                                        :index="index" >
+                                                                            </navigation>
+                                                                            <headline
+                                                                                    v-if="item.type=='headline'"
+                                                                                    :style_type="item.style_type"
+                                                                                    :name="item.name"
+                                                                                    :bg_color="item.bg_color"
+                                                                                    :text_color="item.text_color"
+                                                                                    :font_size="item.font_size"
+                                                                                    :index="index">
+                                                                            </headline>
+                                                                            <blank v-if="item.type=='blank'"
+                                                                                   :ly_height="item.ly_height"
+                                                                                   :bg_color="item.bg_color"
+                                                                                   :index="index">
+                                                                            </blank>
+                                                                            <search v-if="item.type=='search'"
+                                                                                    :bg_color="item.bg_color"
+                                                                                    :bd_color="item.bd_color"
+                                                                                    :text_color="item.text_color"
+                                                                                    :hot_word="item.hot_word"
+                                                                                    :style_type="item.style_type"
+                                                                                    :index="index">
+                                                                            </search>
+                                                                            <blankline v-if="item.type=='blankline'"
+                                                                                       :margin="item.margin"
+                                                                                       :ly_height="item.ly_height"
+                                                                                       :bg_color="item.bg_color"
+                                                                                       :line_color="item.line_color"
+                                                                                       :line_type="item.line_type"
+                                                                                       :index="index">
+                                                                            </blankline>
+                                                                            <article_list
+                                                                                    v-if="item.type=='article_list'"
+                                                                                    :list="item.list"
+                                                                                    :font_size="item.font_size"
+                                                                                    :text_color="item.text_color"
+                                                                                    :bg_color="item.bg_color"
+                                                                                    :style_type="item.style_type"
+                                                                                    :add_type="item.add_type"
+                                                                                    :add_sort="item.add_sort"
+                                                                                    :add_num="item.add_num"
+                                                                                    :add_cate="item.add_cate"
+                                                                                    :index="index">
+                                                                            </article_list>
+                                                                            <product_list
+                                                                                    v-if="item.type=='product_list'"
+                                                                                    :list="item.list"
+                                                                                    :font_size="item.font_size"
+                                                                                    :text_color="item.text_color"
+                                                                                    :bg_color="item.bg_color"
+                                                                                    :style_type="item.style_type"
+                                                                                    :add_type="item.add_type"
+                                                                                    :add_num="item.add_num"
+                                                                                    :add_cate="item.add_cate"
+                                                                                    :index="index">
+                                                                            </product_list>
+                                                                            <goods
+                                                                                    v-if="item.type=='goods'"
+                                                                                    :list="item.list"
+                                                                                    :font_size="item.font_size"
+                                                                                    :text_color="item.text_color"
+                                                                                    :bg_color="item.bg_color"
+                                                                                    :style_type="item.style_type"
+                                                                                    :add_type="item.add_type"
+                                                                                    :add_sort="item.add_sort"
+                                                                                    :add_num="item.add_num"
+                                                                                    :add_cate="item.add_cate"
+                                                                                    :index="index">
+                                                                            </goods>
+                                                                            <edit_button
+                                                                                    v-if="item.type=='edit_button'"
+                                                                                    :name="item.name"
+                                                                                    :radius="item.radius"
+                                                                                    :show_border="item.show_border"
+                                                                                    :show_icon="item.show_icon"
+                                                                                    :bg_color="item.bg_color"
+                                                                                    :text_color="item.text_color"
+                                                                                    :border_color="item.border_color"
+                                                                                    :list="item.list"
+                                                                                    :index="index">
+                                                                            </edit_button>
+                                                                            <position
+                                                                                    v-if="item.type=='position'"
+                                                                                    :name="item.name"
+                                                                                    :show_type="item.show_type"
+                                                                                    :bg_color="item.bg_color"
+                                                                                    :text_color="item.text_color"
+                                                                                    :index="index">
+                                                                            </position>
+                                                                            <rich_text
+                                                                                    v-if="item.type=='rich_text'"
+                                                                                    :content="item.content"
+                                                                                    :bg_color="item.bg_color"
+                                                                                    :index="index">
+                                                                            </rich_text>
+                                                                            <edit_piclist
+                                                                                    v-if="item.type=='edit_piclist'"
+                                                                                    :style_type="item.style_type"
+                                                                                    :column_num="item.column_num"
+                                                                                    :radian="item.radian"
+                                                                                    :bg_color="item.bg_color"
+                                                                                    :text_color="item.text_color"
+                                                                                    :list="item.list"
+                                                                                    :index="index">
+                                                                            </edit_piclist>
+                                                                            <floaticon
+                                                                                    v-if="item.type=='floaticon'"
+                                                                                    :form_transparent="item.form_transparent"
+                                                                                    :list="item.list"
+                                                                                    :index="index">
+                                                                            </floaticon>
+                                                                            <edit_video
+                                                                                    v-if="item.type=='edit_video'"
+                                                                                    :ly_height="item.ly_height"
+                                                                                    :url="item.url"
+                                                                                    :video_type="item.video_type"
+                                                                                    :imgurl="item.imgurl"
+                                                                                    :index="index">
+                                                                            </edit_video>
+                                                                            <edit_music
+                                                                                    v-if="item.type=='edit_music'"
+                                                                                    :url="item.url"
+                                                                                    :imgurl="item.imgurl"
+                                                                                    :name="item.name"
+                                                                                    :author="item.author"
+                                                                                    :index="index">
+                                                                            </edit_music>
+                                                                            <comment_s
+                                                                                    v-if="item.type=='comment'"
+                                                                                    :index="index">
+                                                                            </comment_s>
+                                                                            <fight_group
+                                                                                    v-if="item.type=='fight_group'"
+                                                                                    :list="item.list"
+                                                                                    :style_height="item.style_height"
+                                                                                    :style_width="item.style_width"
+                                                                                    :title_size="item.title_size"
+                                                                                    :title_color="item.title_color"
+                                                                                    :bg_color="item.bg_color"
+                                                                                    :line_color="item.line_color"
+                                                                                    :index="index">
+                                                                            </fight_group>
+                                                                            <tripartite
+                                                                                    v-if="item.type=='tripartite'"
+                                                                                    :list="item.list"
+                                                                                    :index="index">
+                                                                            </tripartite>
+                                                                            <quartet
+                                                                                    v-if="item.type=='quartet'"
+                                                                                    :list="item.list"
+                                                                                    :index="index">
+                                                                            </quartet>
+                                                                            <message_board
+                                                                                    v-if="item.type=='message_board'"
+                                                                                    :bg_color="item.bg_color"
+                                                                                    :btn_color="page.nv_color"
+                                                                                    :text_color="page.text_color"
+                                                                                    :index="index">
+                                                                            </message_board>
+                                                                            <store_door
+                                                                                    v-if="item.type=='store_door'"
+                                                                                    :imgurl="item.imgurl"
+                                                                                    :name="item.name"
+                                                                                    :bg_color="item.bg_color"
+                                                                                    :text_color="item.text_color"
+                                                                                    :time="item.time"
+                                                                                    :phone="item.phone"
+                                                                                    :index="index">
+                                                                            </store_door>
+                                                                            <edit_form
+                                                                                    v-if="item.type=='edit_form'"
+                                                                                    :imgurl="item.imgurl"
+                                                                                    :index="index">
+                                                                            </edit_form>
+                                                                            <customer
+                                                                                    v-if="item.type=='customer'"
+                                                                                    :form_transparent="item.form_transparent"
+                                                                                    :imgurl="item.imgurl"
+                                                                                    :index="index">
+                                                                            </customer>
+                                                                            <edit_phone
+                                                                                    v-if="item.type=='phone'"
+                                                                                    :form_bottom="item.form_bottom"
+                                                                                    :form_margin="item.form_margin"
+                                                                                    :form_transparent="item.form_transparent"
+                                                                                    :imgurl="item.imgurl"
+                                                                                    :index="index">
+                                                                            </edit_phone>
+                                                                            <announcement
+                                                                                    v-if="item.type=='announcement'"
+                                                                                    :text_color="item.text_color"
+                                                                                    :bg_color="item.bg_color"
+                                                                                    :content="item.content"
+                                                                                    :imgurl="item.imgurl"
+                                                                                    :index="index">
+                                                                            </announcement>
+                                                                            <ad
+                                                                                    v-if="item.type=='ad'"
+                                                                                    :imgurl="item.imgurl"
+                                                                                    :ly_height="item.ly_height"
+                                                                                    :index="index">
+                                                                            </ad>
+                                                                            <ucenter_cell
+                                                                                    v-if="item.type=='order' || item.type=='follow' || item.type=='coupon' || item.type=='book' || item.type=='kjm' || item.type=='kjo' || item.type=='ptm' || item.type=='pto' || item.type=='kefu' || item.type=='address' || item.type=='about' || item.type=='fenxiao' || item.type == 'paycontent'"
+                                                                                    :img="item.img"
+                                                                                    :name="item.name"
+                                                                                    :index="index">
+                                                                            </ucenter_cell>
+                                                                            <order_status
+                                                                                    v-if="item.type=='order_status'"
+                                                                                    :index="index">
+                                                                            </order_status>
+                                                                            <member :index="index"
+                                                                                    :bg_color="item.bg_color ? item.bg_color : '#f2f2f2'"
+                                                                                    :bg_img="item.bg_img"
+                                                                                    :text_color="item.text_color ? item.text_color : '#333333'"
+                                                                                    v-if="item.type=='member'">
+                                                                            </member>
+                                                                            <join_us
+                                                                                    v-if="item.type=='join_us'"
+                                                                                    :index="index"
+                                                                                    :list="item.list">
+                                                                            </join_us>
+                                                                            <miaosha
+                                                                                    v-if="item.type=='miaosha'"
+                                                                                    :list="item.list"
+                                                                                    :font_size="item.font_size"
+                                                                                    :text_color="item.text_color"
+                                                                                    :bg_color="item.bg_color"
+                                                                                    :style_type="item.style_type"
+                                                                                    :add_type="item.add_type"
+                                                                                    :add_sort="item.add_sort"
+                                                                                    :add_num="item.add_num"
+                                                                                    :add_cate="item.add_cate"
+                                                                                    :index="index">
+                                                                            </miaosha>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div id="mCSB_1_scrollbar_vertical"
+                                                             class="mCSB_scrollTools mCSB_1_scrollbar mCS-minimal-dark mCSB_scrollTools_vertical"
+                                                             style="display: none;">
+                                                            <div class="mCSB_draggerContainer">
+                                                                <div id="mCSB_1_dragger_vertical" class="mCSB_dragger"
+                                                                     style="position: absolute; min-height: 50px; height: 0px; top: 0px;"
+                                                                     oncontextmenu="return false;">
+                                                                    <div class="mCSB_dragger_bar"
+                                                                         style="line-height: 50px;"></div>
+                                                                </div>
+                                                                <div class="mCSB_draggerRail"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="rightEditwrap" style="position: fixed;right: 0;top: 120px;width:445px;">
+                                            <div class="formEditHd">
+                                                <ul class="clearfix">
+                                                    <li style="" class="on"><a href="javascript:;">页面组件</a></li>
+                                                    <li style=""><a href="javascript:;">编辑组件</a></li>
+                                                </ul>
+                                            </div>
+                                            <div class="formEditBd"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

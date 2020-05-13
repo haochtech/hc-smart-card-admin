@@ -1,0 +1,97 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div class="tabBar clearfix" style="position:relative;">
+            <span onclick="load_page('__CONF_SITE__admin/user/user_list')">微信会员</span>
+            <span onclick="load_page('__CONF_SITE__admin/user/level')">等级列表</span>
+            <span onclick="load_page('__CONF_SITE__admin/user/integral_details')">积分详情</span>
+            <span class="current" onclick="load_page('__CONF_SITE__admin/user/integral_rule')">积分规则设置</span>
+        </div>
+    <div>
+    <div class="mt-20">
+        <table class="table table-border table-bordered table-bg table-hover table-sort">
+            <!--<thead>-->
+            <!--&lt;!&ndash;<tr class="text-c" >&ndash;&gt;-->
+                <!--&lt;!&ndash;<th colspan="6" style="text-align: left;">消费赠送</th>&ndash;&gt;-->
+            <!--&lt;!&ndash;</tr>&ndash;&gt;-->
+            <!--</thead>-->
+            <tbody id="tbody">
+            <tr class="text-c">
+                <td style="text-align: right;width:15%;">消费每满</td>
+                <td style="width:5%;">　</td>
+                <td style="width:80%; text-align: left;">
+                    <span style="float: left;">
+                        <input type="text" autocomplete="off" value="{$list.cons_money|default='0'}" class="input-text" name="cons_money" style="width: 90%;">
+                    </span>
+                    <span style="height:30px;line-height:30px;">元</span>
+                </td>
+            </tr>
+            <tr class="text-c">
+                <td style="text-align: right;width:15%;">赠送积分</td>
+                <td style="width:5%;">　</td>
+                <td style="width:80%; text-align: left;">
+                    <span style="float: left;">
+                        <input type="text" autocomplete="off" value="{$list.cons_integral|default='0'}" class="input-text" name="cons_integral" style="width: 90%;">
+                    </span>
+                    <span style="height:30px;line-height:30px;">积分</span>
+                </td>
+            </tr>
+            <tr class="text-c">
+                <td style="text-align: right;width:15%;">消费规则</td>
+                <td style="width:5%;">　</td>
+                <td style="width:80%; text-align: left;">
+                    单次消费每满xx元，赠送xx积分，例如每满100赠送10积分，消费500赠送50
+                </td>
+            </tr>
+            <tr class="text-c">
+                <td style="text-align: right;width:15%;">开启状态</td>
+                <td style="width:5%;">　</td>
+                <td style="width:70%; text-align: left;">
+                    <label><input type="radio" name="cons_status" value="1" {if $list.cons_status==1}checked{/if}>开启</label>
+                    <label><input type="radio" name="cons_status" value="0" {if $list.cons_status==0}checked{/if}>关闭</label>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="row cl">
+            <div class="col-xs-5 col-sm-5"></div>
+            <div class="col-xs-7 col-sm-7">
+                <input class="btn btn-primary radius" onclick="rule_save('{$luid}')" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    var flags = false;
+    function rule_save(id) {
+        if(!flags){
+            flags = true;
+            $.ajax({
+                type: "post",
+                url: "{:url('user/integral_rule')}",
+                data: {
+                    id: id,
+                    cons_status: $("[name='cons_status']:checked").val(),
+                    cons_money: $("[name='cons_money']").val(),
+                    cons_integral: $("[name='cons_integral']").val()
+                },
+                success: function (data) {
+                    if (data['code'] > 0) {
+                        layer.msg('保存成功!', {icon: 1, time: 1000}, function () {
+                            parent_flash("__CONF_SITE__admin/user/integral_rule");
+                        });
+                    }
+                    else {
+                        flags = false;
+                        layer.msg('保存失败', {icon: 5, time: 1000});
+                    }
+                }
+            });
+        }
+    }
+</script>
+{/block}

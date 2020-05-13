@@ -1,0 +1,192 @@
+<html style="font-size: 48px;"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+  <title>详情</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link  rel="stylesheet" href="./vue/css/index.css?v=1.1">
+    <link rel="stylesheet" href="./vue/css/iconfont.css">
+    <script src="https://pingjs.qq.com/h5/stats.js?v2.0.4" name="MTAH5" sid="500619036"></script>
+<script type="text/ecmascript">
+  var winWidth = 750
+  window.onresize = function () {
+    getRem(winWidth, 100)
+  }
+  function getRem(pwidth, prem) {
+    var html = document.getElementsByTagName('html')[0]
+    var oWidth = document.documentElement.clientWidth
+    html.style.fontSize = oWidth / pwidth * prem + 'px'
+  }
+  (function () {
+    if (typeof WeixinJSBridge == "object" && typeof WeixinJSBridge.invoke == "function") {
+      handleFontSize();
+    } else {
+      document.addEventListener("WeixinJSBridgeReady", handleFontSize, false);
+    }
+    function handleFontSize() {
+      // 设置网页字体为默认大小
+      WeixinJSBridge.invoke('setFontSizeCallback', {
+        'fontSize': 0
+      });
+      // 重写设置网页字体大小的事件
+      WeixinJSBridge.on('menu:setfont', function () {
+        WeixinJSBridge.invoke('setFontSizeCallback', {
+          'fontSize': 0
+        });
+      });
+    }
+    function onBridgeReady() {
+      WeixinJSBridge.call('hideOptionMenu');
+    }
+    if (typeof WeixinJSBridge == "undefined") {
+      if (document.addEventListener) {
+        document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+      } else if (document.attachEvent) {
+        document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+        document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+      }
+    } else {
+      onBridgeReady();
+    }
+  })()
+  getRem(winWidth, 100)
+</script>
+<script src="vue/js/common.js"></script>
+    <script src="vue/js/vue.js"></script>
+    <script src="vue/js/vue-resource.js"></script>
+    <script src="vue/js/index_detail.js?v=1.3"></script>
+     <style>
+         body {
+             background-color: #fff;
+         }
+         .select_date {
+             line-height: .8rem;
+             padding-left: .4rem;
+             color: #888;
+             height: .8rem;
+             font-size: .24rem;
+             z-index: 2;
+         }
+         .select_date #clear_date {
+             width: .3rem;
+             height: .3rem;
+             margin: .25rem 0 .25rem .25rem;
+         }
+         .select_date #rili2 {
+             width: .34rem;
+             height: .32rem;
+             margin-top: .2rem;
+             float: right;
+             margin-right: .45rem;
+         }
+         .event_content_item {
+             height: 2.5rem;
+         }
+         .feeds_title_container {position: fixed;top: 0; left: 0.4rem;}
+         .do_wrapper {position: relative !important;}
+         .home_wrapper[data-v-23f17f48] {position: relative !important;}
+         .time_left ,.time_right {position: relative;}
+         input.time {border:0;}
+         .time_left img ,.time_right img {position: absolute;right:0.1rem;top:0rem;}
+        .feeds_push_wrapper[data-v-19e635b7] {height: 1.5rem;position: relative !important;}
+        .time-sign {width: 0.9rem !important;text-align: right !important;}
+    </style>
+</head>
+<body>
+<div id="app">
+ 
+    <div data-v-19e635b7="" class="feeds_push_container" style="display:none" v-show="show">
+    
+                <div class="select_date" style="pointer-events: auto;"><span v-show="str_time==''">7天内被查看的行为统计</span> <span
+                       v-show="str_time!='' && end_time!=''">{{str_time}}至{{end_time}}</span> <img
+                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAA7xJREFUSA3FV0tPE1EUPnPbJjxEBORNIUIkRmFFovGBUsqj7kzUEBd170IT42/QnTHxH0AXSsQEd7zaEjUYHyxEo5GFBitPRUHkIbQznu/WGdrSgamCnqS9Z+4993xz7nncMwpZIE3ThM9375hK6hkWr1OISnjEDzSh8Y/HYUGi2+s9P6QoiipXNvljHeYUDAbTQqGZKxqp1zSNCswl11cUhWYUEjedzoLbLpdrZX0lnjMF9vk6z0ZU7RaR5ozfYvVJCdmEctXrbbufbIdInORjVdrbO69HVLXrz0GhVXNCB3RBZyJO3AQEOnydd3hsSxT8m2f2eedFb9sFHjkcomTTGYyVlQeva6Rdip3bJr5m5OUbR3d3V0DXZ1gc9SmOd+fIJsQ53efSx4jeaCDtHCg0AwNY4CUwUsYskHL2ZFN9/VHaw+NWJISgAwf2E/YkJ80ZxWJgDiSBPE0uSFRYVECV+yqotcVF2dm7zcQIoC7XCTpyuI5qag+aykVrgiZsVVWHjjP4ZTPJr1/nKC8vh3Jzc6i8vIxCoXFaXV2NE7fZbNTkPkmlJcW0srJCQ0+e8/gzTibmIfPVyNsB8bsMxszHs6qqUjD4mCYnpygjI11anpmZaQjZ7XZqbmqg4uIiWlpapp7eAM3NzRvryRhgwsd1yRZj5wDuDzyi6enPBFAce0Z6OjkcDmphvrAwnxYXFxnUT/Pz32O3mvF1SnvH3Xd81NVmErHzsA5A+XvzJEA4HJFuWFj4Qb19QQkeK2/GcyEZhcX6LWMmZ8yHw2Hq7x+k2dlvMtDge1jY0+O3DPpbWYlMJ0OzBcbBVtvt6wUPVq/xC6VCfNNpAMZdaongX4/HLa2F1bAWVjc3N/DL2C3pgBBfnZOcw9aAs7J20WlPI2H8/GWWfRqgPvYr/AufN7lPEdLKCgETFg9vJYzC4Wl1y4hGZANwbW2NlpaXjaBCZLsb62Uh2UqfoikvuN6I7s0EUSo9rY0yh5HL/QODhCDTCWmEiEYOI5dRvVDFNiOO6gci2iPRjJlgLZe/tLQ0+jQ+QQP+hxSJRDaI4rj7+oOyapWVllB1ddUGGX0CrREwBaOr6JH0hcTx9as39PTZsKxeKCRmhECD5e8/jNH0lKkdBKwoJmvCVTX2cXrU7IYyA0t9XglVlBdWowmUzgCDxix1RantAIbeeRpRgM6Aj+FGaqqsS0O33n1gl9H64IFr9j9r9gyL5VtwFyi7wW20HJYmdpgSC3/JaKcb+rijTnyB//IJE/sS6Mu2+6PtFzpGqlD2G9T5AAAAAElFTkSuQmCC"
+                        alt="" id="clear_date" @click="clear_time" v-show="str_time!='' && end_time!=''"> <img @click='show_date=show_date?false:true' id="rili2"
+                                                                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACIAAAAgCAYAAAB3j6rJAAAAAXNSR0IArs4c6QAAAfJJREFUWAntVz1PAkEQZQ8ClVY25y+ggILEVu1NLCEURDsbW200UqAxEv+FwYSPWlsxtFQUlFbG+wM2QLjzvQtHlgu38nFLrmCTvezOzps3OzN3uYnFFhiFQuGNcwHVGZVlcIkZZMDGcZyTgCOleBnc1JFisXho2/Y1wAewbpKh1WqJeUz5fN6ZJ/dkC+AsIUTXMIzner3eIc7gAyG8GY/Hn3DiFFvXCco1DpNcuHib3ORJYHEE4QPWI3hZTiaTL7VazVI5EXRjFYZnHq5UKpnD4fAMvBVw3iMbHabmChN7UW42m1UC/ANn7wAp0+HHcB+Em1y0iiDEYPaJJSGQ7x9gzFQqtf9fJOaRrSNjZAaDAfkt1ohbE5t2gheQOE1GZOmQ00jYw31rwja6ir3pd8Sr6FWMrIPxMhKZiGwd8adTGRHmz8uhDAxLLttUOiIr6l5PvyPbt2YS6sikRulIWEUZZEeuO6UjsqLu9bZY/RGOTGqUjgQVWVhyOSpKR2RF3etIFavbOvBHVvet/fYlTsvAL3+XCuwz/Iq69x4nfYhns9lvEJ6jvzjOZDKjXC731ev1fnU6wUik0+lLcLLBEmg9L9zeFm/BLfYVHGy0eMFp48J3aOwe47x5v9/vIDIfWO5h7mLuYOocbMLbjESj0Xgl0R+a4OzbcYyQKQAAAABJRU5ErkJggg=="
+                                                                            alt=""></div>
+        <div data-v-19e635b7="" class="feeds_push_wrapper">
+            <div @touchstart="touchStart($event)"
+                 @touchmove="touchMove($event)"
+                 @touchend="touchEnd($event)">
+                <div data-v-19e635b7="" style="pointer-events: auto;" >
+                  <p data-v-19e635b7="" class="total_num" v-show="count>0">共<span
+                        data-v-19e635b7="" style="color: #0eb799; padding: 0px 0.1rem;">{{count}}</span>次</p>
+                 
+                   <div data-v-23f17f48="" class="home_event_item" v-for="(k,v) in index_data">
+                    <div data-v-23f17f48="" class="event_label_item" v-if='k==0 || index_data[k-1].date!=v.date'><span
+                            data-v-23f17f48="" class="event_time_label">{{v.date}}</span></div>
+                    <div data-v-23f17f48="" class="event_content_item clearfix"><span data-v-23f17f48=""
+                                                                                      class="event_head_img"><img
+                            data-v-23f17f48=""
+                            :src="v.user.user_headimg"
+                            class="home_event_user_logo"></span>
+                        <div data-v-23f17f48="" class="table">
+                            <div data-v-23f17f48="" class="table_center" v-if="op_type<7"><p data-v-23f17f48=""><span data-v-23f17f48="">{{v.user.nick_name}}</span>
+                                <span data-v-23f17f48=""><span class="xingxin">{{v.op_type}}</span>了你的<span
+                                        class="xingxin">{{v.op_name}}</span>第{{v.times}}次</span> <!----> <!---->
+                            </p> <span
+                                    data-v-23f17f48="" class="time-sign" style="position: absolute;margin-top: -0.5rem">{{v.time}}</span>
+                            </div>
+                            <div data-v-23f17f48="" class="table_center" v-if="op_type==7">
+                                <p data-v-23f17f48=""><span
+                                        data-v-23f17f48="">{{v.user.nick_name}}</span>
+                                <span data-v-23f17f48=""><span class="xingxin">觉得</span> 你的名片<span
+                                        class="xingxin">很赞</span> <!----> <!---->
+                                </p> <span
+                                    data-v-23f17f48="" class="time-sign" style="margin-left: 200px">{{v.time}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                 <!--<div class="loading_div" style="pointer-events: auto;" v-show="loaded"><img-->
+                        <!--src="vue/img/logo1.png"-->
+                        <!--alt="">数据加载中...-->
+                <!--</div>-->
+                <div class="loading_div2" style=" pointer-events: auto;" v-show='!down && index_data.length>0'>没有更多数据
+                </div>
+                 <div class="loading_div2" style=" pointer-events: auto;" v-show='!down && index_data.length==0'>
+                    暂无数据
+                </div>
+                <div class="loading_div3" style=" pointer-events: auto;" v-show="bug" @click='get_list()'>
+                    <img src="vue/img/logo1.png"
+                         alt="">请求超时或网络出错,点击再次请求
+                </div>
+            </div>
+        </div>
+        <div class="select_date_box" style="z-index:100" v-show="show_date">
+            <div class="date_background"></div>
+            <div class="select_box"><p class="hint"><span>选择时间段</span></p>
+                <div class="time_item">
+                    <div class="time_left">
+                   <input class="time" type="text" id="dateSelectorOne" style="width:120px"> <img
+                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACIAAAAgCAYAAAB3j6rJAAAAAXNSR0IArs4c6QAAAfJJREFUWAntVz1PAkEQZQ8ClVY25y+ggILEVu1NLCEURDsbW200UqAxEv+FwYSPWlsxtFQUlFbG+wM2QLjzvQtHlgu38nFLrmCTvezOzps3OzN3uYnFFhiFQuGNcwHVGZVlcIkZZMDGcZyTgCOleBnc1JFisXho2/Y1wAewbpKh1WqJeUz5fN6ZJ/dkC+AsIUTXMIzner3eIc7gAyG8GY/Hn3DiFFvXCco1DpNcuHib3ORJYHEE4QPWI3hZTiaTL7VazVI5EXRjFYZnHq5UKpnD4fAMvBVw3iMbHabmChN7UW42m1UC/ANn7wAp0+HHcB+Em1y0iiDEYPaJJSGQ7x9gzFQqtf9fJOaRrSNjZAaDAfkt1ohbE5t2gheQOE1GZOmQ00jYw31rwja6ir3pd8Sr6FWMrIPxMhKZiGwd8adTGRHmz8uhDAxLLttUOiIr6l5PvyPbt2YS6sikRulIWEUZZEeuO6UjsqLu9bZY/RGOTGqUjgQVWVhyOSpKR2RF3etIFavbOvBHVvet/fYlTsvAL3+XCuwz/Iq69x4nfYhns9lvEJ6jvzjOZDKjXC731ev1fnU6wUik0+lLcLLBEmg9L9zeFm/BLfYVHGy0eMFp48J3aOwe47x5v9/vIDIfWO5h7mLuYOocbMLbjESj0Xgl0R+a4OzbcYyQKQAAAABJRU5ErkJggg=="
+                            alt=""></div>
+                    <span class="word">至</span>
+                    <div class="time_right" >
+                        <input class="time" type="text" id="dateSelectorTwo" style="width:120px"><img
+                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACIAAAAgCAYAAAB3j6rJAAAAAXNSR0IArs4c6QAAAfJJREFUWAntVz1PAkEQZQ8ClVY25y+ggILEVu1NLCEURDsbW200UqAxEv+FwYSPWlsxtFQUlFbG+wM2QLjzvQtHlgu38nFLrmCTvezOzps3OzN3uYnFFhiFQuGNcwHVGZVlcIkZZMDGcZyTgCOleBnc1JFisXho2/Y1wAewbpKh1WqJeUz5fN6ZJ/dkC+AsIUTXMIzner3eIc7gAyG8GY/Hn3DiFFvXCco1DpNcuHib3ORJYHEE4QPWI3hZTiaTL7VazVI5EXRjFYZnHq5UKpnD4fAMvBVw3iMbHabmChN7UW42m1UC/ANn7wAp0+HHcB+Em1y0iiDEYPaJJSGQ7x9gzFQqtf9fJOaRrSNjZAaDAfkt1ohbE5t2gheQOE1GZOmQ00jYw31rwja6ir3pd8Sr6FWMrIPxMhKZiGwd8adTGRHmz8uhDAxLLttUOiIr6l5PvyPbt2YS6sikRulIWEUZZEeuO6UjsqLu9bZY/RGOTGqUjgQVWVhyOSpKR2RF3etIFavbOvBHVvet/fYlTsvAL3+XCuwz/Iq69x4nfYhns9lvEJ6jvzjOZDKjXC731ev1fnU6wUik0+lLcLLBEmg9L9zeFm/BLfYVHGy0eMFp48J3aOwe47x5v9/vIDIfWO5h7mLuYOocbMLbjESj0Xgl0R+a4OzbcYyQKQAAAABJRU5ErkJggg=="
+                            alt=""></div>
+                </div>
+                <div class="select_box2">
+                    <div class="select_cancel" @click="show_date=false">取消</div>
+                    <div class="select_ok" @click="time_select">确定</div>
+                </div>
+                <div class="btn"></div>
+            </div>
+        </div>
+    </div> <!----></div>
+<script src="./vue/js/jquery-1.7.2.js"></script>
+<script src="./vue/js/layer.js"></script>
+<script src="./vue/js/Mdate/iScroll.js"></script>
+<script src="./vue/js/Mdate/Mdate.js"></script>
+<script type="text/javascript">
+new Mdate("dateSelectorOne", {
+    beginYear: "2017",
+    format: "-"
+})
+new Mdate("dateSelectorTwo", {
+    beginYear: "2017",
+    format: "-"
+})
+</script>
+</body></html>

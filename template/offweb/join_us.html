@@ -1,0 +1,104 @@
+<!--{extend name="base"/}-->
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div class="tabBar clearfix">
+            <span onclick="load_page('__CONF_SITE__admin/offweb/join_us')" class="current">招聘列表</span>
+            <div onclick="layer_open('新增招聘','__CONF_SITE__admin/offweb/join_edit',1000,700)"  class="n_tab_add"><i class="Hui-iconfont">&#xe600;</i>新增招聘</div>
+            <div class="cl"></div>
+        </div>
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+                <div class="text-c">
+                    <input type="text" class="input-text" value="{$search_text}" style="width:250px" placeholder="输入职位名称"  name="search_text">
+                    <button onclick="send_submit()" id="submit_button" class="btn btn-search radius" style="padding: 5px 12px;margin-left: 5px;border-radius: 3px;box-sizing:border-box;background: #ebebeb;border: 1px solid #dcdfe6;"><i class="Hui-iconfont" style="    color: #a2a2a2;
+    font-size: 18px;">&#xe665;</i></button>
+                </div>
+        </div>
+        <table class="table table-border table-bordered table-bg">
+            <thead>
+            <tr class="text-c">
+                <th>职位名称</th>
+                <th>薪资待遇</th>
+                <th>工作经验</th>
+                <th>学历</th>
+                <th>是否发布</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {foreach name="jobo_list" id="vo"  key="k"}
+            <tr class="text-c">
+                <td>{$vo['name']}</td>
+                <td>{$vo['pay']}</td>
+                <td>{$vo['exp']}</td>
+                <td>{$vo['major']}</td>
+                <td>
+                {if $vo['show']==1}
+                    <a style="text-decoration:none" onClick="join_change(this,'{$vo.id}','{$vo.show}')" href="javascript:;" title="取消发布"><span class="label label-success radius caozuo">已发布</span></a>
+                    {else}
+                    <a style="text-decoration:none" onClick="join_change(this,'{$vo.id}','{$vo.show}')" href="javascript:;" title="发布"><span class="label label-danger radius caozuo">已隐藏</span></a>
+                {/if}
+                </td>
+                <td>
+                    <a href="javascript:;" onclick="del_join(this,'{$vo.id}')" style="text-decoration:none;margin-right:15px;"  class="caozuo"><span>删除</span></a>
+                    <a href="javascript:;"  class="show_layer" onclick="layer_open('编辑','__CONF_SITE__admin/offweb/join_edit&id={$vo.id}',1000,700)" style="text-decoration:none;margin-right:15px;" ><span>编辑</span></a>
+                </td>
+            </tr>
+            {/foreach}
+            </tbody>
+        </table>
+    </article>
+    <div class="n_page_no">
+        {$page}
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript" src="/public/js/jquery-2.1.1.js"></script>
+<script type="text/javascript" src="/public/static/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript">
+    function send_submit() {
+        load_page('__CONF_SITE__admin/offweb/join_us','',{search_text:$("input[name=search_text]").val()});
+    }
+    function join_change(obj,id,sta){
+        layer.confirm('确认要修改吗？',function(index){
+            $.ajax({
+                type : "post",
+                url : "{:url('offweb/join_change')}",
+                data : {
+                    "id" : id,
+                    "show":sta
+                },
+                success : function(data) {
+                    if (data > 0) {
+                        layer.msg('修改成功!',{icon:1,time:1000});
+                        parent_flash();
+                    }else{
+                        layer.msg('修改失败!', {icon: 2, time: 1000});
+                    }
+                }
+            })
+        });
+    }
+    function del_join(obj,id){
+        layer.confirm('确认要删除吗？',function(index){
+            $.ajax({
+                type : "post",
+                url : "{:url('offweb/join_change')}",
+                data : {
+                    "id" : id
+                },
+                success : function(data) {
+                    if (data > 0) {
+                        $(obj).parents("tr").remove();
+                        layer.msg('删除成功!',{icon:1,time:1000});
+                    }else{
+                        layer.msg('删除失败!', {icon: 2, time: 1000});
+                    }
+                }
+            })
+        });
+    }
+</script>
+{/block}

@@ -1,0 +1,205 @@
+{extend name="base"/}
+{block name="main"}
+<link rel="stylesheet" href="/public/static/bast/xenon-forms.css">
+<script src="/public/static/layer/2.4/layer.js"></script>
+<div class="Hui-article"><style>.tabBar a:hover {color:#fff !important; text-decoration: none !important;}</style>
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div class="tabBar clearfix">
+            <span onclick="load_page('__CONF_SITE__admin/card/send_card')" class="current" >名片分发</span>
+            <span onclick="load_page('__CONF_SITE__admin/card/all_user')" >用户列表</span><style>.tabBar a:hover {color:#fff;}</style>
+            <span onclick="show_list()" data-a="1" style="display: none;" id="wadawada">返回</span>
+            <a href="javascript:;" onclick="layer_open('添加分发','__CONF_SITE__admin/card/send_card_edit','700','600')" class="n_tab_add"><i class="Hui-iconfont">&#xe600;</i>添加分发</a>
+        </div>
+        <div>
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-bg table-hover table-sort" id="mains">
+                    <thead>
+                    <tr class="text-c">
+                        <th>名称</th>
+                        <th>有效成员</th>
+                        <th>备注</th>
+                        <th>客户数量</th>
+                        <th>更新时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    {foreach name="list" item="vo" key="k"}
+                    <tr class="text-c va-m">
+                        <td>{$vo.name}</td>
+                        <td>
+                            {if $vo.num>0}
+                            {$vo.num}&emsp;<a href="javascript:;" onclick="show_staff('{$vo.id}')">查看</a>
+                            {else}
+                            {$vo.num}
+                            {/if}
+                            </td>
+                        <td>{$vo.content}</td>
+                        <td>{$vo.user_num|default=0}</td>
+                        <td>{:date('Y-m-d H:i:s',$vo.update_time)}</td>
+                        <td>
+                            <a  style="text-decoration:none;margin-right:15px;" title="编辑" href="javascript:;" onclick="layer_open('添加分发','__CONF_SITE__admin/card/send_card_edit&id={$vo.id}','700','600')"  class="show_layer">编辑</a>
+                            <a  style="text-decoration:none;margin-right:15px;" title="作废" href="javascript:;" onclick="wadaxiwa('{$vo.id}')"  class="caozuo">作废</a>
+                            <a onclick="layer_open('{$vo.name}--二维码','__CONF_SITE__admin/offweb/wx_code&type=ff&id=-{$vo.id}','500px','500px')"  class="caozuo">二维码</a>
+                            <a  title="复制" href="javascript:void(0);" onclick="copy_now('wxpath{$k}')" id="wxpath{$k}" data-clipboard-text="yb_mingpian/pages/cardinfo/index?scene=-{$vo['id']}"  class="caozuo">复制链接</a>
+                        </td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+                <table id="show_staff_t" class="table table-border table-bordered table-bg table-hover table-sort" style="display: none">
+                    <thead>
+                    <tr class="text-c">
+                        <th>部门</th>
+                        <th>头像</th>
+                        <th>姓名</th>
+                        <th>客户数量</th>
+                    </tr>
+                    </thead>
+                    <tbody id="show_staff">
+                    </tbody>
+                </table>
+                <table id="show_user_t" class="table table-border table-bordered table-bg table-hover table-sort" style="display: none">
+                    <thead>
+                    <tr class="text-c">
+                        <th>部门</th>
+                        <th>分发成员</th>
+                        <th>客户头像</th>
+                        <th>客户昵称</th>
+                        <th>访问时间</th>
+                    </tr>
+                    </thead>
+                    <tbody id="show_user">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </article>
+    <div class="n_page_no" id="page">
+        {$page|default=''}
+    </div>
+        {/block}
+        {block name="script"}
+        <script type="text/javascript">
+            function copy_now(id) {
+                id='#'+id;
+                var check=$(id).attr('data-clipboard-text');
+                if(check.length<=0){
+                    layer.msg("链接信息有误", {icon: 2, time: 1000});
+                    return false;
+                }
+                var clipboard=new Clipboard(id);
+                clipboard.on('success',function(e){
+                    layer.msg("链接复制成功", {icon: 1, time: 500});
+                });
+                clipboard.on('error', function(e) {
+                    layer.msg("链接信息有误", {icon: 2, time: 1000});
+                });
+            }
+            function show_list() {
+                var data=$("#wadawada").attr("data-a");
+                if (data==1){
+                    $("#mains").show();
+                    $("#show_staff_t").hide();
+                    $("#show_user_t").hide();
+                    $("#wadawada").hide();
+                }
+                if (data==2){
+                    $("#mains").hide();
+                    $("#show_staff_t").show();
+                    $("#show_user_t").hide();
+                    $("#wadawada").attr('data-a',1);
+                }
+            }
+            function show_staff(id) {
+                $.ajax({
+                    type :"post",
+                    url :"{:url('card/show_staff')}",
+                    data : {
+                        'id':id
+                    },
+                    success : function(data) {
+                        $("#show_staff_t").show();
+                        $("#show_user_t").hide();
+                        $("#wadawada").show();
+                        $("#wadawada").attr('data-a',1);
+                        $("#mains").hide();
+                        data=JSON.parse(data);
+                        var list=data['list'];
+                        var html='';
+                        for (var i=0;i<list.length;i++){
+                            html+='<tr class="text-c va-m">';
+                            html+='<td>'+list[i]['name']+'</td>';
+                            html+='<td><img src="'+list[i]['head_photo']+'" alt="用户头像" width="50px" height="50px" class="round"></td>';
+                            html+='<td>'+list[i]['user_name']+'</td>';
+                            if(list[i]['user_num']>0){
+                                html += '<td>' + list[i]['user_num'] + '&emsp;<a href="javascript:;" onclick="show_user('+"'"+list[i]['name']+"'"+','+"'"+list[i]['user_name']+"'"+','+data["id"]+','+list[i]["staff_id"]+')">查看</a></td>';
+                            }else {
+                                html += '<td>' + list[i]['user_num'] + '</td>';
+                            }
+                            html+='<input type="hidden" value="'+list[i]['staff_id']+'">';
+                            html+='</tr>';
+                        }
+                        $("#show_staff").empty();
+                        $("#show_staff").append(html);
+                    }
+                });
+            }
+            function wadaxiwa(id) {
+                $.ajax({
+                    type :"post",
+                    url :"{:url('card/send_del')}",
+                    data : {
+                        'id':id
+                    },
+                    success : function(data) {
+                        if(data['code']>0){
+                            layer.msg('删除成功！');
+                            load_page(top_menu.now_url);
+                        }
+                        else{
+                            flag = false;
+                            layer.msg("删除失败",{icon:5,time:1000});
+                        }
+                    }
+                });
+            }
+            function show_user(a,b,id,staff_id) {
+                $.ajax({
+                    type :"post",
+                    url :"{:url('card/show_user')}",
+                    data : {
+                        'id':id,
+                        'user_name':b,
+                        'name':a,
+                        'staff_id':staff_id
+                    },
+                    success : function(data) {
+                        $("#show_user_t").show();
+                        $("#show_staff_t").hide();
+                        $("#wadawada").show();
+                        $("#wadawada").attr('data-a',2);
+                        $("#mains").hide();
+                        data=JSON.parse(data);
+                        var list=data['list'];
+                        var html='';
+                        var page=data['page'];
+                        $("#page").empty();
+                        $("#page").html(page);
+                        for (var i=0;i<list.length;i++){
+                            html+='<tr class="text-c va-m">';
+                            html+='<td>'+data['name']+'</td>';
+                            html+='<td>'+data['user_name']+'</td>';
+                            html+='<td><img src="'+list[i]['user_headimg']+'" alt="用户头像" width="50px" height="50px" class="round"></td>';
+                            html+='<td>'+list[i]['nick_name']+'</td>';
+                            html+='<td>'+list[i]["update_time"]+'</td>';
+                            html+='</tr>';
+                        }
+                        $("#show_user").empty();
+                        $("#show_user").append(html);
+                    }
+                });
+            }
+        </script>
+        {/block}

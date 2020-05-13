@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="/public/static/h-ui-{$skin}/css/H-ui.min.css" />
+    <link rel="stylesheet" href="/public/static/h-ui-{$skin}/css/H-ui.admin.css"/>
+    <script src="/public/js/all.js"></script>
+
+</head>
+<body>
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <form action="" method="post" class="form form-horizontal" id="form-admin-role-add">
+            <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-3">设置权限：</label>
+                <select style="height: 40px;line-height: 40px;  width: 200px;border: 1px solid #ccc;border-radius: 3px;" class="select" size="1" id="role_id">
+                    {volist name="role_list" id="r"}
+                    <option value="{$r.role_id}">{$r.role_name}</option>
+                    {/volist}
+                </select>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-3">设置到期时间：</label>
+                    <input id="card_etime"  name="card_etime" class="input-text Wdate" type="text"
+                           onclick="WdatePicker({dateFmt:'yyyy-M-d H:mm:ss',minDate:'%y-%M-{%d}'})" placeholder="不修改请留空" style="width:160px;"/>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-3">设置名片数量：</label>
+                <input type="number" style="height: 40px;line-height: 40px;padding:0 10px;border: 1px solid #ccc;border-radius: 3px;" min="1" id="card_num" value="" name="card_num" placeholder="不修改请留空">
+            </div>
+            <div class="row cl">
+                <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3" style="padding-left: 0;">
+                    <button type="button" onclick="add_RoleManage()" class="btn btn-success radius" id="admin-role-save" name="admin-role-save"><i class="icon-ok"></i> 确定</button>
+                </div>
+            </div>
+        </form>
+    </article>
+</div>
+<input type="hidden" value="{$uid}" id="uid">
+<script src="/public/js/jquery-2.1.1.js"></script>
+<script src="/public/static/layer/2.4/layer.js"></script>
+<script src="/public/menu/js/jquery.artdialog.js"></script>
+<script type="text/javascript" src="/public/static/My97DatePicker/4.8/WdatePicker.js"></script>
+<script src="/public/menu/js/iframetools.js"></script>
+<script type="text/javascript">
+    var lock = false;
+    //添加
+    function add_RoleManage() {
+        var role_id=$("#role_id").val();
+        var card_num=$("#card_num").val();
+        var card_etime=$("#card_etime").val();
+        var uid=$("#uid").val();
+        if(!lock){
+            lock = true;
+            $.ajax({
+                url : "{:url('role/permission_edit_do')}",
+                type : "post",
+                data : {
+                    "role_id" : role_id,
+                    "uid" : uid,
+                    'card_num':card_num,
+                    'card_etime':card_etime
+                },
+                success : function(res) {
+                    if(res['code']>0){
+                        layer.msg('提交成功!',{icon:1,time:1000},function () {
+                            layer_close("__CONF_SITE__admin/Role/permission");
+                        });
+                    }
+                    else{
+                        layer.msg('修改失败！',{icon:5,time:1000});
+                        lock = false;
+                    }
+                }
+            })
+        }
+    }
+</script>
+</body>
+</html>

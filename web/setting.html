@@ -1,0 +1,134 @@
+<html style="font-size: 48px;"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <title>转发设置</title>
+    <link rel="stylesheet" href="./vue/css/iconfont.css">
+    <style>
+        #app { font-family: PingFangSC-Regular,Avenir,Helvetica,Arial,sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; color: #2c3e50; }
+        ul { margin: 0; padding: 0; }.choosetype_wrap[data-v-4b45c2d3] { position: fixed; top: 0; left: 0; bottom: 0; right: 0; } li, ul { list-style: none; } .choosetype_wrap ul li[data-v-4b45c2d3] { color: #000; line-height: 1rem; background-color: #fff; font-size: .32rem; height: 1rem; border-bottom: 1px solid #e5e5e5; } .choosetype_wrap ul li .left[data-v-4b45c2d3] { margin-left: .3rem; } .onoff1[data-v-4b45c2d3] { width: 1.02rem; height: .62rem; background-color: #fff; border-radius: .31rem; float: right; margin-top: .19rem; margin-right: .36rem; border: .03rem solid #e7e7e7; box-sizing: border-box; } .choosetype_wrap ul li[data-v-4b45c2d3] { color: #000; line-height: 1rem; background-color: #fff; font-size: .32rem; height: 1rem; border-bottom: 1px solid #e5e5e5; }
+        .onoff1 span[data-v-4b45c2d3] { float: left; width: .56rem; height: .56rem; border-radius: 50%; box-sizing: border-box; background: #fff; border: 2px solid #e7e7e7; }
+        .onoff[data-v-4b45c2d3] { width: 1.02rem; height: .62rem; background-color: #0eb799; border-radius: .31rem; float: right; margin-top: .19rem; margin-right: .36rem; }
+        .onoff span[data-v-4b45c2d3] { float: right; width: .56rem; height: .56rem; border-radius: 50%; background-color: #fff; margin-top: .03rem; margin-right: .03rem; }
+    </style>
+   <script type="text/ecmascript">
+    var winWidth = 750
+    window.onresize = function () {
+        getRem(winWidth, 100)
+    }
+    function getRem(pwidth, prem) {
+        var html = document.getElementsByTagName('html')[0]
+        var oWidth = document.documentElement.clientWidth
+        html.style.fontSize = oWidth / pwidth * prem + 'px'
+    }
+    (function () {
+        if (typeof WeixinJSBridge == "object" && typeof WeixinJSBridge.invoke == "function") {
+            handleFontSize();
+        } else {
+            document.addEventListener("WeixinJSBridgeReady", handleFontSize, false);
+        }
+        function handleFontSize() {
+            // 设置网页字体为默认大小
+            WeixinJSBridge.invoke('setFontSizeCallback', {
+                'fontSize': 0
+            });
+            // 重写设置网页字体大小的事件
+            WeixinJSBridge.on('menu:setfont', function () {
+                WeixinJSBridge.invoke('setFontSizeCallback', {
+                    'fontSize': 0
+                });
+            });
+        }
+        function onBridgeReady() {
+            WeixinJSBridge.call('hideOptionMenu');
+        }
+        if (typeof WeixinJSBridge == "undefined") {
+            if (document.addEventListener) {
+                document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+            } else if (document.attachEvent) {
+                document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+            }
+        } else {
+            onBridgeReady();
+        }
+    })()
+    getRem(winWidth, 100)
+</script>
+    <script src="vue/js/common.js"></script>
+    <script src="vue/js/vue.js"></script>
+    <script src="vue/js/vue-resource.js"></script>
+    <script>
+        window.onload=function(){
+            var theRequest = GetRequest();
+            var __UID__ = theRequest["uid"];
+            var MCHID = theRequest["mch_id"];
+            var domain = window.location.host;
+            var path_name=window.location.pathname;
+            var child_name=path_name.split("/addons");
+            var url="https://"+domain+child_name[0]+"/addons/yb_mingpian/core/index.php?mch_id="+MCHID+"&s=/web/";
+            var vue_obj= new Vue({
+                el:'#app',
+                data:{
+                    show:false,
+                    is_relay:1,
+                    loading:false
+                },
+                created:function(){
+                    var that=this;
+                    this.$http.get(url + 'Webindex/UserInfo', {uid: __UID__}).then(function (res) {
+                        that.show=true;
+                        if (typeof res.data == 'string') {
+                            res.data = json_parse(res.data);
+                        }
+                        if (res.data.code == 0) {
+                            that.is_relay = res.data.info.is_relay;
+                        } else {
+                            layer.open({
+                                content: res.data.msg
+                                , skin: 'msg'
+                                , time: 2 //2秒后自动关闭
+                            });
+                        }
+                    });
+                },
+                methods:{
+                    change_relay:function(){
+                        var that=this;
+                        if(that.loading){
+                            return;
+                        }
+                        that.loading=true;
+                        var is_rel=that.is_relay==1?2:1;
+                        this.$http.get(url + 'Webindex/setting_card', {uid: __UID__,is_relay:is_rel}).then(function (res) {
+                            that.loading = false;
+                            if (typeof res.data == 'string') {
+                                res.data = json_parse(res.data);
+                            }
+                            if (res.data.code == 0) {
+                                that.is_relay=is_rel;
+                            } else {
+                                layer.open({
+                                    content: res.data.msg
+                                    , skin: 'msg'
+                                    , time: 2 //2秒后自动关闭
+                                });
+                            }
+                        });
+                    }
+                }
+            });
+        };
+    </script>
+</head>
+<body>
+<div id="app">
+    <div data-v-4b45c2d3="" class="choosetype_wrap" style="display: none" v-show="show">
+        <ul data-v-4b45c2d3=""
+            style="transition-property: transform; transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1); transition-duration: 0ms; transform: translate(0px, 0px) scale(1) translateZ(0px);">
+            <li data-v-4b45c2d3="" style="pointer-events: auto;" @click="change_relay()"><span data-v-4b45c2d3="" class="left">名片禁止转发</span>
+                <div data-v-4b45c2d3="" :class="{'onoff':is_relay==2,'onoff1':is_relay==1}"><span data-v-4b45c2d3=""></span></div>
+            </li>
+        </ul>
+    </div>
+</div>
+</body></html>

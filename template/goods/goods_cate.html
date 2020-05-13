@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1"/>
+    <meta name="renderer" content="webkit"/>
+    <title>商品分类</title>
+    <link rel="stylesheet" href="/public/css/style.css"/>
+    <script src="/public/js/jquery-2.1.1.js"></script>
+	<style>#sort1 li {text-align: center;}</style>
+
+</head>
+<body>
+<div class="contains" style="width:500px">
+    <!--商品分类-->
+    <div class="wareSort clearfix">
+        <ul id="sort1"></ul>
+        <ul id="sort2" style="display: none;"></ul>
+        <ul id="sort3" style="display: none;"></ul>
+    </div>
+    <div class="selectedSort" style="width: 86%;margin: 20px auto;"><b>您当前选择的商品类别是：</b><i id="selectedSort"></i></div>
+    <div class="wareSortBtn">
+        <input id="releaseBtn" onclick="releaseBtn()" type="button" value="下一步" disabled="disabled"/>
+    </div>
+</div>
+<script>
+    var expressP, expressC, expressD;
+    var arrow = " >> ";
+    intProvince();
+    /*点击下一步*/
+    function releaseBtn() {
+        var releaseS = $("#releaseBtn").prop("disabled");
+        if (releaseS == false) {
+            parent.layer.closeAll();
+        }
+    }
+    /*初始化一级目录*/
+    function intProvince() {
+        areaCont = "";
+        $.ajax({
+            type: "post",
+            url: "{:url('goods/goods_cate')}",
+            data: {'level': 1},
+            success: function (data) {
+                var obj = $.parseJSON(data);
+                for (var i = 0; i < obj.length; i++) {
+                    areaCont += '<li onClick="selectP(' + obj[i]['cate_id'] + ',' + i + ',&quot;' + obj[i].cate_name + '&quot;);"><a href="javascript:void(0)">' + obj[i]['cate_name'] + '</a></li>';
+                }
+                $("#sort1").html(areaCont);
+            }
+        });
+    }
+    /*选择一级目录*/
+    function selectP(cate_id, i, name) {
+        areaCont = "";
+        $.ajax({
+            type: "post",
+            url: "{:url('goods/goods_cate')}",
+            data: {'level': 2, 'pid': cate_id},
+            success: function (data) {
+                var obj = $.parseJSON(data);
+             
+                for (var j = 0; j < obj.length; j++) {
+                    areaCont += '<li onClick="selectC(' + obj[j]['cate_id'] + ',' + j + ',&quot;' + obj[j].cate_name + '&quot;);"><a href="javascript:void(0)">' + obj[j]['cate_name'] + '</a></li>';
+                }
+                $("#sort2").html(areaCont).show();
+                $("#sort3").hide();
+                expressP = name;
+                $("#selectedSort").html(expressP);
+                $("#sort1 li").eq(i).addClass("active").siblings("li").removeClass("active");
+                $("#releaseBtn").removeAttr("disabled");
+                parent.document.getElementById("cate_name").innerHTML = expressP;
+                parent.document.getElementById("cate_id").value = cate_id;
+                parent.document.getElementById("cate_id_v1").value = cate_id;
+            }
+        });
+    }
+    /*选择二级目录*/
+    function selectC(cate_id, j, name) {
+        areaCont = "";
+        expressC = "";
+        $.ajax({
+            type: "post",
+            url: "{:url('goods/goods_cate')}",
+            data: {'level': 3, 'pid': cate_id},
+            success: function (data) {
+                var obj = $.parseJSON(data);
+                for (var k = 0; k < obj.length; k++) {
+                    areaCont += '<li onClick="selectD(' + obj[k]['cate_id'] + ',' + k + ',&quot;' + obj[k].cate_name + '&quot;);"><a href="javascript:void(0)">' + obj[k]['cate_name'] + '</a></li>';
+                }
+                $("#sort3").html(areaCont).show();
+                $("#sort2 li").eq(j).addClass("active").siblings("li").removeClass("active");
+                expressC = expressP + arrow + name;
+                $("#selectedSort").html(expressC);
+                parent.document.getElementById("cate_name").innerHTML = expressC;
+                parent.document.getElementById("cate_id").value = cate_id;
+            }
+        });
+    }
+    /*选择三级目录*/
+    function selectD(cate_id, k, name) {
+        $("#sort3 li").eq(k).addClass("active").siblings("li").removeClass("active");
+        expressD = expressC + arrow + name;
+        $("#selectedSort").html(expressD);
+        parent.document.getElementById("cate_name").innerHTML = expressD;
+        parent.document.getElementById("cate_id").value = cate_id;
+    }
+</script>
+</body>
+</html>

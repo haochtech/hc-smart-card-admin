@@ -1,0 +1,501 @@
+<!doctype html>
+<html style="font-size: 48px;">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <title>雷达</title>
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <link rel="stylesheet" href="./vue/css/userinfo.css">
+    <link rel="stylesheet" href="./vue/css/index.css">
+    <link rel="stylesheet" href="./vue/css/iosSelect.css">
+    <link rel="stylesheet" href="./vue/css/iconfont.css">
+    <link rel="stylesheet" href="./vue/css/swiper.min.css">
+    <style type="text/css">
+        .product-box{position:relative !important;}
+        .choosetype_wrap[data-v-1d007989] {position:relative !important;}
+        .lookcard_wapper[data-v-2d63851b]{position:relative !important;}
+        .product-list li:first-child {padding-top:1.0rem !important;}
+        .product-list li:first-child .product-tips {top: 2.15rem !important;}
+        .Bars {
+            position: relative;
+            width: 3.2rem;
+            border: 1px solid #ececec !important;
+            padding: 1px;
+            border-radius: 5px;
+            margin-top:5px;
+        } .Bars div {
+              display: block;
+              position: relative;
+              background: #4489ff;
+              color: #333333;
+              height: 6px;
+              line-height: 6px;
+              border-radius: 5px;
+          }
+    </style>
+    <script src="https://pingjs.qq.com/h5/stats.js?v2.0.4" name="MTAH5" sid="500619036"></script>
+    <script type="text/ecmascript">
+        var winWidth = 750
+        window.onresize = function () {
+            getRem(winWidth, 100)
+        }
+        function getRem(pwidth, prem) {
+            var html = document.getElementsByTagName('html')[0]
+            var oWidth = document.documentElement.clientWidth
+            html.style.fontSize = oWidth / pwidth * prem + 'px'
+        }
+        (function () {
+            if (typeof WeixinJSBridge == "object" && typeof WeixinJSBridge.invoke == "function") {
+                handleFontSize();
+            } else {
+                document.addEventListener("WeixinJSBridgeReady", handleFontSize, false);
+            }
+            function handleFontSize() {
+                // 设置网页字体为默认大小
+                WeixinJSBridge.invoke('setFontSizeCallback', {
+                    'fontSize': 0
+                });
+                // 重写设置网页字体大小的事件
+                WeixinJSBridge.on('menu:setfont', function () {
+                    WeixinJSBridge.invoke('setFontSizeCallback', {
+                        'fontSize': 0
+                    });
+                });
+            }
+            function onBridgeReady() {
+                WeixinJSBridge.call('hideOptionMenu');
+            }
+            if (typeof WeixinJSBridge == "undefined") {
+                if (document.addEventListener) {
+                    document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+                } else if (document.attachEvent) {
+                    document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                    document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+                }
+            } else {
+                onBridgeReady();
+            }
+        })()
+        getRem(winWidth, 100)
+    </script>
+    <script src="vue/js/jquery-2.1.1.min.js"></script>
+    <script src="vue/js/vue.js"></script>
+    <script src="vue/js/vue-resource.js"></script>
+    <script src="vue/js/common.js"></script>
+    <script src="vue/js/userinfo.js?v=12"></script>
+    <script src="vue/js/layer.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+</head>
+<body>
+<div id="app">
+    <div data-v-2d63851b="" class="lookcard_wapper" style="display: none" v-show="type==='lookcard_wapper'">
+        <div data-v-2d63851b="" class="lookcard_scroll"
+             style="transition-property: transform; transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1); transition-duration: 0ms; transform: translate(0px, 0px) scale(1) translateZ(0px);">
+            <section data-v-2d63851b="" class="my-card-header-box" style="pointer-events: auto;">
+                <div data-v-2d63851b="" class="my-card-header-one">
+                    <div data-v-2d63851b="" class="my-card-header-one-logo">
+                        <img data-v-2d63851b="" :src="userinfo.head_photo" alt=""></div>
+                    <div data-v-2d63851b="" class="my-card-header-one-info">
+                        <div data-v-2d63851b=""><p data-v-2d63851b="" class="my-card-header-one-name"><span
+                                data-v-2d63851b="">{{userinfo.user_name}}</span> <span data-v-2d63851b="">{{userinfo.position}}</span>
+                        </p>
+                            <p data-v-2d63851b="" class="my-card-header-one-tel">{{userinfo.tel}}</p></div>
+                        <section data-v-2d63851b="" class="my-card-header-one-company">
+                            <img data-v-2d63851b=""
+                                 :src="userinfo.mch_logo"
+                                 alt="" onerror="this.src='./vue/img/defaultlogo.png'"></section>
+                    </div>
+                </div>
+            </section>
+            <section data-v-2d63851b="" class="card-part" style="pointer-events: auto;">
+                <div data-v-2d63851b="" class="card-small-title" style="margin-bottom: 0.1rem;color: #ffffff">个人信息</div>
+                <ul data-v-2d63851b="" class="card-info">
+                    <li data-v-2d63851b="" class="clearfix" v-if="userinfo.tel"><span data-v-2d63851b="">手机</span> <span data-v-2d63851b="">{{userinfo.tel}}</span>
+                    </li>
+                    <li data-v-2d63851b="" class="clearfix" v-if="userinfo.wechat_number"><span data-v-2d63851b="">微信</span> <span data-v-2d63851b="">{{userinfo.wechat_number}}</span>
+                    </li>
+                    <li data-v-2d63851b="" class="clearfix" v-if="userinfo.phone"><span data-v-2d63851b="">座机</span> <span data-v-2d63851b="">{{userinfo.phone}}</span>
+                    </li>
+                    <li data-v-2d63851b="" class="clearfix" v-if="userinfo.email"><span data-v-2d63851b="">邮箱</span> <span data-v-2d63851b="">{{userinfo.email}}</span>
+                    </li>
+                    <li data-v-2d63851b="" class="clearfix" v-if="userinfo.mch_address"><span data-v-2d63851b="">地区</span> <span data-v-2d63851b="">{{userinfo.mch_address}}</span>
+                    </li>
+                    <!--<li data-v-2d63851b="" class="clearfix"><span data-v-2d63851b="">地址</span> <span data-v-2d63851b="">哈哈哈哈</span>-->
+                    </li> </ul>
+            </section></div>
+        <div data-v-2d63851b="" class="loading" style="display: none;">
+            <div class="loading_circle">
+                <svg width="65px" height="65px" viewBox="0 0 66 66" xmlns="https://www.w3.org/2000/svg" class="spinner">
+                    <circle fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"
+                            class="path"></circle>
+                </svg>
+            </div>
+        </div>
+        <div data-v-2d63851b="" style="position: fixed;bottom: 0;" class="click-box"><p data-v-2d63851b="" style="display: none;">New</p> <span
+                data-v-2d63851b="" @click="type='card-box'">编辑我的名片</span></div>
+    </div>
+    <div data-v-3cd97972="" class="card-box" style="display: none" v-show="type==='card-box'">
+        <ul data-v-3cd97972="" class="card-list">
+            <li data-v-3cd97972="">
+                <div data-v-3cd97972="" class="line" @click="type='edit_info_wrap'">名片基本信息</div>
+            </li>
+            <li data-v-3cd97972="">
+                <div data-v-3cd97972="" class="line" @click="type='my-recommend-box'">推荐商品</div>
+            </li>
+            <li data-v-3cd97972="">
+                <div data-v-3cd97972="" class="line" @click="type='edit_usersummary'">个人简介/语音/标签/图片</div>
+            </li>
+        </ul>
+    </div>
+    <div data-v-c7a2517a="" class="edit_info_wrap"  style="display: none" v-show="type==='edit_info_wrap'">
+        <section data-v-c7a2517a="" class="edit_info_box">
+            <div data-v-c7a2517a="" class="edit_info_title">个人信息</div>
+            <div data-v-c7a2517a="" class="edit_info_item item_line">
+                <div data-v-c7a2517a="" @click="ChooseImage()">
+                    <span data-v-c7a2517a="" class="me_span1" style="width: 2rem;">头像</span>
+                    <img :src="variable.edit_head_photo" style="width: 0.5rem;height: 0.5rem;" >
+                </div>
+            </div>
+            <div data-v-c7a2517a="" class="edit_info_item item_line">
+                <div data-v-c7a2517a="">
+                    <span data-v-c7a2517a="" class="me_span1" style="width: 2rem;">微信手机号</span>
+                    <input value="{{userinfo.id}}" type="hidden" v-model="edit_userinfo.id"/>
+                    <input data-v-c7a2517a="" type="text" placeholder="请填写绑定手机号" value="{{userinfo.wxtel}}"
+                           maxlength="20" class="junge" style="width: 4.7rem;" disabled="disabled" >
+                </div>
+            </div>
+            <div data-v-c7a2517a="" class="edit_info_item item_line">
+                <div data-v-c7a2517a="">
+                    <span data-v-c7a2517a="" class="me_span1" style="width: 2rem;">名片手机号</span>
+                    <input data-v-c7a2517a="" type="text" placeholder="请填写展示手机号" v-model="edit_userinfo.tel"
+                           value="{{userinfo.tel}}" maxlength="20" class="junge" style="width: 4.7rem;">
+                </div>
+            </div>
+            <div data-v-c7a2517a="" class="edit_info_item item_line">
+                <div data-v-c7a2517a="">
+                    <span data-v-c7a2517a="" class="me_span1" style="width: 2rem;">微信</span>
+                    <input data-v-c7a2517a="" type="text" placeholder="请填写微信" v-model="edit_userinfo.wechat_number"
+                           value="{{userinfo.wechat_number}}" maxlength="20" class="junge" style="width: 4.7rem;">
+                </div>
+            </div>
+            <div data-v-c7a2517a="" class="edit_info_item item_line">
+                <div data-v-c7a2517a=""><span data-v-c7a2517a="" class="me_span1" style="width: 2rem;">座机</span>
+                    <input data-v-c7a2517a="" type="text" placeholder="请填写座机" v-model="edit_userinfo.phone"
+                           value="{{userinfo.phone}}" class="junge" style="width: 4.7rem;">
+                </div>
+            </div>
+            <div data-v-c7a2517a="" class="edit_info_item item_line">
+                <div data-v-c7a2517a=""><span data-v-c7a2517a="" class="me_span1" style="width: 2rem;">邮箱</span>
+                    <input data-v-c7a2517a="" maxlength="30" type="text" placeholder="请填写邮箱"
+                           v-model="edit_userinfo.email" value="{{userinfo.email}}" class="junge"
+                           style="width: 4.7rem;"></div>
+            </div>
+        </section>
+        <div data-v-c7a2517a="" class="save" @click="EditUserinfo()">保存</div>
+    </div>
+    <section data-v-55e08041="" class="my-recommend-box" style="display: none" v-show="type==='my-recommend-box'">
+        <div data-v-55e08041="" class="my-recommend-product" style="display: none" v-show="v_show.my_recommend_product">
+            <div data-v-55e08041="" class="my-recommend-title clearfix">
+                <span data-v-55e08041="">我推荐的商品</span>
+                <span data-v-55e08041="" class="recommend_mall" @click="type='goods'">去管理</span>
+            </div>
+            <ul data-v-55e08041="">
+                <li data-v-55e08041="" class="product-item" v-for="(k,v) in proposalgoods">
+                    <img data-v-55e08041=""
+                         :src="v.img_cover"
+                         alt="">
+                    <div data-v-55e08041="" class="product-item-right"><p data-v-55e08041="">{{v.goods_name}}</p>
+                        <p data-v-55e08041="">{{v.description}} </p></div>
+                </li>
+            </ul>
+        </div>
+        <div data-v-55e08041="" class="no-my-recommend" style="display: none" v-show="v_show.no_my_recommend">
+            <p data-v-55e08041="">我推荐的商品</p>
+            <p data-v-55e08041="">暂无商品，请去<span data-v-55e08041="" class="add-recommend" @click="type='goods'">添加</span>
+            </p>
+        </div>
+    </section>
+    <div style="display: none" v-show="type==='goods'" @touchstart="TouchStart($event)"
+         @touchmove="TouchMove($event)"
+         @touchend="TouchEnd($event)">
+        <div class="first_loading_mask" style="display: none;">
+            <div class="first_loading_box"><img
+                    src="vue/img/logo1.png"
+                    alt="" id="in_loading"> <img
+                    src="vue/img/logo1.png"
+                    alt="" style="display: none;">
+                <p>正在加载</p>
+                <p style="display: none;">加载失败,点击重新加载</p>
+            </div>
+        </div>
+        <div class="product-box"><p class="product-nav-content" style="margin-top: 0;"><span @click="SelectProdeuctNav(0,0,'')">{{content_show.product_nav_content}}</span>
+            <img
+                    src="vue/img/red/sanjiao.png"
+                    :class="{ 'roate_img': v_show.product_nav==true,'normal': v_show.product_nav==false}"
+            ></p>
+            <ul class="product-nav" style="display: none"  v-show="v_show.product_nav">
+                <li @click="SelectProdeuctNav(1,0,'已发布商品')">已发布商品</li>
+                <li @click="SelectProdeuctNav(1,2,'全部产品')">全部产品</li>
+                <li @click="SelectProdeuctNav(1,3,'我的推荐')">我的推荐</li>
+                <!--<li @click="SelectProdeuctNav(1,1,'已发布')">已发布</li>-->
+                <!--<li @click="SelectProdeuctNav(1,2,'已下架')">已下架</li>-->
+            </ul>
+            <div data-v-ecaca2b0="" id="outer-0slyh" class="_v-container product-scroller"
+                 style="width: 100%; height: 100%;">
+                <div data-v-ecaca2b0="" id="inner-ewbd9" class="_v-content"
+                     style="transform: translate3d(0px, 0px, 0px) scale(1);">
+                    <!--<div data-v-ecaca2b0="" class="pull-to-refresh-layer" style="height: 0.94rem">-->
+                        <!--<span data-v-ecaca2b0="" class="spinner-holder">-->
+                            <!--<span data-v-ecaca2b0="" class="text" style="color: rgb(170, 170, 170);">下拉刷新</span>-->
+                        <!--</span>-->
+                    <!--</div>-->
+                    <ul data-v-ecaca2b0="" class="product-list">
+                        <li data-v-ecaca2b0="" v-for="v in goods">
+                            <span data-v-ecaca2b0="" class="product-tips" id="goods_state_name_{{v.goods_id}}">
+                                {{v.state_name}}
+                            </span> <img
+                                data-v-ecaca2b0=""
+                                :src="v.img_cover"
+                                alt="">
+                            <div data-v-ecaca2b0="" class="product-intrduce">
+                                <p data-v-ecaca2b0="" style="margin-top: 0.1rem;margin-bottom: 0rem;">
+                                <span data-v-ecaca2b0="" class="product-name">
+                                    <input value="{{v.state}}" id="goods_state_{{v.goods_id}}" type="hidden"/>
+                                    {{v.goods_name}}
+                                </span>
+                                    <span data-v-ecaca2b0=""></span>
+                                </p>
+                                <p data-v-ecaca2b0="" style="margin-top: 0rem;margin-bottom: 0rem;">价格：{{v.price}}</p>
+                                <p data-v-ecaca2b0="" style="margin-top: 0rem;margin-bottom: 0.1rem;"><span data-v-ecaca2b0="">发布日期：{{v.sale_date}}</span> <span
+                                        data-v-ecaca2b0="" @click="ProposalAlert(v.goods_id,v.tui)"></span></p></div>
+                        </li>
+                    </ul>
+                    <div data-v-ecaca2b0="" class="loading-layer" style="display: none" v-show="v_show.no_data">
+                        <span data-v-ecaca2b0="" class="spinner-holder">
+                        </span>
+                        <div data-v-ecaca2b0="" class="no-data-text active" style="color: rgb(170, 170, 170);">没有更多数据
+                        </div>
+                    </div>
+                    <div data-v-ecaca2b0="" class="loading-layer" style="display: none" v-show="v_show.loading_data">
+                        <span data-v-ecaca2b0="" class="spinner-holder">
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="product-alert" style="display: none" v-show="v_show.product_alert">
+                <ul>
+                    <li @click="CheckProposalGoods()">{{content_show.product_alert_content}}</li>
+                    <li @click="v_show.product_alert=false">取消</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div data-v-1d007989=""  style="display: none"  v-show="type==='edit_usersummary'">
+        <section data-v-1d007989="" class="choosetype_wrap">
+            <div data-v-1d007989=""
+                 style="transition-property: transform; transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1); transition-duration: 0ms; transform: translate(0px, 0px) scale(1) translateZ(0px);">
+                <form data-v-1d007989="" style="pointer-events: auto;"><input data-v-1d007989="" type="file"
+                                                                              accept="image/*" style="display: none;">
+                    <input data-v-1d007989="" type="reset" style="display: none;"></form>
+                <div data-v-1d007989="" style="pointer-events: auto;">
+                    <section data-v-1d007989="" style="height: 100%">
+                        <div data-v-1d007989="" style="position: relative;">
+                            <section data-v-1d007989="" class="my-instrduce"><!---->
+                                <div data-v-1d007989="" class="my-instrduce-title"><span
+                                        data-v-1d007989="">我的个人简介</span><span data-v-1d007989=""></span> <!--<span data-v-1d007989="">{{variable.profile_length}}/2000</span>--></div>
+                                <div data-v-1d007989="" contenteditable="true" class="edit-div textarea11 junge" id="profile_div">{{edit_usersummary.profile}}</div>
+                            </section>
+                            <div data-v-1d007989="" class="my-help" @click="v_show.my_instruce_help_mask=true">不会写简介?戳这里＞</div>
+                        </div>
+                        <section data-v-1d007989="" class="my-vedio" style="">
+                            <div data-v-1d007989="" class="my-vedio-title">我的声音</div>
+                            <div v-if="!edit_usersummary.vioce_profile" data-v-1d007989="" class="no-audio-div" @click="open_mall_record()"><span data-v-1d007989="" class="audio-img"><img
+                                    src="vue/img/red/luyin.png" alt=""></span> <span data-v-1d007989="" class="no-audio-hint">录制我的声音</span></div>
+                            <div v-if="edit_usersummary.vioce_profile" data-v-1d007989="" class="has-audio-div"><span data-v-1d007989="" @click="bf()" class="has-audio-img" :class="{ card-record: is_voice }"></span>
+                                <div data-v-1d007989="" class="audio-control">
+                                    <div data-v-1d007989="" class="audio-control-content"><p data-v-1d007989="" style="margin-bottom: 0 !important;">
+                                        我的语音介绍</p>
+                                        <div class="Bars">
+                                            <!--<div :style="{width: progress+'%;'}">-->
+                                            <!--</div>-->
+                                            <div style="width:{{progress}}%">
+                                            </div>
+                                        </div>
+                                        <!--<input data-v-1d007989="" id="processRange" type="range" max="100" min="0" step="20" class="progress" style="{{'width: 100%; margin-bottom: 3px; background: -webkit-linear-gradient(top, rgb(59, 131, 255), rgb(59, 131, 255)) 0% 0% / '+progress+'% 100% no-repeat;'}}">-->
+
+                                        <span data-v-1d007989="" class="current-time">{{str_time}}</span> <span
+                                                data-v-1d007989="" class="total-time">{{end_time}}</span></div>
+                                    <div data-v-1d007989="" class="audio-mask"></div>
+                                </div>
+                                <div data-v-1d007989="" class="audio-choose"><span data-v-1d007989="" class="delete-record" @click="delete_record()">删除</span>
+                                    <div data-v-1d007989="" class="record-line"></div>
+                                    <span data-v-1d007989="" class="restart-record" @click="open_mall_record()">重录</span></div>
+                            </div>
+                            <audio :src="edit_usersummary.vioce_profile" controls="controls" preload id="music1" hidden></audio>
+                            <!--<audio data-v-1d007989="" :src="userinfo.vioce_profile" style=""></audio>-->
+                        </section>
+                        <section data-v-1d007989="" class="my-label-box">
+                            <div data-v-1d007989="" class="my-instrduce-title" style="margin-bottom: 0.08rem;"><span
+                                    data-v-1d007989="">我的标签</span> <span data-v-1d007989="">{{variable.effect_tag_count}}/10</span></div>
+                            <ul data-v-1d007989="" class="clearfix">
+                                <li data-v-1d007989="" class="my-label-item" v-for="(key,value) in edit_usersummary.effect_tag"><span data-v-1d007989="">{{key}}</span> <span
+                                        data-v-1d007989="">{{value}}</span>
+                                    <span data-v-1d007989="" class="close-label" @click="v_show.del_tag_show=true,variable.del_effect_tag=key"></span>
+                                </li>
+                                <li data-v-1d007989="" class="add-label" @click="v_show.add_tag_show=true,variable.add_effect_tag=''"></li>
+                            </ul>
+                            <div data-v-1d007989="" class="default_label_box"><p data-v-1d007989="">可参考标签</p>
+                                <ul data-v-1d007989="" class="clearfix">
+                                    <li data-v-1d007989="" v-for="(key,value) in content_show.effect_tag_default" @click="AddTag(key)" :class="{'actived-label':value==1}">{{key}}</li>
+                                </ul>
+                            </div>
+                        </section>
+                        <section data-v-1d007989="" class="my-photo-box">
+                            <div data-v-1d007989="" class="my-instrduce-title" style="margin-bottom: 0.08rem;"><span
+                                    data-v-1d007989="">我的照片</span> <span data-v-1d007989="">{{variable.wall_photo_count}}/9</span></div>
+                            <ul data-v-1d007989="" class="clearfix">
+                                <li data-v-1d007989="" draggable="true" drag_group="item" drag_block="item"
+                                    drag_key="0" v-for="(key,value) in variable.wall_photo_data">
+                                    <img data-v-1d007989="" :src="value" alt="">
+                                    <span data-v-1d007989="" class="close-photo" @click="DelWallPhoto(key)"></span>
+                                </li>
+                                <li data-v-1d007989="" @click="ChooseImageArr()"><img data-v-1d007989=""
+                                                            src="data:image/png;base64,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"
+                                                            alt=""></li>
+                            </ul>
+                        </section>
+                    </section>
+                </div>
+            </div>
+        </section>
+        <br><br><br>
+        <div data-v-1d007989="" class="my-instruce-help-mask" style="display: none" v-show="v_show.my_instruce_help_mask">
+            <div data-v-1d007989="" class="my-instruce-help-box">
+                <p data-v-1d007989="">
+                个人简介参考
+                <img data-v-1d007989=""
+                     src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAABABJREFUSA21lltoVEcYx7NrNoGtGFEEEYQEBUNDLvogCIK3ljY0KqipGmKRlqJ4AUFQFPVBRdCnIqW21Ir31qYtiDcsNRJfCj7lQppIkDwIIliqiTeyye76+x/nW2bXnO0a4sDZb+Y/3/x/M3PmnLNFRZT29vaFHR0dN/r6+iap/T6KvMUQS/6Rrq6uxalU6mo6nf6A9t2ysrJPKioqno4nvL+/f/LAwMBNPOdHIpEX0Wi0IQp0h4OKNX9wcPBWd3f3lPECy0ue8panWGJG4/H4WmZx3UB0zBsZGbnN1kwzbaxRHvKSp3mIFTAlMKsSEn4lYaUlEP+JxWLLqqqqHnlawVU8pw8PD2ulH9ogoJeLi4s/xzMRMRForLOz8yJxjWkk3istLV1aWVn50LRCYm9v74yhoaFWvOZYPl6/1dTUNBGHpWXAapA4Afg54nq1VUi8z2FYUl1d/eCNkv+XwzqTe3gbj1mWicfPQDcQk6ZFraKoDhKaiWdMl0EymbzT09NTblpYVI5yc6BnnGcGqvFZYAlAUyR+STyptivliUTiDvdttgm5UX3KQS+3Pnk4r5RpFrO22kRFZh1h278lbvH0h5gtra2tvedpRbwY5pDXijbDdPK+A7qNmDbNj2+t2Do1AMBW4jemEWXcxuqqTHP1NtcXyBrjxo4KVVLoigMH98Nr7ijVXZ72mMfiY1aZ5p7+he4/88fq6up2e7mjVgsCayTwQ4R95sKq/lMdtv+WOwx0v+XkiwWDZQJcpgdDDA8A1eQKKu8EliPw7wmbctx/ALo5R8vbfCcwp3wRW6sv2UTflW1/ztXAKW7z9Xz1gsFAP+KNdBmzuAwBBSeWSZjHS95wK4HrsP1vCX2c/JE8p58CuIKWgQLe5C57ZOLKUa4/Nqxusw3r18thOZ0tmJYqCViK6ytWdlptdmIjfT9xBYugL4G8hudYEw0tecEcpFWM/IUr5hySbOcXQC/6jsCbuA1n0SY4XV+gdRy4P/w8vx4KBrqWxPNcxW7ACNAmoC2+gdWBNwLXhDL51JuBX7IcP456j/m0NZN0gSsw0fYBbQyDylB9ynFbLUljL7CADWrklrdWTKK+TD9692wIw9V8j6/lDh6tzaQ/Y+W/+2eC+tes/JSfn7VioJuBnjQoia+ArigUKmPlaozGqi0vecpbbSsZMB3bEU+QGOwCyS+4GjD605ILjRqjsfLQGOd5wjECmwCMsJPW8UDhhwHPCfU8EvrGjqm4sfV4PfMMjjtWUYTndA8zOuJ1DrBV9RyWvz1tzFVO+wLu+Q0MysyEyezViks84Ym+s+MFla+85AnsiXGIb5haNde/bMNcr3Ncq/IWQ6wsY/4hTs0S3kPDZ7wGOeTg9D1125EAAAAASUVORK5CYII=" @click="v_show.my_instruce_help_mask=fasle">
+            </p>
+                <ul data-v-1d007989="">
+                    <li data-v-1d007989="" @click="edit_usersummary.profile=content_show.my_instruce_help_mask_content,v_show.my_instruce_help_mask=fasle">
+{{content_show.my_instruce_help_mask_content}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div data-v-1d007989="" class="loading" style="display: none;">
+            <div class="loading_circle">
+                <svg width="65px" height="65px" viewBox="0 0 66 66" xmlns="https://www.w3.org/2000/svg" class="spinner">
+                    <circle fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"
+                            class="path"></circle>
+                </svg>
+            </div>
+        </div>
+        <div data-v-11364152="" data-v-1d007989="" style="display: none;">
+            <div data-v-11364152="" class="alert_hint">
+                <div data-v-11364152=""><p data-v-11364152="">保存成功</p></div>
+                <div data-v-11364152=""></div>
+                <div data-v-11364152="">知道了</div>
+            </div>
+            <div data-v-11364152="" class="background"></div>
+        </div>
+        <div data-v-86d66f7a="" data-v-1d007989=""  style="display: none"  v-show="v_show.add_tag_show">
+            <div data-v-86d66f7a="" class="prompt_container"><p data-v-86d66f7a="" class="prompt_title">添加标签</p>
+                <p data-v-86d66f7a="" class="error" style="display: none;"></p>
+                <input data-v-86d66f7a="" type="text" v-model="variable.add_effect_tag" placeholder="输入自定义标签">
+                <div data-v-86d66f7a="" class="choose_type">
+                    <div data-v-86d66f7a="" @click="v_show.add_tag_show=false">取消</div>
+                    <div data-v-86d66f7a="" @click="AddTag('')">确定</div>
+                </div>
+            </div>
+            <div data-v-86d66f7a="" class="big_container"></div>
+        </div>
+        <div data-v-1d007989=""  style="display: none" v-show="v_show.del_tag_show">
+            <div class="confirm_container"><p class="confirm_title">删除标签</p>
+                <p class="content">确定执行此操作?</p>
+                <div class="choose_type">
+                    <div @click="v_show.del_tag_show=false">取消</div>
+                    <div @click="DelTag()">确定</div>
+                </div>
+            </div>
+            <div class="background"></div>
+        </div>
+        <div data-v-1d007989="" class="save" @click="EditUserSummary()">保存</div>
+        <div data-v-1d007989="" class="mall_mask" v-show="v_show.mall_mask" style="display: none">
+            <div data-v-1d007989="" class="record_box" style=""><span data-v-1d007989=""
+                                                                                    id="close_mall_record" @click="close_mall_record()"><img
+                    data-v-1d007989=""
+                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAABABJREFUSA21lltoVEcYx7NrNoGtGFEEEYQEBUNDLvogCIK3ljY0KqipGmKRlqJ4AUFQFPVBRdCnIqW21Ir31qYtiDcsNRJfCj7lQppIkDwIIliqiTeyye76+x/nW2bXnO0a4sDZb+Y/3/x/M3PmnLNFRZT29vaFHR0dN/r6+iap/T6KvMUQS/6Rrq6uxalU6mo6nf6A9t2ysrJPKioqno4nvL+/f/LAwMBNPOdHIpEX0Wi0IQp0h4OKNX9wcPBWd3f3lPECy0ue8panWGJG4/H4WmZx3UB0zBsZGbnN1kwzbaxRHvKSp3mIFTAlMKsSEn4lYaUlEP+JxWLLqqqqHnlawVU8pw8PD2ulH9ogoJeLi4s/xzMRMRForLOz8yJxjWkk3istLV1aWVn50LRCYm9v74yhoaFWvOZYPl6/1dTUNBGHpWXAapA4Afg54nq1VUi8z2FYUl1d/eCNkv+XwzqTe3gbj1mWicfPQDcQk6ZFraKoDhKaiWdMl0EymbzT09NTblpYVI5yc6BnnGcGqvFZYAlAUyR+STyptivliUTiDvdttgm5UX3KQS+3Pnk4r5RpFrO22kRFZh1h278lbvH0h5gtra2tvedpRbwY5pDXijbDdPK+A7qNmDbNj2+t2Do1AMBW4jemEWXcxuqqTHP1NtcXyBrjxo4KVVLoigMH98Nr7ijVXZ72mMfiY1aZ5p7+he4/88fq6up2e7mjVgsCayTwQ4R95sKq/lMdtv+WOwx0v+XkiwWDZQJcpgdDDA8A1eQKKu8EliPw7wmbctx/ALo5R8vbfCcwp3wRW6sv2UTflW1/ztXAKW7z9Xz1gsFAP+KNdBmzuAwBBSeWSZjHS95wK4HrsP1vCX2c/JE8p58CuIKWgQLe5C57ZOLKUa4/Nqxusw3r18thOZ0tmJYqCViK6ytWdlptdmIjfT9xBYugL4G8hudYEw0tecEcpFWM/IUr5hySbOcXQC/6jsCbuA1n0SY4XV+gdRy4P/w8vx4KBrqWxPNcxW7ACNAmoC2+gdWBNwLXhDL51JuBX7IcP456j/m0NZN0gSsw0fYBbQyDylB9ynFbLUljL7CADWrklrdWTKK+TD9692wIw9V8j6/lDh6tzaQ/Y+W/+2eC+tes/JSfn7VioJuBnjQoia+ArigUKmPlaozGqi0vecpbbSsZMB3bEU+QGOwCyS+4GjD605ILjRqjsfLQGOd5wjECmwCMsJPW8UDhhwHPCfU8EvrGjqm4sfV4PfMMjjtWUYTndA8zOuJ1DrBV9RyWvz1tzFVO+wLu+Q0MysyEyezViks84Ym+s+MFla+85AnsiXGIb5haNde/bMNcr3Ncq/IWQ6wsY/4hTs0S3kPDZ7wGOeTg9D1125EAAAAASUVORK5CYII="
+                    alt=""></span>
+                <p data-v-1d007989="" class="record_tuijian"><span data-v-1d007989="">录制语音推荐语</span> <span data-v-1d007989="" v-if="stopRecord==2"> {{Record_time}}"</span></p>
+                <div data-v-1d007989="" v-show="v_show.mall_mask && stopRecord!=3" >
+                    <div data-v-1d007989="" class="record_animation" >
+                        <svg data-v-1d007989=""  viewBox="0 0 66 66" xmlns="https://www.w3.org/2000/svg"
+                             class="record_svg">
+                            <defs data-v-1d007989="">
+                                <linearGradient data-v-1d007989="" x1="1" y1="0" x2="0" y2="0" id="gradient2">
+                                    <stop data-v-1d007989="" offset="10%" stop-color="#EFF5FF"></stop>
+                                    <stop data-v-1d007989="" offset="100%" stop-color="#3B83FF"></stop>
+                                </linearGradient>
+                            </defs>
+                            <circle data-v-1d007989="" stroke="white" stroke-width="1" cx="33" cy="33" r="27"
+                                    fill="white"></circle>
+                            <circle data-v-1d007989="" stroke="#3B83FF" stroke-width="1" cx="33" cy="33" r="24"
+                                    fill="none" :class="{record_time_animation:stopRecord==2}" style="stroke-dasharray: 0, 176;"></circle>
+                        </svg>
+                        <div data-v-1d007989="" class="circle_click no_touch_circle"></div>
+                        <div data-v-1d007989="" class="touch_text" @touchstart="sound_recording($event)" @touchend="clearLoop($event)" ><img   data-v-1d007989=""
+                                                                        src="data:image/png;base64,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"
+                                                                        alt=""></div>
+                    </div>
+                    <p data-v-1d007989="" class="mall-tishi">长按录制语音</p>
+                    <div data-v-1d007989="" class="record-hint" ><p data-v-1d007989="" style="padding-top: 0.24rem;">
+                        语音录制参考</p>
+                        <p data-v-1d007989="" style="padding-top: 0.12rem; padding-bottom: 0.32rem;">hi，你好，能认识你是缘分，欢
+                            迎来到我的电子名片；我叫xxx，是xxx公司的xxx（职位），希望为
+                            更多有需要xxx（你们公司的产品/服务）的人提供更好的产品服务，做不了生意可以交个朋友哦，请收下我的名片～</p></div>
+                </div>
+                <div data-v-1d007989="" class="record_ok" v-show="v_show.mall_mask && stopRecord==3" style="display: none">
+                    <div data-v-1d007989="" class="radio_info" @click="play_voice()"><img data-v-1d007989=""
+                                                                    :src="userinfo.head_photo?userinfo.head_photo:'vue/img/defaultlogo.png'"
+                                                                    alt="" id="record_logo">
+                        <div data-v-1d007989="" class="mall_radio_btn">
+                            <div data-v-1d007989="" class="mall_arrow_btn_img"></div>
+                            <div data-v-1d007989="" class="mall_radio_btn_img"></div>
+                        </div>
+                        <span data-v-1d007989="">{{Record_time}}"</span></div>
+                    <div data-v-1d007989="" class="mall_radio_check_box">
+                        <div data-v-1d007989="" class="restart_mall_record" @click="restart_mall_record()">重录</div>
+                        <div data-v-1d007989="" class="use_mall_record" @click="uploadVoice()">使用</div>
+                    </div>
+                </div>
+                <div data-v-1d007989="" class="record_fail" style="display: none;">
+                    <div data-v-1d007989=""><img data-v-1d007989=""
+                                                 src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAB7CAYAAABw3nC/AAAAAXNSR0IArs4c6QAABBlJREFUaAXtmr9rFEEUx+82d0XCIaRI4IQUwSJFYpHjAv4XiiAi2CoWolhYWVtZCWqhhY2FVdB/wEqLkOPSJKVVwIDp5KJR74ffN957mTe7F29m55TDXVh2d/Z9P+97b3dmNpstl7Bsb29fGwwGj7Eu0HHoUi6XD7He2djYeJ0QpN/vP80LJQ4xwHpG+wkOCD5PB5GWeWImsN4H8DgSlDDHxDSlwMG3iGDDYvDXiGDDmjh4+kpROC5Nz12RJMlk7mMMQic9j7PE6H3MMjXmLDHAzDJgzhIDzKzCMU1zJ3fFzMxMtPGYWZPteZijoo1uzJqsY9x70RwzyziG/WgXj1kGXK1WozlmlgHPzc1Fc8wsA15eXqanl0HesYIYxCKOAQ+BMcohDBscoxzCsMGSLUdJhGGDJVsOsDBssGTLARaGDZZsOcDCsMGSLQdYGDZYsuUAC+OvgOVn5HAsjMJx5sWT+kxHjTGWxnCcLgX+/pXG/6cUdjmlg8Qohc0QsJ0ttMY2Q8CAxbh4whCwnW06HE+sFLOzs7l7ns2QGq+urv6A615ofUk7ZBiEgIfAPK6V1gXL7RLgXGldsMrqCVdaF6yyeoKVVoFzdpLRYHsQ8XRL4f+gFG5WT9eFYynY6Lti+mrML4rkx3nsuFrV8/i1iwdPQl2tArtZRTXGjqtVYDfrGDwJcbUKzC+KJNpjx9UqcK/XU93Sg1tytQpcqVTUTe4DdrUK3O12gx3DhDKlwHjtok76OHYnCQXGyTxgpVVg1Cm4FK5WgfOUwtUq8MrKSrBjV6vAqHEX60+fi0axpCGtrVNgOoGZ2tt1liYFRmZ1dW0Xo/azNCkwxN7gLE0W2LsUAKc0WeDJOEa93sCBzwN4b6iBrFiKChQVKCrgV4HyOOGYIZLd3V3zRc7a2hp9WUOfp5y6jAS32+0FPI/dAPQS1nVQKkMSzYs7NKLhQfBFo9E4zMqQAgNSbrVa9/FY+gCCM1kiq+0LnosfNpvNR0ik/qWkwPv7+7MHBwevAL9sif+4C+hmvV6/vrS0JDOJmkEAfekLpaykIa3tQMBbW1u3EHDVPumzT1pisMaUYm9vr9bpdD6icZFPBG4/12q1c3g31DGOj46OrkSAkpfFIev3//PwMy4GOkzJmGUc46qeT0UENjDLgJGlHshJyZjFjr+nIgIb4Niw2PGnQE5KBseGxY4/pCICG+DYsAwYjM1ATpbMsEwHgf0yPlhsYdvIihy3DW7b+FCxia35npAe9fERYHIXAPW4Py5wGNclBrHomEtRwtD3HifuecIknLTE4AY1bFIjSnITJXmCtcpBp23hkP6wuY0SPLfjxDE3UgCyX8DxO247ZfuOYl0oxacc2xC4X8dMQuMIXZCzdA6/hO7TFoBvAdyhtqzlF62tt/77M31pAAAAAElFTkSuQmCC"
+                                                 alt="">
+                        <p data-v-1d007989="" style="margin-top: 0.6rem;">上传失败</p>
+                        <p data-v-1d007989="" style="margin-top: 0.06rem;">网络有问题,请稍后再试</p></div>
+                    <div data-v-1d007989="" class="mall_radio_restart_box">
+                        <div data-v-1d007989="" class="restart_mall_record">重录</div>
+                        <div data-v-1d007989="" class="use_mall_record">重试</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="first_loading_mask" style="z-index: 7; display: none;" v-show="loaded">
+        <div class="first_loading_box"><img
+                src="./vue/img/logo1.png"
+                alt="" > <img
+                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHIAAABvCAYAAAAwlZQ4AAAAAXNSR0IArs4c6QAAEb5JREFUeAHtXQuMnFUVPvd/zMy2LNvX9knp9t3u1mh4SSKVVqC8NGKhNZpgIMQSQR4qUURMNiCGmCBJER8JSYkYNRRIRKGlom0Ay6saVIp9v1tKoe+luzP//9/rd/7dmZ3pzmx35j+z++8sN7uZfx7/ueee795zzz3n3PsrquHS0roxkR51cuxANtFytXFdat+4b80xam3V1eJFVYtwHOhOXf7Wl2zXfsr43gCyowwp6iCl9ipSr2kyf9hx+0VvSzPkSBOMEz1L6c8oO9VggmBg2cJwUZY9nmznQsvP3D7t8befctrb7t1yz8KPpBizpAjFlE6LMQDRQKMN5L/GOIRWMOl2sKETlpu8JUgNXzVj+RvnSMmtdoF82tiGaDYFVZuWKsPAGAB6ilQieYFR9FTTip2pyggV3lWzQDZ9uK4RGm2y0QOsVgvlnXvHo9NK1C2wTx5clvswwkXNAuma1BRMTCNDlRpBQNW81QRshFm3TfzNhmFR66lZIDVZc5STiHX7TOAT2dasVId/3idAlpKAMfNg8pf6NjafK8dVFulPR2Uo1j02YuOa46xWs21T6GxGqfHZ95W+1iSQXZbgDIqpoXM6WHAURData9IhYNoOTYCVP2kwAGnAKBa5B08Ht9z3NTkibaOnK9seTqGQyhVJ//4+dBQovTlqrTUJJKaduTAiosqm+vfDzCHtt2lVtz1qZTUJJDyb86IKpj/uV5bFhs5+W9d/olpLCHwuwb8Z+2LZGJG0bdudM9NRea25ETnt4b82QChT4+qaKwAMqhXLj40Fn1X4puaAtM5qQERBjR0Ma0jmUWnzboXYFdxWc0DCnJ8JQycRf4sVjgDf09qxNhUgUuGbmgMSk04L8dwT92LBfaj1EWV5uyVYrUEg2WLlRXa8i1LobIr2bB+9/7AEp7Xl2VmCYLJ6sznsnYKjMvS+cIaBZGH+Am8zLV0qEjAVAfLodTSCUjTC85IuYWkk2d4+09JptXrclxt+on+gAs/bI2fsIE2D1FmwLkeJzrthZMaIWKwso4qBPHx9ooVsvRhesMt8Y2YYXzWQCuwBgpEc26FFH6zevn7MeZe9POqqjj53gDP+kKMT+ofKHXavyQiS1T4vPUQs1oqA/HBJcrYy/v2wmxcnLRrGKTFgKcRvYIZiJxIubAdf672/bm09RNR6RnjK+cH05a9PE513OXTl+xkkSm4th4/eflvWiDy0xL3FUcHDrq3GdECzn0KAOy6FNRUEI9bDs+1a0LrW2acUkrhEprKQrIIjANl96HC0L1tP1Nc+W62HbnAeSijzBFTpGAZQD+TwK9JqDnRoJbO4zie/s6G+EXlv5yKNMf/jaNcwdDDv7th258UnohHqvrtPQH5wg/NAnU33eaxGYwYgNwWDkdIafctYkcNB3aLpvHLdoImUPULOeAJdOMuhXEUcAVl+zwjkwcX2VzEX3t8BEGOIYdgOVquBoaMq4e3KNkzqFb2Dk7i4r8gWo/4rSbDXOfLQEhqvjHoEAKo4x2htiBmqfk+jT2Ip+DkhVyOJi7POLfW/XB0CF72PSOPcPcyhSaxS41wcAIm8l81qJclZJF0NRswQSVyCZNli1UGbtoPtkjItCeSJr9BoVPQNtk7jXli1wiARW1xn23vOz9fXwbxEEpdcT8ZmHiZ/gFIdkYPJWT75tSSQ7Za9IGnTBMw9sS+8ljVKHshhKXcCGj9RNLbZCeS2XTcvFPQu9AKkstR8nnviXpjFjCbP0fYWaV49P5ihbGeYuGtOkbj2KDkiIaCWwTAaORoEpXFIWRmxxXW2Q0Blz8WexuxbmdfOBa+446IokAcX0XB4/KcPBiC7tMbOUStJbHGdRQy+UOEkLnbNIZjsygSTs3zya1EgrXrMC6QmCM7x+XWKXjOQMHTYlBeezbF70RjZJK5QfeijlA52iwoBxIoCCU/GDOxjSsnZatJsd9MDjljkWuKqqunRdUjiMqJJXJ0Wq9mzc+Ie8fVuUSAxGlvcot90CzAuVxmMQ7ig35Pmx3KSk7G/slHWNcdLDyUWTM5vc3G4jJoXZ09OtgGsqbD0OJmxfHGL1VLWNFisrqjFGnqF5WKQWTnwaw8gASCcJGbOYDB04ANGxIPWT1hJe/MbJXEdGJXAiJQg1U2Dd4cpEtceXEEPTk8spZHo6FPiDiQbOXAdeohBPoRLYUOH5W1vIj/DYfxuIKJcsWvOz3gU+GLB5Hx2egCZJvdcsN4Yt3hjPtM8f7NazQT6+2Of8V/N/07qescrO95DZGyVlawTIcnBZPS3QyaVFNcezGDP1a7Ss5KWsqV9rCz8qJ4iHhs8QDJa7cVq7P7xz+nfciOqUlYuDdSCt25Hnk4jwLw4aiYdQmEUnOrYsfPWC45Xg98eQBqt5lk9Po1WdagGA3rXs2h/pZS4PyOkdgQ69DWtvOfGPUOiTudifG2//aK9LY9vvKLD+/hrUN5fwIjCKSGVanGLGodt27v4lauv8zqwRhUqdp1DmbTe2IMgUjqeTdm0WHJE8mjMBHTFuGf9l4X4H5Rk7lpzxROJ+rpbPEHhOohspNsyNxeMvQ3nk4sON0vS0GFVCKPkFAX2Ts63G7IFqwG9xmlmEAOpAC9kqz0Dc8Z6lzVWrjRNo7Ew1yZLAslLYMwv74910wdyFQ3Bi2+9cO0IyLaJxS5V4Atm9+RhlTK7C4DU5ExFtP1swbrIQQ0IiW1D9L5dqgGDkU4iFUwG341aULgWm+5Ee0bP/+zhAiCRmDMHPtYe82YUwYV+YlOdRXAUvvr7XuyEnGUnYEbKDUi4xNmvT5tbVasuABJq/FM8p0kWNvJUFaL3kjz2By0TmHldI0isOsYKfuYwYFBg7KCGuZLzI3OcDrjTyGaMiUmiHwlhPsPZsbIVaoAFF2WYbZAbkQeWEU4oRDBZMHbFahVTwnEr4++SbcLgota6dgGr1FkseLEC2cL6zTjKDl1+OSCdo8mJUIKiyVbsCMDSd++Y84j3OQzZciydbOTVgKTFGqppRQcBZuhkyQEJfGdg4V4n2GeoM9+UNqvWobyA5AiNMxWT2QhJILESwCihnY9dsypMcckBiY+b2QMjWXgyRscQzxiT5LE/aBlLz3GwhU2yLostVqJctnoOOizaxYPJPCWguiEPJAK886RXA9wpYOrkUlxCIEN5kxINJnP3g3/VN4ElHr2X7Nn9QQuDpFlSrTLP7OaztZMLUodA7ltCI/Fdk6RR1anC6cNkHfbzD+HynfVLsO2AZkharOya04FuC1yzIyvaEEg8iGIyRpBoMLlrRtjV8Hs6lq1sKL76x9omYn6ZIHkoCJ/sguXAfivdfc5rCKT29WxEQxyoWLHSCaTa1GnviJEdfIQcmm45algYmBbi3uJTJS3aCos1dxhhCCTcqy2sCiULT+5wzeUmY0nag4qWomabIweChbNGkKtUYESGNeALcfcRh9w8+sRZzhkXkpqO+wO7+rI+1mz/sDYs6wwmS54NwL0DO6TaHfK3ZSsakq9wMkMrzYHDXK750HRBBps5LCo4L8GacoIaMUxFg8lQ4Sjmfb8DGzqHcLl73XXh2bHSFivm2yPpQO/OF63j+86ss124j9BppPoNcn7oSLvaPvHPSPEYwsXPnBqPhMSxsoaO4uz63YePNxQcRujUGX+PF7i3Yk6TwjHU4XWXBnODe+h3Qc6uKhtRPvK7Dab7P2xNz6mFuO6HctPaBXjgZGoR8mAuhUocV3GVHEXCsgPKFZEPMdGGwWTygy0rl64sOBRA2FbtbnbmFVrhDqeb8CzTyksXd3gW2AakbX09danckV/FmLpj9ZXzLdd+BA7pC0NfZkT5szdHLNGqi2EX6g4JXD96bNGqn+a34fTAcv53FV+bVrI8j5pZseI1cnHr6ALdTivMWrocIzNK1yjJy51rrrpGOfYfoQXqfVhq4YPkSv564L7g+RYWVMHSg7kJzRJxti6By0/RFKknGnlI23Ic+hxG5SXivILgt19aNBXCWQEFEIJYjTokaPLaXCOYjIMvwmByPs2qAOm5xPtHxggmjBFmGi6Rn+qW3/jsNfZlfM9O2WMDXzA9Iktc8JVjkND2H1Cm52GEVQESfsXZ2OpgC87xoTigVcQlfdvTC86CVXIt1maCIq8OqS4gc8Hk/FqqAiSI4oD4/GqiX/PhUxiU4iGxxMjhyDdVEyXzTaO3tjgFTn/EmMwFk/N/JSzuTtLwO8yTW8xAzNDTfobSmCO35TMvcQ2P1kzbxabWiBaqBC99olHi1GVxIM0GciH4mZKnwtnMpUXvJ1Xlu7lKCckyQQsvNQZDgaHDRxrkgsn5PIsD2X6SeBF9jmRaZfhkBUM7quEUQAa4eIpLvoClrkOLNTBtju4OJufTFgcSZ4tPtW3sH5G0HcAlNF/RuSG/MeVet5pWCwKaLZ2GUS4fffk9z48oB46VOIxQHEgM/bnY4SCvq6pwXvnhV9/kEzCx3o3/BNm53cBsfXLhuqIOEXEgIRg8bZw7j0xhUkEG/0p+RJoONQV24ChJp7ZMq3tSCfNYSa3v+U3nJ9UAsllytcfRcKjpE8amHaUaUenn2H02GzukEKOtlEI/3Yfe7KfhNNT2C6VqFAXSvETDMRqnSR44HFqseKxC3Rh4NIQLevk87ihxL07C5s788vIr//KfUryKNiNt40njhmQPI0RsEx1yq2qBY0q4QKW2SGa3CbMXkgutVfav2uZBXJfUHaJAYq03A87tlKSPtWu+7eHtjyq0O168OokuMjPuHh0HYSvw+Ojjl69+vbc2iwIJC7m5y7ndW53lfYdlDP7EgbRcbxwCvpPivPRw8bAVr12/MNptbz2T0ETjkXCSi7vmMMUHCUObztSQcr8PyJkGj059LIHEXNIVQH7Jr7NubJ1ffMmR32axEQkQeaUwR9JiDbcdGDoMlb0nn2mRa418UxyYELdiY0scrxn9tP5lUgfX/2r+C0f7wqPciHydRmImFgsmM/PhszID2k0LAaZwCXdICdOshBwbM7xGtJDEHGoHA291oB9cvmj18+XQEwPSS4fBZNH9IxwKw47nLbQOsc215TTrDL+tJ3XX0c5thCzIgSlcMU7JMZTG86DeD0zwBvbpP31if8eqJ28+syo9nWcxILF2nJ1Ike0JLhIQumJ9faVn6J3TGa/0PQNnTlDH+bT/wX/ppvtMgOMUBqgo1wlwWP2RuuGp/T+75PmTUdgQa0T67/QAgPyxV9QTWDmLnOzc5RSonEj+nViXZtK0L/EOzVLfrZ1DnMRGJOTdUnq5mi/J8q45isL/UoW316P3bqolEFk2aFb0wsFkGDqzJIPJ0bkqQaGzxUWDsyXuGBQfy4zI4ziMkLB/RHDkVE167OSqQkisavz2kbAIkL5FU9HRG+Lut2SZ4GHjBo5y8SB1H+VdtZ+JqFakg861E9zR413YcMIzr08g+X1XvDktnzsRIOFjFQ0ml9+Mvt2RC4nVy4fE+sZB9X4lAiTWZniGVPWYFKPMITE4GNQFvJm6tkpkIA8imAzvxHTJYHLVRIx1B/qbeCSlavyWQTgykCNSNBH1IVO7jFoH6qfMY/AJkEXFbwc0TTyYXLSmaB+yaw4uvwDb7Av23kejGp+7I49IOLUnhAf4xKdNRTkJQ2JEH3WoKoTEitbYvx9GBhLswoSIf+l8RjXtqr+MjsSf2/I5jAwk1mYfDgqLlVuq4GPtJYGpfPHF547IQMKrswnby9OsumJd2GI97bSoWPNbJnORgUxeQttR5z9tt8ya+/vn2JMHf2RNLj1YlJGBhKoKsI78BROL66Bki9XzqQOuRPH9ldzuOJTIQHIjkMO0Eqb9nxyZRy2Ky4Vdc/ADH0wG8vsrxZmtkKAIkNi36DseLfPTtB5HqYQ7jCvkpyq3hfsribarK+njqlQQA6IiQHI7IKRDjk1fxElXT8CS9d0UcjMxKXHEgVXbQP6HCyRTe6Gr/P4jEo/MElTziXMwv+n9DYcbEd2IufPzWJpMwmcpvB+wKRRxUq7731k+a/G1qsI1L1KS6qgxg9OkEG+oal29goOThROKdmMK6Jfz7HrlpUpf/h8OMAuMnKbPuQAAAABJRU5ErkJggg=="
+                alt="" style="display: none;">
+            <p>正在加载</p>
+            <p style="display: none;">加载失败,点击重新加载</p></div>
+    </div>
+</div>
+<!--<script src="./vue/js/Mdate/iScroll.js"></script>-->
+<!--<script src="./vue/js/Mdate/Mdate.js"></script>-->
+</body>
+</html>

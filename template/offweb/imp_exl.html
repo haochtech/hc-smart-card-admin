@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="/public/static/h-ui-{$skin}/css/H-ui.min.css"/>
+    <script src="/public/js/jquery-2.1.1.js"></script>
+</head>
+
+<body>
+<article class="cl pd-20">
+    <div class="row cl">
+        <label class="form-label col-xs-12 col-sm-12">
+            重要提示：<br/>
+            <span class="c-red">导入数据区域请不要包含空行，否则导入失败</span><br>
+            <span class="c-red">部分员工导入失败后请只上传导入失败人员表格</span><br>
+            <a href="{$file}" style="color: rebeccapurple">模板下载</a>
+        </label>
+    </div>
+    <div class="row cl" style="margin-top: 20px;">
+        <label class="form-label col-xs-3 col-sm-2">
+            <span class="c-red">*</span>
+            选择文件：</label>
+        <div class="formControls col-xs-9 col-sm-8">
+            <form method="post" enctype="multipart/form-data" id="imp">
+            <input type="file" name="exl" id="exl">
+            </form>
+        </div>
+    </div>
+    <div class="row cl" style="margin-top: 30px;">
+        <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+            <input class="btn btn-primary radius" onclick="rsave()" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+        </div>
+    </div>
+</article>
+ <script type="text/javascript" src="/public/static/layer/2.4/layer.js"></script>
+<script type="text/javascript">
+    function rsave() {
+        var fi=new FormData($("#imp")[0]);
+        console.log(fi);
+        $.ajax({
+            data:fi,
+            type:"post",
+            processData:false,
+            contentType:false,
+            url:"{:url('offweb/imp_exl')}",
+            dataType:'json',
+            success : function(data) {
+                console.log(data);return false;
+                if(data['code']>0){
+                    layer.msg(data["message"],{icon:1,time:3000},function () {
+                        window.parent.location.href="{:url('offweb/structure')}";
+                    });
+                }else{
+                    flag = false;
+                    layer.msg(data["message"],{icon:5,time:3000});
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

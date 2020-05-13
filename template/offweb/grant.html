@@ -1,0 +1,21 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+             <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+                        <div class="tabBar clearfix">
+                            <span class="current">授权管理</span>
+                        </div>
+                    </div>
+        <div>
+            <div class="mt-20">
+                {if $grant_check_code.code==2}
+                <a href="{$url}">授权</a>
+                {else}
+                已授权
+                {/if}
+            </div>
+        </div>
+        {/block}
+        {block name="script"}
+        {/block}

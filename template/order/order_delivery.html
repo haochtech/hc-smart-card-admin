@@ -1,0 +1,136 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="/public/static/h-ui-{$skin}/css/H-ui.min.css" />
+</head>
+
+<body>
+<script src="/public/js/all.js"></script>
+<div>
+<div class="modal-body">
+    <!-- 主要内容 -->
+    <div>待发货(<span id="no_shipping_num">1</span>)</div>
+    <table class="table table-hover" style="margin-bottom:10px;">
+        <thead>
+        <tr>
+            <td>商品</td>
+            <td>数量</td>
+            <td>物流 | 单号</td>
+            <td>状态</td>
+        </tr>
+        </thead>
+        <colgroup>
+            <col style="width: 40%;">
+            <col style="width: 10%;">
+            <col style="width: 30%;">
+            <col style="width: 15%;">
+        </colgroup><colgroup>
+    </colgroup><tbody>
+    {volist name="data['order_goods_list']" id="go"}
+    <tr>
+                <td>
+                    <a href="javascript:;">{$go['goods_name']}</a>
+                </td>
+                <td>
+                    {$go['num']}
+                </td>
+                <td>
+                </td>
+                <td>{$go['shipping_status_name']}</td>
+            </tr>
+    {/volist}
+    </tbody>
+    </table>
+    <div>
+        <div style="margin-bottom:5px;">发货方式：</div>
+        <label class="checkbox-inline" style="float:left;margin-right:30px;"><input type="radio" name="shipping_type" id="shipping_type0" value="0"> 无需物流</label>
+        <label class="checkbox-inline" style="float:left;"><input type="radio" name="shipping_type" id="shipping_type1" value="1" checked="checked"> 需要物流</label>
+    </div>
+    <div style="clear:both;"></div>
+    <div class="form-group" id="express_input" style="">
+        <span class="select-box" style="width: auto;float: left">
+        <select class="select" id="divlogistics_express_company" style="width:200px;float:left;">
+            <option value="0">请选择物流公司</option>
+            {volist name="data['express_company_list']" id="ex"}
+            <option value="{$ex['co_id']}">{$ex['company_name']}</option>
+            {/volist}
+        </select>
+        </span>
+        <div class="col-xs-5" style="float: left;">
+            <input type="text" id="divlogistics_express_no" class="input-text radius" placeholder="请填写快递单号" style="height:32px;"></div>
+        </div>
+    <div id="receiver_info">{$data['order_info']['address']}{$data['order_info']['receiver_address']}&nbsp;{$data['order_info']['receiver_mobile']}</div>
+</div>
+    <div class="modal-footer">
+        <input type="hidden" id="delivery_order_id" value="{$data['order_info']['order_id']}">
+        <button class="btn btn-primary" onclick="orderDeliverySubmit()">提交更改</button>
+        <button class="btn" onclick="shut_down()">关闭</button>
+    </div>
+</div>
+<script type="text/javascript" src="/public/js/jquery-2.1.1.js"></script>
+<script type="text/javascript" src="/public/static/layer/2.4/layer.js"></script>
+<script>
+    $("#shipping_type1").focus(function(){
+        $("#express_input").show();
+    });
+    $("#shipping_type0").focus(function(){
+        $("#express_input").hide();
+    });
+    //关闭
+    function shut_down() {
+        parent.layer.closeAll();
+    }
+    //全选
+    function deliveryCheckAll(event){
+        var checked = event.checked;
+        $("input[type = 'checkbox'][value = 0]").prop("checked",checked);
+        var obj = $("input[type = 'checkbox'][value = 0][checked]");
+        $("#checkedbox").html(obj.length);
+    }
+    //单选
+    function deliveryCheck(event){
+        var obj = $("input[type = 'checkbox'][value = 0][checked]");
+        $("#checkedbox").html(obj.length);
+    }
+    //提交
+    function orderDeliverySubmit(){
+        var order_id = $("#delivery_order_id").val();
+        var express_name = $("#divlogistics_express_company").find("option:selected").text();
+        var shipping_type = $('input[name="shipping_type"]:checked ').val();
+        var express_company_id = $("#divlogistics_express_company").val();
+        var express_no = $("#divlogistics_express_no").val();
+        var re='{$re}';
+        if(shipping_type == 1){
+            if(express_company_id == "0"){
+                layer.msg("请选择物流公司", {icon: 5, time: 1000});
+                return false;
+            }
+            if(express_no == ""){
+                layer.msg("请填写快递单号", {icon: 5, time: 1000});
+                $("#divlogistics_express_no").focus();
+                return false;
+            }
+        }
+        $.ajax({
+            type : "post",
+            url : "{:url('order/doOrderDelivery')}",
+            data : {'order_id':order_id,"express_name":express_name,"shipping_type":shipping_type,"express_company_id":express_company_id,"express_no":express_no},
+            success : function(data) {
+                if (data['code'] > 0) {
+                    layer.msg(data["message"], {icon: 1, time: 1000},function () {
+                        if(re=='o') {
+                            layer_close('__CONF_SITE__admin/Order/OrderList');
+                        }else {
+                            layer_close('__CONF_SITE__admin/Order/OrderList2');
+                        }
+                    });
+                } else {
+                    layer.msg(data["message"], {icon: 5, time: 1000});
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

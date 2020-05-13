@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+    <title>联系我们</title>
+    <link rel="stylesheet" type="text/css" href="/public/static/league/base.css">
+    <link rel="stylesheet" type="text/css" href="/public/static/league/web.css">
+    <style></style>
+
+</head>
+<body style="background: #f0f0f0;">
+<div class="wrap contact">
+    <div class="index_tit" style="padding-top:1.5rem; padding-bottom:0.5rem;"><h1 class="tc">联系我们</h1> <span class="tc">如需更多帮助，请致电我们</span>
+    </div>
+    <div class="contact_list" id="contact">
+        <ul>
+            <li><em class="icon01 db"></em> <span class="con_tit db">手机/微信</span> <span
+                    class="con_memo db">{$list.phone}</span></li>
+            <li><em class="icon02 db"></em> <span class="con_tit db">QQ号码</span> <span
+                    class="con_memo db">{$list.qq}</span></li>
+            <li><em class="icon03 db"></em> <span class="con_tit db">公司地址</span> <span class="con_memo db">{$list.address}</span>
+            </li>
+        </ul>
+        <a class="contact_btn db" href="tel:{$list.phone}">立即咨询客服</a></div>
+</div>
+</body>
+</html>

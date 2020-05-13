@@ -1,0 +1,98 @@
+{extend name="base"/}
+{block name="main"}
+<style>
+    .btn:hover {
+        color: #ffffff !important;
+    }
+</style>
+<link rel="stylesheet" href="/public/static/bast/xenon-forms.css">
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+            <div class="tabBar clearfix">
+                <span onclick="load_page('__CONF_SITE__admin/activity/order_share')" {if $show==staff} class="current" {/if}>员工订单统计</span>
+                <span onclick="load_page('__CONF_SITE__admin/activity/send_share')" {if $show==send} class="current" {/if}>可发放佣金</span>
+                <span onclick="load_page('__CONF_SITE__admin/activity/disend_share')" {if $show==disend} class="current"
+                      {/if}>未入账佣金</span>
+            </div>
+        </div>
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+            <div class="text-c">
+                日期范围：
+                <input type="text" onfocus="WdatePicker()" value="{$star_time}" name="star_time" class="input-text Wdate" style="width:120px;">
+                -
+                <input type="text" onfocus="WdatePicker()" value="{$end_time}" name="end_time" class="input-text Wdate" style="width:120px;">
+                <input type="text" class="input-text" value="{$user_name}" style="width:250px" placeholder="输入员工姓名"  name="user_name">
+                <button onclick="send_submit()" class="btn btn-search radius"  name=""><i class="Hui-iconfont">&#xe665;</i> 搜索</button>
+            </div>
+        </div>
+        <div>
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-bg table-hover table-sort">
+                    <thead>
+                    <tr class="text-c">
+                        <th>头像</th>
+                        <th>姓名</th>
+                        <th>职务</th>
+                        <th>手机</th>
+                        {if $show=="staff"}
+                        <th>创建时间</th>
+                        {else}
+                        <th>成交额</th>
+                        {/if}
+                        <th>订单状态</th>
+                        {if $show=="staff"}
+                        <th>操作</th>
+                        {/if}
+                    </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    {foreach name="list" item="s"}
+                    <tr class="text-c va-m">
+                        <td><img src="{$s.head_photo}" alt="用户头像" width="50px" height="50px" class="round"></td>
+                        <td>{$s.user_name}</td>
+                        <td>{$s.position}</td>
+                        <td>{$s.wxtel}</td>
+                        {if $show=="staff"}
+                        <th>{:date('Y/m/d H:i:s',$s.create_time)}</th>
+                        {else}
+                        <td>￥ {$s.money}</td>
+                        {/if}
+                        <td>{$s.status}</td>
+                        {if $show=="staff"}
+                        <td>
+                            <a onclick="layer_open('订单详情','__CONF_SITE__admin/activity/show_order_dd&order_id={$s.order_id}&send={$s.money}',800,600)" style="text-decoration:none;margin-right:15px;"  class="show_layer">查看详情</a>
+                        </td>
+                        {/if}
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+                <input type="hidden" id="show" name="show" value="{$show}">
+            </div>
+            <div class="n_page_no" id="new_page">
+                {$page}
+            </div>
+        </div>
+        {/block}
+        {block name="script"}
+        <script type="text/javascript">
+            var url="";
+            function send_submit() {
+                var show="{$show}";
+                if(show==="disend"){
+                    url="{:url('activity/disend_share')}";
+                }else if(show==="send"){
+                    url="{:url('activity/send_share')}";
+                }else{
+                    url="{:url('activity/order_share')}";
+                }
+                load_page(url,'',{
+                    star_time:$("input[name=star_time]").val(),
+                    end_time:$("input[name=end_time]").val(),
+                    user_name:$("input[name=user_name]").val()
+                });
+            }
+        </script>
+        {/block}

@@ -1,0 +1,158 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="/public/static/h-ui-{$skin}/css/H-ui.min.css" />
+    <title></title>
+    <style>
+        .form-label {text-align:right !important;}
+        input[type="checkbox"] + label::before {
+            content: "\a0";  /*不换行空格*/
+            display: inline-block;
+            vertical-align: .2em;
+            height: 18px;
+            width: 18px;
+            font-size: 22px;
+            margin-right: .2em;
+            border-radius: .2em;
+            background-color: white;
+            border: 1px solid #93a1a1;
+            text-indent: .15em;
+            line-height: .65;  /*行高不加单位，子元素将继承数字乘以自身字体尺寸而非父元素行高*/
+        }
+        input[type="checkbox"]:checked + label::before {
+            content: "\2714";
+            background-color:#1aad19;
+            color: white;
+            height: 18px;
+            width: 18px;
+            font-size: 22px;
+        }
+        input[type="checkbox"] {
+            position: absolute;
+            clip: rect(0, 0, 0, 0);
+            cursor:pointer;
+        }
+    </style>
+    <script src="/public/js/all.js"></script>
+</head>
+<body>
+<article class="cl pd-20">
+    <form action="" method="post" class="form form-horizontal" id="">
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-2"><span class="c-red">*</span>活动名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" value="" placeholder="活动名称" class="input-text" id="activity_name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-2"><span class="c-red">*</span>满足金额：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" value="" placeholder="满足金额" class="input-text" id="satisfy_money">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-2"><span class="c-red">*</span>优惠金额：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" value="" class="input-text" placeholder="优惠金额" id="discount_money">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-2"><span class="c-red">*</span>开始时间：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" id="star_time" class="input-text Wdate" style="width:180px;">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-2"><span class="c-red">*</span>结束时间：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" id="end_time" class="input-text Wdate" style="width:180px;">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-2">是否启用：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                    <input type="checkbox" checked id="is_use">
+                    <label for="is_use">&nbsp;</label>
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" onclick="addSuppAjax()" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</article>
+<script type="text/javascript" src="/public/js/jquery-2.1.1.js"></script>
+<script type="text/javascript" src="/public/static/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/public/static/My97DatePicker/4.8/WdatePicker.js"></script>
+<script src="/public/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="/public/js/file_upload.js" type="text/javascript"></script>
+<script type="text/javascript">
+    //模块输入信息验证
+    function verify(activity_name,satisfy_money,discount_money,star_time,end_time) {
+        if (activity_name == '') {
+            layer.msg('请填写活动名称!',{icon:5,time:1000});
+            return false;
+        }
+        if (satisfy_money == '') {
+            layer.msg('请填写满足金额!',{icon:5,time:1000});
+            return false;
+        }
+        if (discount_money == '') {
+            layer.msg('请填写优惠金额!',{icon:5,time:1000});
+            return false;
+        }
+        if (star_time == '') {
+            layer.msg('请选择开始时间!',{icon:5,time:1000});
+            return false;
+        }
+        if (end_time == '') {
+            layer.msg('请选择结束时间!',{icon:5,time:1000});
+            return false;
+        }
+        return true;
+    }
+    var flag = false;//防止重复提交
+    //添加用户
+    function addSuppAjax() {
+        var activity_name = $("#activity_name").val();
+        var satisfy_money = $("#satisfy_money").val();
+        var discount_money = $("#discount_money").val();
+        var star_time = $("#star_time").val();
+        var end_time = $("#end_time").val();
+        if($("#is_use").prop("checked")){
+            var is_use = 1;
+        }else{
+            var is_use = 0;
+        }
+        if(verify(activity_name,satisfy_money,discount_money,star_time,end_time) && !flag){
+            flag = true;
+            $.ajax({
+                type : "post",
+                url : "{:url('Activity/addActivity')}",
+                data : {
+                    'activity_name':activity_name,
+                    'satisfy_money' : satisfy_money,
+                    'discount_money' : discount_money,
+                    'star_time' : star_time,
+                    'end_time' : end_time,
+                    'is_use':is_use,
+                },
+                success : function(data) {
+                    if(data['code']>0){
+                        layer.msg('添加成功!',{icon:1,time:1000},function () {
+                            layer_close();
+                        });
+                    }
+                    else{
+                        flag = false;
+                        layer.msg(data['message'],{icon:5,time:1000});
+                    }
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>

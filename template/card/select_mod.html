@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="/public/static/h-ui-{$skin}/css/style.css?v=1.3" />
+    <link media="all" href="/public/menu/css/{$skin}/article.css" type="text/css" rel="stylesheet">
+    <style>
+        td a:hover {background-color: rgb(13, 163, 249);color:#fff;border:1px solid rgb(13, 163, 249);}
+        .wxtables {
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 100px;
+            border: 1px solid rgb(231, 231, 235);
+        }
+    </style>
+    <script type="text/javascript" src="/public/js/all.js"></script>
+</head>
+<body style="background-color: rgb(255, 255, 255);">
+<div class="jbox-container" style="float: left; padding: 0px;">
+    <ul class="gagp-goodslist" style="padding: 10px; width: 880px;">
+        <table class="wxtables">
+            <colgroup>
+                <col width="5%"><col width="30%"><col width="35%"><col width="15%"><col width="10%">
+            </colgroup>
+            <thead>
+            <tr style="background-color: rgb(13, 163, 249);">
+                <td>ID</td>
+                <td>模板简图</td>
+                <td style="text-align: center;">操作</td>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="vo" key='k'}
+            <tr>
+                <td><p>{$k}</p></td>
+                <td><img src="{$vo}" width="80px" class="round"></td>
+                <td style="text-align: center;">
+                    {if $k==$now}
+                    <a style="border-radius: 2px;" class="btn selectedb" data-a="{$k}">已选择</a>
+                    {else}
+                    <a style="border-radius: 2px;" class="btn selecta" data-a="{$k}">选择</a>
+                    {/if}
+                </td>
+            </tr>
+            {/volist}
+            <tr>
+                <td><p>5</p></td>
+                <td><img src="{$now_img}" alt="自定义图" width="80px" class="round"><i><span>自定义名片背景图</span></i></td>
+                <td style="text-align: center;">
+                    {if !empty($now_img)}
+                    {if 5==$now}
+                    <a style="border-radius: 2px;" class="btn selectedb" data-a="5">已选择</a>
+                    {else}
+                    <a style="border-radius: 2px;" class="btn selecta" data-a="5">选择</a>
+                    {/if}
+                    {else}
+                    <span>未设置</span>
+                    {/if}
+                </td>
+            </tr>
+            <input type="hidden" id="nedd" value="{$now}">
+            <input type="hidden" id="ida" value="{$id}">
+            </tbody>
+        </table>
+    </ul>
+</div>
+<div class="sel_fun_opt" style="position: fixed; bottom: 0px;background: #fff;height: 60px;width:100%;border-top:1px solid #eeeeee;padding-top:20px;">
+    <div class="sure" onclick="">确定</div>
+    <div class="cancel" onclick="">返回</div>
+</div>
+<script type="text/javascript" src="/public/js/jquery-2.1.1.js"></script>
+<script type="text/javascript" src="/public/static/layer/2.4/layer.js"></script>
+<script type="text/javascript">
+    $(".btn").click(function(){
+        var dd=$(this).attr("data-a");
+        if ($(this).hasClass('selectedb')) {
+            $(this).removeClass('selectedb');
+            $(this).addClass('selecta');
+            $(this).html('选择');
+            $("#nedd").val('-1');
+        }else{
+            $(".btn").removeClass('selectedb');
+            $(".btn").html('选择');
+            $(this).addClass('selectedb');
+            $(this).html('已选择');
+            $("#nedd").val(dd);
+        }
+    });
+    $(".sure").click(function(){
+        $.ajax({
+            type : "post",
+            url : "__CONF_SITE__admin/card/select_mod",
+            data : {'cid':$("#nedd").val(),'id':$("#ida").val(),},
+            success : function(data) {
+                if(data['code']>0 ){
+                    layer.msg('选择成功',{icon:1,time:1000},function () {
+                        layer_close();
+                    });
+                }else{
+                    layer.msg('选择失败',{icon:5,time:1000},function () {
+                        layer_close();
+                    });
+                }
+            }
+        });
+    })
+    $(".cancel").click(function(){
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);
+    });
+</script>
+</body>
+</html>

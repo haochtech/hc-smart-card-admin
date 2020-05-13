@@ -1,0 +1,118 @@
+{include file="demo"}
+<style> input[type="checkbox"] + label::before { content: "\a0";  /*不换行空格*/ display: inline-block; vertical-align: .2em; height: 18px; width: 18px; font-size: 22px; margin-right: .2em; border-radius: .2em; background-color: white; border: 1px solid #93a1a1; text-indent: .15em; line-height: .65;  /*行高不加单位，子元素将继承数字乘以自身字体尺寸而非父元素行高*/ } input[type="checkbox"]:checked + label::before { content: "\2714"; background-color:#00a0e9; color: white; height: 18px; width: 18px; font-size: 22px; } input[type="checkbox"] { position: absolute; clip: rect(0, 0, 0, 0); cursor:pointer; }
+</style>
+<link rel="stylesheet" type="text/css" href="/public/css/defau.css">
+<body>
+<article class="cl pd-20">
+    <form action="" method="post" class="form form-horizontal" id="">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>职位名称：</label>
+            <div class="formControls col-xs-8 col-sm-8">
+                <input type="text" autocomplete="off" value="{$data['name']|default=''}" placeholder="职位名称" class="input-text" id="name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>薪资待遇：</label>
+            <div class="formControls col-xs-8 col-sm-8">
+                <input type="text" autocomplete="off" value="{$data['pay']|default=''}" class="input-text" id="pay">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>工作经验：</label>
+            <div class="formControls col-xs-8 col-sm-8">
+                <input type="text" autocomplete="off" value="{$data['exp']|default=''}" class="input-text" id="exp">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>学历要求：</label>
+            <div class="formControls col-xs-8 col-sm-8">
+                <input type="text" autocomplete="off" value="{$data['major']|default=''}" class="input-text" id="major">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>Hr电话：</label>
+            <div class="formControls col-xs-8 col-sm-8">
+                <input type="text" autocomplete="off" value="{$data['hr']|default=''}" class="input-text" id="hr">
+            </div>
+        </div>
+        {if $data['show']>=1}{else}
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">是否发布：</label>
+            <div class="formControls col-xs-8 col-sm-8">
+                <div class="formControls col-xs-8 col-sm-3">
+                    <input type="checkbox" id="show">
+                    <label for="show">&nbsp;</label>
+                </div>
+            </div>
+        </div>
+        {/if}
+        <div class="row cl" style="margin-bottom: 100px;">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>职位介绍：</label>
+            <div class="formControls col-xs-8 col-sm-8">
+                <script id="editor" type="text/plain" style="width: 100%; height: 500px;">{$data['content']|default=''}</script></div>
+        </div>
+        <div class="row cl wq_bottom_btn" style="left: 10px;">
+            <div>
+                <input class="btn btn-primary radius" onclick="edit_join()" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+        <input type="hidden" value="{$data['id']|default=''}" id="i_d">
+    </form>
+</article>
+<script src="/public/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="/public/js/file_upload.js" type="text/javascript"></script>
+<script src="/public/menu/js/jquery.artdialog.js"></script>
+<script src="/public/menu/js/iframetools.js"></script>
+<script type="text/javascript">
+    var ue =UM.getEditor('editor',{
+        imageUrl:"__CONF_SITE__app/Umupload/uploadFile", //处理图片上传的接口
+        imageFieldName:"upfile", //上传图片的表单的name
+        imagePath: ""
+    });
+    var flag = false;//防止重复提交
+    //添加用户
+    function edit_join() {
+        var name = $("#name").val();
+        var exp = $("#exp").val();
+        var pay = $("#pay").val();
+        var major = $("#major").val();
+        var hr = $("#hr").val();
+        var id = $("#i_d").val();
+        var content = UM.getEditor('editor').getContent();
+        var show = 1;
+        if ($("input[type=checkbox]").prop("checked")) {
+        } else {
+            show = 2;
+        }
+        if (!flag) {
+            flag = true;
+            $.ajax({
+                type: "post",
+                url: "{:url('admin/offweb/join_edit')}",
+                data: {
+                    'name': name,
+                    'exp': exp,
+                    'major': major,
+                    'pay': pay,
+                    'content': content,
+                    'id': id,
+                    'hr': hr,
+                    'show': show
+                },
+                success: function (data) {
+                    if (data['code'] > 0) {
+                        layer.msg('操作成功!', {icon: 1, time: 1000}, function () {
+                            layer_close("__CONF_SITE__admin/offweb/join_us");
+                        });
+                    }
+                    else {
+                        flag = false;
+                        layer.msg('操作失败', {icon: 5, time: 1000});
+                    }
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>

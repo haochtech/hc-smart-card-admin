@@ -1,0 +1,103 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="/public/static/h-ui-{$skin}/css/H-ui.min.css"/>
+    <script src="/public/js/jquery-2.1.1.js"></script>
+    <script src="/public/js/all.js"></script>
+
+</head>
+<body>
+<article class="cl pd-20">
+    <label class="row cl" style="margin-top: 20px;">
+        {if $is_new==0}
+        <label class="form-label col-xs-4 col-sm-2">
+            <span class="c-red">*</span>
+            原授权码：</label>
+        <div class="formControls col-xs-8 col-sm-8">
+            <input type="password" autocomplete="off" value=""  class="input-text" id="old_path" style="width:70%;">
+        </div>
+        {/if}
+        <label class="form-label col-xs-4 col-sm-2">
+            <span class="c-red">*</span>
+            新授权码：</label>
+        <div class="formControls col-xs-8 col-sm-8">
+            <input type="password" autocomplete="off" value=""  class="input-text" id="new1" style="width:70%;">
+        </div>
+        <label class="form-label col-xs-4 col-sm-2">
+            <span class="c-red">*</span>
+            确认授权码：</label>
+        <div class="formControls col-xs-8 col-sm-8">
+            <input type="password" autocomplete="off" value=""  class="input-text" id="new2" style="width:70%;">
+        </div>
+        <label class="form-label col-xs-10 col-sm-2">
+            <span class="c-red">注:</span>
+        <span>默认授权码为用户名,汉字请用*逐个替代。例:123中国aBc&emsp;替换为123**aBc</span>
+            </label>
+        <div class="formControls col-xs-1 col-sm-8">
+            &emsp;
+        </div>
+        <input type="hidden" value="{$uid}" id="uid">
+        <input type="hidden" value="{$is_new}" id="is_new">
+    </div>
+    <div class="row cl" style="margin-top: 30px;">
+        <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+            <input class="btn btn-primary radius" onclick="rsave()" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            <input class="btn btn-primary radius" onclick="reset()" type="button" value="&nbsp;&nbsp;初始化&nbsp;&nbsp;" style="width: 76px">
+        </div>
+    </div>
+</article>
+ <script type="text/javascript" src="/public/static/layer/2.4/layer.js"></script>
+<script type="text/javascript">
+    function rsave() {
+        var is_new = $('#is_new').val();
+        var uid = $('#uid').val();
+        var old_path = $('#old_path').val();
+        var new1 = $('#new1').val();
+        var new2 = $('#new2').val();
+        $.ajax({
+            type : "post",
+            url : "__CONF_SITE__admin/role/check_user_auth",
+            data:{
+                "is_new":is_new,
+                "uid":uid,
+                "old_path":old_path,
+                "new1":new1,
+                "new2":new2
+            },
+            success : function(data) {
+                if(data['code']>0 ){
+                    layer.msg('修改成功,请及时通知该成员',{icon:1,time:1000},function () {
+                        layer_close();
+                    });
+                }else{
+                    layer.msg(data["message"],{icon:5,time:1000});
+                }
+            }
+        });
+    }
+    function reset() {
+        var uid = $('#uid').val();
+        layer.confirm("将初始化为默认授权码",function () {
+            $.ajax({
+                type : "post",
+                url : "__CONF_SITE__admin/role/reset",
+                data:{
+                    "uid":uid
+                },
+                success : function(data) {
+                    if(data['code']>0 ){
+                        layer.msg('初始化成功,请及时通知该成员',{icon:1,time:1000},function () {
+                            layer_close();
+                        });
+                    }else{
+                        layer.msg(data["message"],{icon:5,time:1000});
+                    }
+                }
+            });
+        })
+
+    }
+</script>
+</body>
+</html>

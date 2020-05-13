@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="/public/static/h-ui-{$skin}/css/H-ui.min.css"/>
+    <script src="/public/js/jquery-2.1.1.js"></script>
+</head>
+
+<body>
+<article class="cl pd-20">
+    <div class="row cl" style="margin-top: 20px; text-align: center;">
+        {if $data['code']==0}
+        <img width="220" height="220" class="radius" src="{$data['code_path']?$data['code_path']:'/public/icon/loading.png'}">
+        <div style="font-size: 13px; text-align: center;color:#ccc;">注: 小程序发布后，方可生产二维码
+            {if $id_show==1}
+            id:{$id}
+            {/if}</div>
+        {else/}
+        <div>{$data['msg']}（注: 小程序发布后，方可生产二维码）</div>
+        {/if}
+    </div>
+
+</article>
+
+</body>
+</html>

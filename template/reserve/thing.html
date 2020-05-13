@@ -1,0 +1,94 @@
+{extend name="base"/}
+{block name="main"}
+<style>
+    .btn-search:hover ,.btn-search i:hover {color:#fff !important; text-decoration: none !important;}
+</style>
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+            <div class="tabBar clearfix">
+            <span class="current" >项目管理</span>
+            <span onclick="load_page('__CONF_SITE__admin/reserve/order')">订单列表</span>
+            <div class="n_tab_add" onclick="layer_open('新增项目','__CONF_SITE__admin/reserve/thing_add',900,700)" ><i class="Hui-iconfont">&#xe600;</i>新增项目</div>
+        </div>
+        </div>
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+            <div class="text-c">
+                <input type="text" class="input-text" value="{$soname}" style="width:250px" placeholder="输入分类"
+                       name="soname">
+                <button onclick="send_submit()" class="btn btn-search radius" name=""><i class="Hui-iconfont">&#xe665;</i>
+                    搜索项目
+                </button>
+            </div>
+        </div>
+        <table class="table table-border table-bordered table-bg">
+            <thead>
+            <tr class="text-c">
+                <th>图片</th>
+                <th>名称</th>
+                <th>关联表单</th>
+                <th>编辑时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="vo"}
+            <tr class="text-c">
+                <td><img src="{$vo.img}" style="width: 50px;height: 50px;"></td>
+                <td>{$vo.name}</td>
+                <td>{$vo.title}</td>
+                <td>
+                    {$vo.time|date='Y-m-d H:i:s',###}
+                </td>
+                <td>
+                    <a title="编辑" href="javascript:;" onclick="assort_edit('{$vo.id}')" class="ml-5"
+                       style="text-decoration:none">编辑</a>
+                    <a title="删除" href="javascript:;" onclick="assort_del('{$vo.id}')" class="ml-5"
+                       style="text-decoration:none">删除</a>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </article>
+    <div class="n_page_no">
+        {$list->render()}
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript" src="/public/js/jquery-2.1.1.js"></script>
+<script type="text/javascript">
+    function send_submit() {
+        load_page('__CONF_SITE__admin/reserve/thing', '', {
+            soname: $("input[name=soname]").val()
+        })
+    }
+    function assort_edit(id) {
+        layer_open('修改项目','__CONF_SITE__admin/reserve/thing_edit&id='+ id,900,700);
+    }
+    var lock = false;
+    function assort_del(id) {
+        if (!lock) {
+            layer.confirm('确认要删除吗？', function (index) {
+                lock = true;
+                $.ajax({
+                    type: "post",
+                    url: "__CONF_SITE__admin/reserve/thing_del",
+                    data: {'id': id},
+                    success: function (data) {
+                        if (data['code'] > 0) {
+                            layer.msg('删除成功', {icon: 1, time: 1000}, function () {
+                                parent_flash();
+                            });
+                        } else {
+                            layer.msg('删除失败', {icon: 5, time: 1000});
+                            lock = false;
+                        }
+                    }
+                });
+            });
+        }
+    }
+</script>
+{/block}

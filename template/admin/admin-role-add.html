@@ -1,0 +1,166 @@
+﻿{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+	<article class="cl pd-20">
+	<div class="n_tab_line">
+		<a href="{:url('admin/admin_role')}" class="n_tab_list02">角色列表</a>
+		<a href="{:url('admin/admin_role_add')}" class="n_tab_add02">添加角色</a>
+		<a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a>
+		<div class="cl"></div>
+	</div>
+	<form action="" method="post" class="form form-horizontal" id="form-admin-role-add">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>角色名称：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="" placeholder="" id="roleName" name="roleName" datatype="*4-16" nullmsg="用户账户不能为空">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">描述：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="" placeholder="" id="info">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">权限：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				{foreach item="vo" name="list"}
+				<dl class="permission-list">
+					<dt>
+						<label>
+							<input type="checkbox" value="{$vo['module_id']}" name="user-Character" id="{$vo['module_id']}">
+							{$vo['module_name']}
+						</label>
+					</dt>
+					<dd>
+						{foreach item="per" name="vo['child']"}
+						<dl class="cl permission-list2">
+							<dt>
+								<label class="">
+									<input type="checkbox" value="{$per['module_id']}" name="user-Character" id="{$per['module_id']}">
+									{$per['module_name']}</label>
+							</dt>
+							<dd>
+								{foreach item="three" name="per['child']"}
+								<label class="">
+									<input type="checkbox" value="{$three['module_id']}" name="user-Character" id="{$three['module_id']}">
+									{$three[module_name]}</label>
+								{/foreach}
+							</dd>
+						</dl>
+						{/foreach}
+					</dd>
+				</dl>
+				{/foreach}
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<button type="button" onclick="btn()" class="btn btn-success radius" id="admin-role-save" name="admin-role-save"><i class="icon-ok"></i> 确定</button>
+			</div>
+		</div>
+		<input type="hidden" name="sendCheckDatas" id="sendCheckDatas">
+	</form>
+	</article>
+</div>
+	{/block}
+	{block name="script"}
+<script type="text/javascript">
+$(function(){
+	$(".permission-list dt input:checkbox").click(function(){
+		$(this).closest("dl").find("dd input:checkbox").prop("checked",$(this).prop("checked"));
+	});
+	$(".permission-list2 dd input:checkbox").click(function(){
+		var l =$(this).parent().parent().find("input:checked").length;
+		var l2=$(this).parents(".permission-list").find(".permission-list2 dd").find("input:checked").length;
+		if($(this).prop("checked")){
+			$(this).closest("dl").find("dt input:checkbox").prop("checked",true);
+			$(this).parents(".permission-list").find("dt").first().find("input:checkbox").prop("checked",true);
+		}
+		else{
+			if(l==0){
+				$(this).closest("dl").find("dt input:checkbox").prop("checked",false);
+			}
+			if(l2==0){
+				$(this).parents(".permission-list").find("dt").first().find("input:checkbox").prop("checked",false);
+			}
+		}
+	});
+	
+	$("#form-admin-role-add").validate({
+		rules:{
+			roleName:{
+				required:true,
+			},
+		},
+		onkeyup:false,
+		focusCleanup:true,
+		success:"valid",
+		submitHandler:function(form){
+			$(form).ajaxSubmit();
+			var index = parent.layer.getFrameIndex(window.name);
+			parent.layer.close(index);
+		}
+	});
+});
+//提交按钮
+function btn() {
+    $("#admin-role-save").attr("disabled",true);
+    sendDatas();
+}
+// 点击提交时将选中的数据提交到后台
+function sendDatas() {
+    var SendDatas = "";
+    var checks = document.getElementsByName("user-Character");
+    for(var i=0;i<checks.length;i++){
+      if(checks[i].checked==true){
+          var strCheckID = $(checks[i]).attr("id");
+          if(strCheckID!='Edit01')
+          {
+              SendDatas += strCheckID + ",";
+          }
+	  }
+    }
+    SendDatas=SendDatas.substring(0,SendDatas.length-1);
+    // 并放到隐藏域中
+    $("#sendCheckDatas").val(SendDatas);
+    add_RoleManage();
+};
+//添加
+function add_RoleManage() {
+    var roleName = $("#roleName").val();
+    var array = $("#sendCheckDatas").val();
+    var info=$("#info").val();
+    if (roleName == '') {
+        layer.msg('请填写用户组名称!',{icon:5,time:1000});
+        $("#admin-role-save").removeAttr("disabled");
+        return;
+    }
+    if (array == '') {
+        layer.msg('请选择权限!',{icon:5,time:1000});
+        $("#admin-role-save").removeAttr("disabled");
+        return;
+    }
+    $.ajax({
+        url : "{:url('admin/addAdminGroup')}",
+        type : "post",
+        data : {
+            "array" : array,
+            "roleName" : roleName,
+			"info":info
+        },
+        success : function(res) {
+            if(res['code']>0){
+                layer.msg('添加成功!',{icon:1,time:1000},function () {
+					window.location.href="{:url('admin/admin_role')}";
+                });
+            }
+			else{
+                layer.msg(res['message'],{icon:5,time:1000});
+                $("#admin-role-save").removeAttr("disabled");
+			}
+        }
+    })
+}
+</script>
+{/block}

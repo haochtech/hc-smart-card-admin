@@ -1,0 +1,115 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div class="tabBar clearfix">
+            <span onclick="load_page('__CONF_SITE__admin/bargain/index')">活动列表</span>
+            <span onclick="load_page('__CONF_SITE__admin/bargain/activity_carousel')">轮播图</span>
+            <span class="current" onclick="load_page('__CONF_SITE__admin/bargain/activity_class')">砍价分类</span>
+            <span onclick="load_page('__CONF_SITE__admin/bargain/bargain_order')" >砍价订单</span>
+            <div onclick="layer_open('添加分类','__CONF_SITE__admin/bargain/add_activity_class',900,700)"  class="n_tab_add"><i class="Hui-iconfont">&#xe600;</i>添加分类</div>
+        </div>
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+            <div class="text-c"> 分类名称：
+                <input type="text" class="input-text" value="{$search_text}" style="width:250px" placeholder="输入分类名称"  name="search_text">
+                <button onclick="send_submit()" class="btn btn-search radius"  name=""><i class="Hui-iconfont">&#xe665;</i> 搜分类</button>
+            </div>
+        </div>
+        <table class="table table-border table-bordered table-hover table-bg">
+            <thead>
+            <!--<tr>-->
+                <!--<th scope="col" colspan="11">分类</th>-->
+            <!--</tr>-->
+            <tr class="text-c">
+                <th>排序</th>
+                <th>分类名称</th>
+                <th>分类图片</th>
+                <th>分类状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="vo"}
+            <tr class="text-c">
+                <td style="text-align: center;"><input type="text" class="sort input-common" onchange="activity_class_sort('{$vo.id}',this.value)" value="{$vo['sort']}" size="1"></td>
+                <td>{$vo['class_name']}</td>
+                <td><img src="{$vo['img_url']}"  style="width: 50px;height: 50px;"></td>
+                <td>
+                    {if $vo['is_use']==0}
+                    <a href="javascript:;" onclick="bargain_status('{$vo.id}','off')"><span class="label label-success radius">正常</span></a>
+                    {else}
+                    <a href="javascript:;" onclick="bargain_status('{$vo.id}','on')"><span class="label label-danger radius">禁用</span></a>
+                    {/if}
+                </td>
+                <td>
+                    <a href="javascript:;" onclick="layer_open('编辑','__CONF_SITE__admin/bargain/edit_activity_class&id={$vo.id}',800,700)" class="show_layer">编辑</a>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </article>
+    <div class="n_page_no">
+        {$page}
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    function send_submit() {
+        load_page("{:url('bargain/activity_class')}",'',{search_text:$("input[name=search_text]").val()});
+    }
+    /*活动-状态*/
+    function bargain_status(id,key){
+        var msg='';
+        if(key=='off'){
+            msg='确定要禁用吗？';
+        }else {
+            msg='确定要启用吗？';
+        }
+        layer.confirm(msg,function(){
+            $.ajax({
+                type : "post",
+                url : "{:url('bargain/activity_class_status')}",
+                data : {
+                    "id" : id,
+                    "key":key
+                },
+                success : function(data) {
+                    if (data['code'] > 0) {
+                        layer.msg('操作成功',{icon:1,time:1000},function () {
+                            parent_flash("__CONF_SITE__admin/bargain/activity_class");
+                        });
+                    }else{
+                        layer.msg(data['message'], {icon: 2, time: 1000});
+                    }
+                }
+            })
+        });
+    }
+    /*活动-编辑*/
+    function activity_class_edit(title,url,w,h){
+        layer_show(title,url,w,h);
+    }
+    function activity_class_sort(id,val) {
+        $.ajax({
+            type : "post",
+            url : "{:url('bargain/activity_class_sort')}",
+            data : {
+                "id" : id,
+                "val":val
+            },
+            success : function(data) {
+                if (data['code'] > 0) {
+                    layer.msg('排序成功',{icon:1,time:1000},function () {
+                        parent_flash();
+                    });
+                }else{
+                    layer.msg(data['message'], {icon: 2, time: 1000});
+                }
+            }
+        })
+    }
+</script>
+{/block}

@@ -1,0 +1,58 @@
+<html>
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <link rel="stylesheet" type="text/css" href="/public/static/h-ui-{$skin}/css/style.css" />
+    <link media="all" href="/public/menu/css/select1.css" type="text/css" rel="stylesheet">
+    <script type="text/javascript" src="/public/js/jquery-2.1.1.js"></script>
+    <script type="text/javascript" src="/public/static/layer/2.4/layer.js"></script>
+
+</head>
+<body><div style="margin-left: 90px;" id="3D">
+    <ul class="hPage-tpls clearfix mgt40 mgb20">
+        <li class="fl">
+            <div class="showActions myshow btn-tpllist" style="height: 325px;">
+                <div class="hPage-tpls-img">
+                    <img src="/public/images/1517197255.png" alt="">
+                </div>
+                <div class="hPage-tpls-overlay" style="display: none;">
+                    <div class="hPage-tpls-acitons">
+                        <a href="javascript:;" data-url="/yb_mingpian/pages/caregory/index" data-name="商品列表" data-key="caregory"  class="btn btn-small" style="margin-right: 40px;">选择</a>
+                    </div>
+                </div>
+            </div>
+        </li>
+        <li class="fl">
+            <div class="showActions myshow btn-tpllist" style="height: 325px;">
+                <div class="hPage-tpls-img">
+                    <img src="/public/images/1517197247.png" alt="">
+                </div>
+                <div class="hPage-tpls-overlay" style="display: none;">
+                    <div class="hPage-tpls-acitons">
+                        <a href="javascript:;" data-url="/yb_mingpian/pages/product/index" data-name="商品列表" data-key="product"  class="btn btn-small" style="margin-right: 40px;">选择</a>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+<script>
+    $(function(){
+        $(".hPage-tpls-overlay").hide();
+        $(".showActions").mouseover(function(){
+            $(this).find(".hPage-tpls-overlay").show();
+        });
+        $(".showActions").mouseout(function(){
+            $(this).find(".hPage-tpls-overlay").hide();
+        });
+        $('.btn-tpllist').click(function(){
+            var item={};
+            item["imgurl"] = $(this).find(".btn-small").attr('data-url');
+            item['name'] = $(this).find(".btn-small").attr('data-name');
+            item['key'] =  $(this).find('.btn-small').attr('data-key');
+            //console.log(item);
+            parent.get_not_attr('{$this_id}',item);
+            parent.layer.closeAll();
+        });
+    })
+</script></body>
+</html>

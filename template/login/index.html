@@ -1,0 +1,152 @@
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>{$info.site_name}</title>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1,IE=edge"/>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="robots" content="noindex,nofollow">
+    <script src="/public/js/jquery-2.1.1.js"></script>
+    <script src="/public/static/layer/2.4/layer.js"></script>
+    <style>
+        body,div,input,img,h1{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .wrap{
+            display: flex;
+            align-items: center;
+            width: 100%;
+            flex-direction: column;
+            margin-top: 180px;
+        }
+        h1{
+            color: #2C3E50;
+            font-weight: 300;
+            line-height: 1.1;
+            font-size: 36px;
+        }
+        .lines{
+            width: 360px;
+            height: 36px;
+            border: 1px solid #dce4ec;
+            margin-top: 18px;
+            font-size: 14px;
+            color: #2C3E50;
+            background-color: #fff;
+            background-image: none;
+            border-radius: 0;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+        }
+        input{
+            padding: 0 10px;
+            background-color: #fff;
+            background-image: none;
+        }
+        button{
+            margin-top: 18px;
+            width: 360px;
+            height: 36px;
+            color: #fff;
+            background-color: #2C3E50;
+            border-color: #2C3E50;
+            margin-bottom: 0;
+            font-weight: normal;
+            -ms-touch-action: manipulation;
+            touch-action: manipulation;
+            cursor: pointer;
+            background-image: none;
+            border: 1px solid transparent;
+            white-space: nowrap;
+            font-size: 14px;
+            border-radius: 0;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none
+        }
+        img{
+            width: 150px;
+            height: 100%;
+            overflow: hidden;
+        }
+        .captcha{
+            width: 210px;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<form action="" method="post" id="form1" onsubmit="return false;">
+<div class="wrap">
+    <h1>
+        {$info.site_name}管理后台
+    </h1>
+    <input type="text" id="input_username" class="lines" name="username"
+           placeholder="用户名或邮箱" title="用户名或邮箱"
+           value="" data-rule-required="true" data-msg-required="">
+    <input type="password" id="input_password" class="lines" name="password"
+           placeholder="密码" title="密码" data-rule-required="true"
+           data-msg-required="">
+    <div style="display: flex; justify-content: space-between" class="lines">
+        <input type="text" id="input_captcha" name="captcha" placeholder="验证码" class="captcha" style="border: none;">
+        <img src="{$site_root}web/index.php?c=utility&a=code&" id="code" onclick="this.src='{$site_root}web/index.php?c=utility&a=code&r='+Math.random();" title="换一张"/>
+    </div>
+    <button type="submit" id="btn" data-loadingmsg="正在加载...">登录</button>
+</div>
+</form>
+<script>
+$('#form1').on('submit',function () {
+    return false;
+});
+var flag = false;
+$('#btn').on('click',function () {
+    var uname = $("#input_username").val().trim();
+    var pass = $("#input_password").val().trim();
+    var code = $("#input_captcha").val().trim();
+    if(uname.length * pass.length * code.length == 0)
+    {
+        layer.msg('请完善信息', {icon: 2, time: 1000});
+        return;
+    }
+    if(flag)
+    {
+        return;
+    }
+    flag = true;
+    $.ajax({
+        url: "{:url('login/login')}",
+        type: 'POST',
+        cache: false,
+        data: new FormData($('#form1')[0]),
+        processData: false,
+        contentType: false,
+        dataType: 'json',
+        success:function (res) {
+            console.log(res);
+            if(res.code == 0)
+            {
+                layer.msg(res.message, {icon: 2, time: 1000});
+            }
+            else if(res.code == 1)
+            {
+                location.reload();
+            }
+            $('#code').click();
+            flag = false;
+        },
+        error:function (err) {
+            console.log(err);
+            flag = false;
+        }
+    }).done(function(res) {
+    }).fail(function(res) {
+    });
+});
+</script>
+</body>
+</html>

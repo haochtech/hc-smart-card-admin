@@ -1,0 +1,198 @@
+{extend name="base"/}
+{block name="main"}
+<style type="text/css">
+     .layui-layer-iframe  {
+        position: fixed;
+
+    }
+</style>
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+            <div class="tabBar clearfix">
+                <span class="current">内容列表</span>
+                <span onclick="load_page('__CONF_SITE__admin/paycontent/class_list')">内容分类</span>
+                <span onclick="load_page('__CONF_SITE__admin/paycontent/groups')">内容合集</span>
+                <span onclick="load_page('__CONF_SITE__admin/paycontent/prices')">资费管理</span>
+                <span onclick="load_page('__CONF_SITE__admin/paycontent/orders')">订单列表</span>
+                <div onclick="layer_open('添加内容','__CONF_SITE__admin/paycontent/add_paycontent',900,700)"  class="n_tab_add"><i class="Hui-iconfont">&#xe600;</i>添加内容</div>
+            </div>
+        </div>
+        <div>
+            <div class="cl pd-5 bg-1 bk-gray mt-20">
+                <div class="text-c">
+                    <input type="text" name="search_text" value="{$search_text}" placeholder=" 内容名称" style="width:250px" class="input-text">
+                    <span class="select-box" style="width: auto;">
+                      <select class="select" size="1" name="class_id" id="class_id">
+                          <option value="0">全部分类</option>
+                          {volist name="class_list" id="cl"}
+                            <option {if $cl['id']==$class_id} selected {/if} value="{$cl['id']}">{$cl['name']}</option>
+                          {/volist}
+                      </select>
+                    </span>
+                    <span class="select-box" style="width: auto;">
+                      <select class="select" size="1" name="group_id" id="group_id">
+                          <option value="0">全部合集</option>
+                          {volist name="group_list" id="cl"}
+                            <option {if $cl['id']==$group_id} selected {/if} value="{$cl['id']}">{$cl['name']}</option>
+                          {/volist}
+                      </select>
+                    </span>
+                    <button class="btn btn-search radius" onclick="send_submit()"><i class="Hui-iconfont">&#xe665;</i> 搜内容</button>
+                </div>
+            </div>
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-bg table-hover table-sort">
+                    <colgroup>
+                        <col width="5%">
+                        <col>
+                        <col width="35%">
+                        <col>
+                        <col>
+                        <col>
+                        <col>
+                    </colgroup>
+                    <thead>
+                    <tr class="text-c">
+                        <th>排序</th>
+                        <th>封面图</th>
+                        <th>内容标题</th>
+                        <th>所属分类</th>
+                        <th>所属合集</th>
+                        <th>是否免费</th>
+                        <th>费用</th>
+                        <th>类型</th>
+                        <th>显示/隐藏</th>
+                        <th>发布时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    {volist name="list" id="r" key='k'}
+                    <tr class="text-c va-m">
+                        <td style="text-align: center;">
+                            <input style="width: 60px;" type="number" class="sort input-common" data-id="{$r['id']}" name="sort" value="{$r['sort']}" size="1" >
+                        </td>
+                        <td><img width="60" height="60" class="paycontent-thumb" onerror="this.src='/public/goods/img/default_goods_image_240.gif'" src="{$r['image']}"></td>
+                        <td>{$r['title']|subtext=10}</td>
+                        <td>{$r['class_name']}</td>
+                        <td>{$r['group_name']}</td>
+                        <td>{if $r['free']==0 && $r['price']==0}免费{else}收费{/if}</td>
+                        <td>
+                            {if $r['free'] == 0 && $r['price']>0}
+                                单独收费
+                            {/if}
+                            {if $r['free']==1}套餐收费{/if}
+                            {if $r['free']==2}时长收费{/if}
+                        </td>
+                        <td>{$types[$r['paycontent_type']]}</td>
+                        <td>
+                            {if $r['status']==1}
+                            <a class="label label-success radius" onclick="paycontent_type(this,'{$r.id}')">显示中</a>
+                            {/if}
+                            {if $r['status']==2}
+                            <a class="label label-error radius" onclick="paycontent_type(this,'{$r.id}')">隐藏中</a>
+                            {/if}
+                        </td>
+                        <td>{$r['create_time']|date="Y-m-d H:i:s",###}</td>
+                        <td>
+                            <a style="text-decoration:none;" title="编辑"  class="show_layer" href="javascript:;" onclick="layer_open('编辑','{:url('admin/paycontent/add_paycontent',['id'=>$r['id']])}',900,700)">编辑</a>
+                            <a style="text-decoration:none;" title="删除"  class="caozuo" href="javascript:void(0);" onclick="paycontent_del(this,'{$r.id}')"  type="button" value="删除">删除</a>
+                            <a style="text-decoration:none;" title="复制" href="javascript:void(0);" onclick="copy_now('wxpath{$k}')" id="wxpath{$k}" data-clipboard-text="yb_mingpian/pages/find_info/index?id={$r['id']}">复制链接</a>
+                        </td>
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+                <div class="n_page_no">
+                    {$page}
+                </div>
+            </div>
+        </div>
+        {/block}
+        {block name="script"}
+        <script type="text/javascript">
+            function send_submit() {
+                load_page('__CONF_SITE__admin/paycontent/index', '', {
+                    search_text: $("input[name=search_text]").val(),
+                    group_id: $("#group_id").val(),
+                    class_id: $("#class_id").val()
+                })
+            }
+            /*内容-删除*/
+            function paycontent_del(obj,id){
+                layer.confirm('确认要删除吗？',function(index){
+                    //后台处理
+                    $.ajax({
+                        type : "post",
+                        url : "{:url('admin/paycontent/del_paycontent')}",
+                        data : {
+                            "id" : id.toString(),
+                        },
+                        success : function(data) {
+                            if (data['code'] >0) {
+                                $(obj).parents("tr").remove();
+                                layer.msg('删除成功!',{icon:1,time:1000});
+                            }
+                            else
+                            {
+                                layer.msg('删除失败', {icon: 2, time: 1000});
+                            }
+                        }
+                    })
+                });
+            }
+            function paycontent_type(obj,id) {
+                $.ajax({
+                    type : "post",
+                    url : "__CONF_SITE__admin/paycontent/paycontent_status",
+                    data : {'id':id},
+                    success : function(data) {
+                        console.log(data);
+                        if(data['code']>0 ){
+                            layer.msg('操作成功',{icon:1,time:1000},function () {
+                                parent_flash();
+                            });
+                        }else{
+                            layer.msg('操作失败',{icon:5,time:1000});
+                        }
+                    }
+                });
+            }
+            function copy_now(id) {
+                id='#'+id;
+                var check=$(id).attr('data-clipboard-text');
+                if(check.length<=0){
+                    layer.msg("链接信息有误", {icon: 2, time: 1000});
+                    return false;
+                }
+                var clipboard=new Clipboard(id);
+                clipboard.on('success',function(e){
+                    layer.msg("链接复制成功", {icon: 1, time: 500});
+                });
+                clipboard.on('error', function(e) {
+                    layer.msg("链接信息有误", {icon: 2, time: 1000});
+                });
+            }
+            $("input[name=sort]").change(function(){
+                var id = $(this).data("id");
+                var sort = $(this).val().trim();
+                $.ajax({
+                    type:"post",
+                    url:"{:url('paycontent/paycontent_sort')}",
+                    data:{'id':id,'sort':sort},
+                    dataType:"json",
+                    success: function (data) {
+                        if(data.code>0){
+                            layer.msg('操作成功', {icon: 1, time: 1000},function () {
+                                parent_flash();
+                            });
+                        }else{
+                            layer.msg('操作失败', {icon: 2, time: 1000});
+                        }
+                    }
+                });
+            });
+        </script>
+        {/block}

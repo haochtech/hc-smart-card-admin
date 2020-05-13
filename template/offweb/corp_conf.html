@@ -1,0 +1,261 @@
+{extend name="base"/}
+{block name="main"}
+<style>.form_message {display: block; height: 38px; line-height: 38px; text-align: left;color:#999;}
+.formControls .btn {float:left;margin-right:15px;}
+.clear{clear:both;}
+/*.form-label {font-weight: bold;}*/
+.input-text {padding-left:10px !important;}
+</style>
+<script src="/public/lunbo/swiper.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/public/css/defau.css">
+<div class="Hui-article">
+<article class="cl pd-20" id="main">
+	<h3 id="dont_touch_this">企业号</h3>
+	<div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+		<div class="tabBar clearfix">
+			<span class="current">企业信息</span>
+		</div>
+	</div>
+	<div class="form form-horizontal">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">AI雷达助手路径：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" value="{$aipath}" class="input-text" disabled style="margin-right: 10px;"><a style="text-decoration:none;color:#0066cc;" title="复制" href="javascript:void(0);" onclick="copy_now('aipath')" id="aipath" data-clipboard-text="{$aipath}">复制链接</a>
+			</div>
+		</div><div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">Boss雷达路径：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" value="{$bosspath}" class="input-text" disabled style="margin-right: 10px;"><a style="text-decoration:none;color:#0066cc;" title="复制" href="javascript:void(0);" onclick="copy_now('bosspath')" id="bosspath" data-clipboard-text="{$bosspath}">复制链接</a>
+			</div>
+		</div><div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>企业ID：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" value="{$info.corp_id}" class="input-text" id="corp_id" onblur="check_secret(this.value,'1')" placeholder="请务必删除多余空格">
+                <input type="hidden" value="{$info.corp_id}" class="input-text" id="old_aid" name="aid">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>通讯录Secret：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" value="{$info.tsecret}" class="input-text" onblur="check_secret('1',this.value)" id="tsecret" name="tsecret" placeholder="请辨清此Secret与应用Secret,填错将影响后续操作">
+				<input type="hidden" value="{$info.tsecret}" class="input-text" id="old_tsecret" name="tsecret">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>应用AgentID：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" value="{$info.aid}" class="input-text" id="aid" name="aid" placeholder="请务必删除多余空格">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>应用Secret：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" value="{$info.asecret}" class="input-text" id="asecret" name="asecret" placeholder="请辨清此Secret与通讯录Secret,填错将影响后续操作">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">企业二维码：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<div style="position: absolute;top:5px;left:200px;color: #ccc;">请上传“微工作台”二维码</div>
+				<img width="120"  v-if="wxqrcode!=''"  :src="wxqrcode" class="thumbnail">
+				<input onclick="select_img('1','head_photo');" class="btn btn-default" type="button" value="选择图片">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">企业微信域名校验文件：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<form id="wxfile" method="post" enctype="multipart/form-data">
+				<input type="file" name="wxwx" id="wxwx" style=" height:40px;">
+                    {if $info.file_path!=null}
+                    已上传，<a href="{$info.file_path}" target="_blank">点击查看</a>
+                    {/if}
+				</form>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">获取手机号：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="checkbox" name="get_pho" {if $info.txl_get_pho==1}checked{/if} value="txl_get_pho" id="r11"><label for="r11" style="margin-right: 15px;">  通讯录  </label>
+				<input type="checkbox" name="get_pho" {if $info.index_get_pho==1}checked{/if} value="index_get_pho" id="r22"><label for="r22" style="margin-right: 15px;">  首页客服  </label>
+				<input type="checkbox" name="get_pho" {if $info.shop_get_pho==1}checked{/if} value="shop_get_pho" id="r3"><label for="r3" style="margin-right: 15px;">  商城/产品客服  </label>
+				<input type="checkbox" name="get_pho" {if $info.web_get_pho==1}checked{/if} value="web_get_pho" id="r4"><label for="r4" style="margin-right: 15px;">  官网客服  </label>
+				<input type="checkbox" name="get_pho" {if $info.dynamic_get_pho==1}checked{/if} value="dynamic_get_pho" id="r5"><label for="r5">  动态客服  </label>
+			</div>
+		</div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">浏览数量开关：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="radio" name="show_sea" {if $info.show_sea==1}checked{/if} value="1" id="r1"><label for="r1">  显示  </label>
+                <input type="radio" name="show_sea" {if $info.show_sea==2}checked{/if} value="2" id="r2"><label for="r2">  隐藏  </label>
+                <br>
+                <i>决定小程序名片信息处是否显示名片浏览量</i>
+            </div>
+        </div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">企业授权码：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="radio" name="is_power_code" {if $info.is_power_code==2}checked{/if} value="2" id="is_power_code_radio2"><label for="is_power_code_radio2">  关闭  </label>
+				<input type="radio" name="is_power_code" {if $info.is_power_code==1}checked{/if} value="1" id="is_power_code_radio1"><label for="is_power_code_radio1">  打开  </label>
+				<br>
+				<i>决定系统部分功能操作是否填写授权码</i>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+				<!--<input class="btn btn-primary radius" onclick="addAjax()" type="button" value="确认提交" style="padding:6px 12px;">-->
+				<input class="btn btn-primary radius" onclick="addAjax()" type="button" value="确认提交" style="width: 73px">
+				<!--<input class="btn btn-primary radius" onclick="clear_all()" type="button" value="清除企业数据" style="padding:6px 12px;margin-left: 20px;">-->
+			</div>
+		</div>
+	</div>
+	<input type="hidden" value="{$info['id']|default=''}" id="id">
+</article>
+</div>
+{/block}
+{block name="script"}
+<!--<script src="/public/menu/js/jquery.artdialog.js"></script>-->
+<!--<script src="/public/menu/js/iframetools.js"></script>-->
+<script type="text/javascript">
+    var bannerVM = new Vue({
+        el: '#main',
+        data: {
+            wxqrcode:'{$info.wxqrcode}'//图片链接
+        }
+    });
+    function head_photo(id,path) {
+        bannerVM.wxqrcode=path;
+    }
+    function select_img(number,type) {
+        layer_open("我的图片001",'__CONF_SITE__admin/images/dialogalbumlist&number=' + number + '&type=' + type,900,620);
+    }
+	function check_secret(a,b) {
+        if(a=='1'){
+            a=$('#corp_id').val();
+		}if(b=='1'){
+            b=$('#tsecret').val();
+		}
+        $.ajax({
+            type: "post",
+            url: "{:url('offweb/check_secret')}",
+            data: {secret:a,corp_id:b},
+            success: function (data) {
+                if (data> 0) {
+                    layer.confirm("存在相同的企业Id及通讯录Secret,不同应用修改公司架构将会导致冲突");
+                }
+            }
+        });
+    }
+	function clear_all() {
+        layer.confirm("将清除本站企业微信相关数据！",function () {
+            check_users(do_clear);
+        })
+    }
+    var do_clear=function () {
+        $.ajax({
+            type: "get",
+            url: "{:url('offweb/clear_all')}",
+            success: function (data) {
+                if (data> 0) {
+                    layer.msg("数据已清除",{icon:1,time:1000},function () {
+                        parent_flash();
+                    });
+                }
+            }
+        });
+    }
+    function get_pho() {
+        var re_get=[];
+		$("input[name=get_pho]").each(function () {
+			if($(this).prop("checked")){
+			    re_get[$(this).attr("value")]=1;
+			}else {
+                re_get[$(this).attr("value")]=2;
+			}
+        });
+		return re_get;
+    }
+    function check_input(corp_id,tsecret){
+        if (corp_id=="" || corp_id.length<=7){
+            layer.msg('请填写企业ID！',{icon:5,time:1000});
+            return false;
+        }
+        if (tsecret=="" || tsecret.length<=10){
+            layer.msg('请正确填写通讯录secret！',{icon:5,time:1000});
+            return false;
+        }
+        return true;
+	}
+	var fo='';
+    function addAjax() {
+        var id = $("#id").val();
+        var corp_id = $("#corp_id").val();
+        var aid = $("#aid").val();
+        var asecret = $("#asecret").val();
+        var tsecret = $("#tsecret").val();
+        var old_tsecret = $("#old_tsecret").val();
+        var old_aid = $("#old_aid").val();
+        var show_sea = $("input[name=show_sea]:checked").val();
+        var is_power_code = $("input[name=is_power_code]:checked").val();
+        fo=new FormData($("#wxfile")[0]);
+        var get_pho2=get_pho();
+        fo.append("id",id);
+        fo.append("corp_id",corp_id);
+        fo.append("aid",aid);
+        fo.append("asecret",asecret);
+        fo.append("tsecret",tsecret);
+        fo.append("show_sea",show_sea);
+        fo.append("is_power_code",is_power_code);
+        fo.append("txl_get_pho",get_pho2["txl_get_pho"]);
+        fo.append("index_get_pho",get_pho2["index_get_pho"]);
+        fo.append("shop_get_pho",get_pho2["shop_get_pho"]);
+        fo.append("web_get_pho",get_pho2["web_get_pho"]);
+        fo.append("dynamic_get_pho",get_pho2["dynamic_get_pho"]);
+        fo.append("wxqrcode",bannerVM.wxqrcode);
+        fo.append("old_tsecret",old_tsecret);
+        fo.append("old_aid",old_aid);
+        if(check_input(corp_id,tsecret)) {
+            if (old_tsecret != tsecret || old_aid != corp_id) {
+                layer.confirm("变更企业ID或通讯录secret将清除原有企业所有信息并重新获取公司架构，请谨慎操作.【此操作不可逆】", function (index) {
+                    check_users(do_send_corp);
+                })
+            } else {
+                check_users(do_send_corp);
+            }
+        }
+    }
+    var do_send_corp=function () {
+        $.ajax({
+            type: "post",
+            url: "{:url('offweb/corp_conf')}",
+            data: fo,
+            cache: false,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                if (data['code'] > 0) {
+                    layer.msg('提交成功!', {icon: 1, time: 1000}, function () {
+                        parent_flash();
+                    });
+                } else {
+                    layer.msg(data.message, {icon: 2, time: 1000})
+                }
+            }
+        });
+    }
+    function copy_now(id) {
+        id='#'+id;
+        var check=$(id).attr('data-clipboard-text');
+        if(check.length<=0){
+            layer.msg("链接信息有误", {icon: 2, time: 1000});
+            return false;
+        }
+        var clipboard=new Clipboard(id);
+        clipboard.on('success',function(e){
+            layer.msg("链接复制成功", {icon: 1, time: 500});
+        });
+        clipboard.on('error', function(e) {
+            layer.msg("链接信息有误", {icon: 2, time: 1000});
+        });
+    }
+</script>
+{/block}

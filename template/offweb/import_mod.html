@@ -1,0 +1,155 @@
+{extend name="base"/}
+{block name="main"}
+<style>
+    body {    background: #FFFFFF !important;}
+    .btn_bg {width:225px; height: 354px; background: rgba(0,0,0,0.8);position: absolute;top:0;left:0;z-index: 998;}
+    .float_btn {display:none;}
+    .down_load_icon {position:absolute;right:0;bottom: 0;width:50px !important;height: 50px !important;}
+    #3D {max-width: 1350px;}
+</style>
+<link rel="stylesheet" type="text/css" href="/public/menu/css/mod_list.css" />
+<script>				$(function () {
+    $("#3D").find('div').hover(
+        function () {
+            $(this).find('.float_btn').fadeIn(500);
+        },
+        function () {
+            $(this).find('.float_btn').fadeOut(500);
+        }
+    )
+})
+</script>
+<div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;margin-left: 10px; margin-top: 20px;z-index: 9999999;">
+    <div class="tabBar clearfix">
+        <span {if condition="$status==1"} class="current" {else} onclick="load_page('__CONF_SITE__admin/menu/import_mod&status=1&nimei=1&wn_id={$wn_id}&type={$type}')" {/if}>已下载</span>
+        <span {if condition="$status==3" } class="current" {else}
+              onclick="load_page('__CONF_SITE__admin/menu/my_mod&down=1&wn_id={$wn_id}&type={$type}')" {/if}>我的模板库</span>
+    </div>
+    {if $status<3}
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+            <div class="text-c" style="justify-content: center; display: flex; height: 31px;line-height: 31px;"> 模版标签：
+                <input type="text" class="input-text" value="{$mod_name}" style="width:250px" placeholder="模版标签"  name="mod_name">
+                <button onclick="search_mod()" id="submit_button" class="btn btn-search radius" style="padding: 5px 12px;margin-left: 5px;border-radius: 3px;box-sizing:border-box;background: #ebebeb;border: 1px solid #dcdfe6;"><i class="Hui-iconfont">&#xe665;</i></button>
+            </div>
+    </div>
+    {/if}
+</div>
+<script>
+    function search_mod() {
+        load_page("__CONF_SITE__admin/menu/import_mod&nimei=1&wn_id={$wn_id}&type={$type}",'',{mod_name:$("input[name=mod_name]").val()})
+    }
+</script>
+<div class="content-right fl" style="width: 100%;border-left:0 !important;">
+    <div id="3D" style="max-width: 1480px;">
+        {volist name="bus_mod_id" id="m"}
+        <div class="programCode" style="position: relative;">
+            <dl>
+                <dt><div style="max-width: 225px; position: relative; overflow: hidden; height: 351px; ">{if $m.is_dow==1}<img class="down_load_icon" src="/public/menu/images/down_load_icon.png" alt="已下载">{/if}<a href="{$m['img']}" target="_blank"><img src="{$m['img']}" alt="模板图" title="点击放大预览" style="cursor: zoom-in;"></a></div></dt>
+                <div class="float_btn">
+                    <dd style="margin-top: 4px; position: absolute;top:130px;width:100%;z-index: 1000;"><div style="font-weight: bold; text-align: center; padding: 3px;color:#fff;">{$m['name']}</div></dd>
+                    <dd style="position: absolute;top:170px; text-align: center;">
+                        {if $m.is_dow==1}
+                        <button onclick="this_mod('{$m.is_this_id}')" class="btn btn-success radius" style="z-index:1000;padding: 10px 20px;">选择模版</button><p></p>
+                        {/if}
+                    </dd>
+                    <div class="btn_bg"></div>
+                </div>
+            </dl>
+        </div>
+        {/volist}
+    </div>
+    <input type="hidden" name="wn_id" id="wn_id" value="{$wn_id}">
+    <input type="hidden" name="type" id="type" value="{$type}">
+    <input type="hidden" name="my_id" id="my_id" value="{$status}">
+    <div class="n_page_no" style="clear: both; float: left; margin-right: 15px; margin-top: 10px;">
+        {if   $status!=1&&$status!=3}
+        <ul class="pagination">
+            {if $page==1}
+            <a href="javascript:;" class="n_page_button page_disable">首页</a>
+            <a href="javascript:;" class="n_page_button page_disable">上一页</a>
+            {else}
+            <a onclick="load_page('__CONF_SITE__admin/menu/import_mod&page=1&mod_name={$mod_name}&status={$status}')" href="javascript:;" class="n_page_button">首页</a>
+            <a class="n_page_button" href="javascript:;"  onclick="load_page('__CONF_SITE__admin/menu/import_mod&page=1&mod_name={$mod_name}&status={$status}')">上一页</a>
+            {/if}
+            {if $count==1}
+            <a href="javascript:;" class="n_page_button current">1</a>
+            {else}
+            {for start="1" end="$count"}
+            {if $i==$page}
+            <a href="javascript:;" class="n_page_button current">{$i}</a>
+            {else}
+            <a class="n_page_button" onclick="load_page('__CONF_SITE__admin/menu/import_mod&page={$i}&mod_name={$mod_name}&status={$status}')" href="javascript:;" >{$i}</a>
+            {/if}
+            {/for}
+            {/if}
+            {if $page==$count-1 || ($count-1)==0}
+            <a href="javascript:;" class="n_page_button page_disable">下一页</a>
+            <a href="javascript:;" class="n_page_button page_disable">末页</a>
+            {else}
+            <a class="n_page_button" onclick="load_page('__CONF_SITE__admin/menu/import_mod&page={$page+1}&mod_name={$mod_name}&status={$status}')" href="javascript:;" >下一页</a>
+            <a onclick="load_page('__CONF_SITE__admin/menu/import_mod&page={$count-1}&mod_name={$mod_name}&status={$status}')" href="javascript:;"  class="n_page_button">末页</a>
+            {/if}
+        </ul>
+        {else}
+        {$page}
+        {/if}
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript" src="/public/js/jquery-2.1.1.js"></script>
+<script type="text/javascript" src="/public/static/layer/2.4/layer.js"></script>
+<script>
+    $(function(){
+        $(".hPage-tpls-overlay").hide();
+        $(".showActions").mouseover(function(){
+            $(this).find(".hPage-tpls-overlay").show();
+        });
+        $(".showActions").mouseout(function(){
+            $(this).find(".hPage-tpls-overlay").hide();
+        });
+        $('.btn-tpllist').click(function(){
+        });
+    })
+    /**
+     * 用户选择了模版
+     */
+    function this_mod(id) {
+        var a=$("#type").val();
+        var my_id=$("#my_id").val();
+        if(a==1){
+            d="非官网组件";
+        }
+        if(a==2){
+            d="非产品展示组件";
+        }
+        if(a==3){
+            d="非商城组件";
+        }
+        layer.confirm('当前页面对于'+d+'可能无法使用，请谨慎选择',function(index){
+            $.ajax({
+                type : "post",
+                url : "{:url('menu/import_mod')}",
+                data : {
+                    "mod_id" : id,
+                    "type" : a,
+                    "my_id" : my_id,
+                    "wn_id":$("#wn_id").val()
+                },
+                success : function(data) {
+                    if (data['code'] > 0) {
+                        layer.msg('导入成功!',{icon:1,time:1000},function () {
+                            load_page("__CONF_SITE__admin/custom/power&id="+$("#wn_id").val()+"&type="+a,'','',3);
+                        });
+                    }else{
+                        layer.msg(data['message'], {icon: 2, time: 1000});
+                    }
+                },
+                error : function() {
+                    layer.msg('网络忙，请稍后再试', {icon: 2, time: 3000});
+                }
+            })
+        });
+    }
+</script>
+{/block}

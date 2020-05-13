@@ -1,0 +1,65 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div class="tabBar clearfix" style="position:relative;">
+            <span onclick="load_page('__CONF_SITE__admin/user/user_list')">微信会员</span>
+            <span class="current" onclick="load_page('__CONF_SITE__admin/user/level')">等级列表</span>
+            <span onclick="load_page('__CONF_SITE__admin/user/integral_details')">积分详情</span>
+            <span onclick="load_page('__CONF_SITE__admin/user/integral_rule')">积分规则设置</span>
+            <div onclick="layer_open('添加会员等级','__CONF_SITE__admin/user/add_level','650px','500px')"  class="n_tab_add"><i class="Hui-iconfont">&#xe600;</i>添加等级</div>
+        </div>
+        <table class="table table-border table-bordered table-bg">
+            <thead>
+            <tr class="text-c">
+                <th>会员等级</th>
+                <th>等级名称</th>
+                <th>累计积分</th>
+                <th>享受折扣</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="vo"}
+            <tr class="text-c">
+                <td>{$vo['level']}</td>
+                <td>{$vo['level_name']}</td>
+                <td>{$vo['hierarchy']}</td>
+                <th>{$vo['rebate']|default="10"}折</th>
+                <td>
+                    <a title="编辑" href="javascript:;" onclick="layer_open('编辑会员等级','__CONF_SITE__admin/user/edit_level&id={$vo.id}','650px','500px')" class="ml-5 show_layer" style="text-decoration:none">编辑</a>
+                    <a title="删除" href="javascript:;" onclick="level_del('{$vo.id}')" class="ml-5 caozuo" style="text-decoration:none">删除</a>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </article>
+    <div class="n_page_no">
+        {$list->render()}
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    function level_del(id) {
+        layer.confirm('确认要删除吗？',function(index){
+            $.ajax({
+                type : "post",
+                url : "{:url('user/level_del')}",
+                data: {id: id},
+                success : function(data) {
+                    if(data['code']>0 ){
+                        layer.msg('删除成功',{icon:1,time:1000},function () {
+                            parent_flash("__CONF_SITE__admin/user/level");
+                        });
+                    }else{
+                        layer.msg(data['data'],{icon:5,time:1000});
+                    }
+                }
+            });
+        });
+    }
+</script>
+{/block}

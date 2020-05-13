@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="/public/static/h-ui-{$skin}/css/H-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="/public/static/h-ui-{$skin}/css/style.css" />
+    <style>
+        .yb_form_list {border-bottom:1px solid #f2f2f2;}
+        .yb_form_list .yb_form_title {width:80px; float: left;overflow: hidden;height: 40px; line-height: 40px;}
+        .yb_form_list .yb_form_content{padding: 10px;
+            float: left;}
+        .clear {clear:both;}
+    </style>
+
+</head>
+<body>
+<div class="panel panel-default">
+    <div class="panel-header">{:getUserName($user_info['user_id'])} 时间：{:date('Y-m-d H:i:s',$user_info.create_time)} </div>
+    <div class="panel-body">
+        {volist name="$user_info['param']" id="it"}
+        <div class="yb_form_list">
+        <div class="yb_form_title">{$it['title']}</div>
+        <div class="yb_form_content">
+            {if $it['key']=='pic'}
+            <a href="{$it['value']}" target="_blank"><img width="100" height="100" src="{$it['value']}"></a>
+            {elseif $it['key']=='pic_arr'}
+            <?php $images=get_img_arr($it['value']); ?>
+            {volist name="images" id="img"}
+            <a href="{$img}" target="_blank"><img width="100" height="100" src="{$img}"></a>
+            {/volist}
+            {else}
+            {$it['value']}
+            {/if}
+        </div>
+            <div class="clear"></div>
+        </div>
+        {/volist}
+    </div>
+</div>
+</body>
+</html>

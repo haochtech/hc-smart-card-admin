@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link media="all" href="//mp.sssvip.net/addons/yb_mingpian/core/public/menu/css/index_1.css" type="text/css" rel="stylesheet">
+    <style>
+        .contlist {width:20%;float:left; height: 52px;line-height: 52px;text-align: center;}
+        .contlist .box a {text-align:center;display: block;height:40px; line-height: 40px; border:1px solid #e8e8e8;color:#333;margin:5px;border-radius: 4px;}
+        .contlist .box {}
+    </style>
+
+</head>
+<body>
+<div class="metv5box" style="margin-top: 30px;">
+    <ul class="columnlist" id="test">
+        <li class="contlist">
+            <div class="box">
+                <a href="javascript:;" onclick="select_menu(this)"
+                   data-type="input" data-name="单行文本" data-img="__CONF_URL__public/menu/images/11blue.PNG">
+                    单行文本
+                </a>
+            </div>
+        </li>
+        <li class="contlist">
+            <div class="box">
+                <a href="javascript:;" onclick="select_menu(this)"
+                   data-type="textarea" data-name="多行文本" data-img="__CONF_URL__public/menu/images/11red.PNG">
+                    多行文本
+                </a>
+            </div>
+        </li>
+        <li class="contlist">
+            <div class="box">
+                <a href="javascript:;" onclick="select_menu(this)"
+                   data-type="checkbox" data-name="多项选择" data-img="">
+                    多项选择
+                </a>
+            </div>
+        </li>
+        <li class="contlist">
+            <div class="box">
+                <a href="javascript:;" onclick="select_menu(this)"
+                   data-type="radio" data-name="单项选择器" data-img="">
+                    单项选择器
+                </a>
+            </div>
+        </li>
+        <li class="contlist">
+            <div class="box">
+                <a href="javascript:;" onclick="select_menu(this)"
+                   data-type="picker" data-name="下拉选择" data-img="">
+                    下拉选择
+                </a>
+            </div>
+        </li>
+        <li class="contlist">
+            <div class="box">
+                <a href="javascript:;" onclick="select_menu(this)"
+                   data-type="time_one" data-name="日期" data-img="">
+                    日期
+                </a>
+            </div>
+        </li>
+        <li class="contlist">
+            <div class="box">
+                <a href="javascript:;" onclick="select_menu(this)"
+                   data-type="time_two" data-name="日期范围" data-img="">
+                    日期范围
+                </a>
+            </div>
+        </li>
+        <li class="contlist">
+            <div class="box">
+                <a href="javascript:;" onclick="select_menu(this)"
+                   data-type="region" data-name="省市县选择" data-img="">
+                    省市县选择
+                </a>
+            </div>
+        </li>
+        <li class="contlist">
+            <div class="box">
+                <a href="javascript:;" onclick="select_menu(this)"
+                   data-type="pic" data-name="单图上传" data-img="">
+                    单图上传
+                </a>
+            </div>
+        </li>
+        <li class="contlist">
+            <div class="box">
+                <a href="javascript:;" onclick="select_menu(this)"
+                   data-type="pic_arr" data-name="多图上传" data-img="">
+                    多图上传
+                </a>
+            </div>
+        </li>
+    </ul>
+</div>
+<script src="/public/js/jquery-2.1.1.js" type="text/javascript"></script>
+<script type="text/javascript" src="/public/static/layer/2.4/layer.js"></script>
+<script type="text/javascript">
+    $(".box").click(function () {
+        $('.selectedb').removeClass('selectedb');
+        $(this).addClass('selectedb');
+    });
+    //没有页面的
+    function select_menu(obj) {
+        var item = {};
+        item["type"] = $(obj).attr('data-type');
+        item["img"] = $(obj).attr('data-img');
+        item['name'] = $(obj).attr('data-name');
+        parent.get_cratn_di(item);
+        parent.layer.closeAll();
+    }
+</script>
+</body>
+</html>

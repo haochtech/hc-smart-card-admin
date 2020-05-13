@@ -1,0 +1,124 @@
+{extend name="base"/}
+{block name="main"}
+<style>
+    .table>tbody>tr>td{
+        text-align: center;
+    }
+</style>
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div class="tabBar clearfix">
+            <span class="current" onclick="load_page('__CONF_SITE__admin/activity/miaosha')">活动列表</span>
+            <span onclick="load_page('__CONF_SITE__admin/activity/ac_order&type=1')" >活动订单</span>
+            <div onclick="layer_open('添加活动','__CONF_SITE__admin/activity/add_miaosha',800,700)"  class="n_tab_add"><i class="Hui-iconfont">&#xe600;</i>添加活动</div>
+        </div>
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+                <div class="text-c"> 活动名称：
+                    <input type="text" class="input-text" value="{$search_text}" style="width:250px" placeholder="输入活动名称"  name="search_text">
+                    <button onclick="send_submit()" id="submit_button" class="btn btn-search radius" style="padding: 5px 12px;margin-left: 5px;border-radius: 3px;box-sizing:border-box;background: #ebebeb;border: 1px solid #dcdfe6;"><i class="Hui-iconfont" style="    color: #a2a2a2;
+    font-size: 18px;">&#xe665;</i></button>
+                </div>
+        </div>
+        <table class="table table-border table-bordered table-hover table-bg">
+            <thead>
+            <tr class="text-c">
+                <th>活动名称</th>
+                <th>活动主图</th>
+                <th>原价</th>
+                <th>秒杀价</th>
+                <th>限购数量</th>
+                <th>销售量</th>
+                <th>库存</th>
+                <th>活动时间</th>
+                <th>活动状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+                {volist name="list" id="vo"}
+                <tr>
+                    <td>{$vo['name']}</td>
+                    <td><img src="{$vo['pic']}" width="50"></td>
+                    <td>￥{$vo['oprice']}</td>
+                    <td>￥{$vo['nprice']}</td>
+                    <td>{$vo['max_pre']}</td>
+                    <td>{$vo['sell']}</td>
+                    <td>{$vo['kucun']}</td>
+                    <td>{$vo['stime']}<br>{$vo['etime']}</td>
+                    <td>{$vo['now']}</td>
+                    <td>
+                        <a onclick="layer_open('活动编辑','__CONF_SITE__admin/activity/edit_miaosha&id={$vo.id}&type=1','900','800')" href="javascript:;" style="text-decoration:none;margin-right:15px;" class="show_layer">修改</a>
+                        {if $vo.status==2}
+                        <a onclick="do_change('{$vo.id}',1)" href="#" style="text-decoration:none;margin-right:15px;" class="caozuo">启用</a>
+                        {else/}
+                        <a onclick="do_change('{$vo.id}',2)" href="#" style="text-decoration:none;margin-right:15px;" class="caozuo">停用</a>
+                        {/if}
+                        <a onclick="bar_del('{$vo.id}')" href="#" style="text-decoration:none;margin-right:15px;" class="caozuo">删除</a>
+                        {if $vo.show_order>0}
+                        <a onclick="load_page('__CONF_SITE__admin/activity/ac_order&acid={$vo.id}&type=1')" href="javascript:;" style="text-decoration:none;margin-right:15px;" >查看订单</a>
+                        {/if}
+                    </td>
+                </tr>
+                {/volist}
+            </tbody>
+        </table>
+    </article>
+    <div class="n_page_no">
+        {$page}
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    function do_change(id,s) {
+        var d="";
+        if(s==2){d="确定停用该活动？"}else {d="确定启用该活动？"}
+        layer.confirm(d,function(){
+            $.ajax({
+                type : "post",
+                url : "{:url('activity/change')}",
+                data : {
+                    "id" : id,
+                    "status" :s,
+                    "type":1
+                },
+                success : function(data) {
+                    if (data['code'] > 0) {
+                        layer.msg('操作成功',{icon:1,time:1000},function () {
+                            parent_flash();
+                        });
+                    }else{
+                        layer.msg(data['message'], {icon: 2, time: 1000});
+                    }
+                }
+            })
+        });
+    }
+    function bar_del(id) {
+        layer.confirm("确定要删除吗?",function(){
+            $.ajax({
+                type : "post",
+                url : "{:url('activity/del')}",
+                data : {
+                    "id" : id,
+                    "type":1
+                },
+                success : function(data) {
+                    if (data['code'] > 0) {
+                        layer.msg('操作成功',{icon:1,time:1000},function () {
+                            parent_flash();
+                        });
+                    }else{
+                        layer.msg(data['message'], {icon: 2, time: 1000});
+                    }
+                }
+            })
+        });
+
+    }
+    function send_submit() {
+       load_page("{:url('activity/miaosha')}",'',{search_text:$("input[name=search_text]").val()});
+   }
+</script>
+{/block}

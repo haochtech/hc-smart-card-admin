@@ -1,0 +1,111 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+            <div class="tabBar clearfix">
+                <span class="current">视频列表</span>
+                <div onclick="add_move()"  class="n_tab_add"><i class="Hui-iconfont">&#xe600;</i>添加视频</div>
+            </div>
+        </div>
+        <div>
+<!--            <div class="cl pd-5 bg-1 bk-gray mt-20">-->
+                <!--
+                                        <span class="page_btn"><a href="javascript:;" onclick="goods_pldel()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 删除</a></span>
+                                        <span class="page_btn" style="margin-left: 10px;margin-right: 10px;"><a href="javascript:;" onclick="goods_re()" class="btn btn-warning radius"><i class="Hui-iconfont">&#xe6c1;</i> 热卖</a></span>
+                                        <span class="page_btn" style="margin-right: 10px;"><a href="javascript:;" onclick="goods_new()" class="btn btn-secondary radius"><i class="Hui-iconfont">&#xe630;</i> 新品</a></span>
+                                        <span class="page_btn"><a href="javascript:;" onclick="goods_tui()" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe6cf;</i> 推荐</a></span>
+                -->
+<!--            </div>-->
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-bg table-hover table-sort">
+                    <thead>
+                    <tr class="text-c">
+                        <th>封面图</th>
+                        <th>标题</th>
+                        <th>视频链接</th>
+                        <th>添加时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    {volist name="list" id="r"}
+                    <tr class="text-c va-m">
+                        <td><img width="60" class="product-thumb" src="{$r['img']}"></td>
+                        <td>{$r['title']}</td>
+                        <td>{$r['url']}</td>
+                        <td>{$r['add_time']|date="Y-m-d H:i:s",###}</td>
+                        <td>
+                            <a style="text-decoration:none;color:#0066cc;" title="编辑" href="javascript:;" onclick="video_edit('{$r.id}')" class="ml-5" style="text-decoration:none">
+<!--                            <i class="Hui-iconfont">&#xe6df;</i>-->
+                            编辑
+                            </a>
+                            <a style="text-decoration:none;color:#0066cc;" title="删除" href="javascript:;" onclick="article_del(this,'{$r.id}')" class="ml-5" style="text-decoration:none">
+<!--                            <i class="Hui-iconfont">&#xe6e2;</i>-->
+                            删除
+                            </a>
+                        </td>
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+                <div class="n_page_no">
+                    {$page}
+                </div>
+            </div>
+        </div>
+        {/block}
+        {block name="script"}
+        <script type="text/javascript">
+            /*文章-编辑*/
+            function add_move(){
+                layer.open({
+                    type: 2,
+                    area: ['800px', '700px'],
+                    fix: false, //不固定
+                    maxmin: true,
+                    shade:0.4,
+                    title: '添加视频',
+                    content: '__CONF_SITE__admin/Video/video_add',
+                    scrollbar:false,
+                    shadeClose:true,
+            });
+            }
+            function video_edit(id) {
+                layer.open({
+                    type: 2,
+                    area: ['800px', '700px'],
+                    fix: false, //不固定
+                    maxmin: true,
+                    shade:0.4,
+                    title: '编辑视频',
+                    content: '__CONF_SITE__admin/Video/video_edit&id='+id,
+                    scrollbar:false,
+                    shadeClose:true,
+                });
+            }
+            /*文章-删除*/
+            function article_del(obj,id){
+                layer.confirm('确认要删除吗？',function(index){
+                    //后台处理
+                    $.ajax({
+                        type : "post",
+                        url : "__CONF_SITE__admin/Video/video_del",
+                        data : {
+                            "id" : id
+                        },
+                        success : function(data) {
+                            if (data['code'] >0) {
+                                $(obj).parents("tr").remove();
+                                layer.msg('删除成功!',{icon:1,time:1000});
+                            }
+                            else
+                            {
+                                layer.msg('删除失败', {icon: 2, time: 1000});
+                            }
+                        }
+                    })
+                });
+            }
+        </script>
+        {/block}

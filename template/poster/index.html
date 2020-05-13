@@ -1,0 +1,200 @@
+﻿﻿{extend name="base"/}
+{block name="main"}
+<style>
+    button.btn.btn-danger.radius {
+        margin-left: 64px;
+        margin-top: -50px;
+    }
+    .programCode {
+        float: left;
+        margin-right: 20px;
+    }
+    body {    background: #FFFFFF !important;}
+    .btn_bg {width:225px; height: 300px; background: rgba(0,0,0,0.8);position: absolute;top:0;left:0;z-index: 998;}
+    .float_btn {display:none;}
+    .down_load_icon {position:absolute;right:0;bottom: 0;width:50px !important;height: 50px !important;}
+    #3D {max-width: 1350px;}
+    .programCode {height:297px !important;}
+    button.btn.btn-danger.radius {margin-left: 0px !important; }
+    .btn {line-height: 10px !important; }
+</style>
+<link rel="stylesheet" type="text/css" href="/public/menu/css/mod_list.css" />
+<script>				$(function () {
+    $("#3D").find('div').hover(
+            function () {
+                $(this).find('.float_btn').fadeIn(500);
+            },
+            function () {
+                $(this).find('.float_btn').fadeOut(500);
+            }
+    )
+})
+</script>
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div id="tab_demo" class="HuiTab" style="margin-top: 0px; position: relative;">
+            <div class="tabBar clearfix">
+                <span {if condition="$status==0"} class="current" {else} onclick="load_page('__CONF_SITE__admin/Poster/index&status=0')" {/if}>全部</span>
+                <span {if condition="$status==1"} class="current" {else} onclick="load_page('__CONF_SITE__admin/Poster/index&status=1')" {/if}>已下载</span>
+                <span {if condition="$status==2"} class="current" {else} onclick="load_page('__CONF_SITE__admin/Poster/index&status=2')" {/if}>未下载</span>
+                <span  {if condition="$status==3"} class="current" {else} onclick="load_page('__CONF_SITE__admin/Poster/index&status=3')" {/if}>海报素材</span>
+                <div class="l n_tab_add">
+                    <a onclick="layer_open('添加素材','__CONF_SITE__admin/Poster/add','900px','650px')">
+                        <i class="Hui-iconfont">&#xe600;</i>添加海报
+                    </a>
+                </div>
+            </div>
+        </div>
+        {if $status==3}
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+                <div class="text-c"> 素材名称：
+                    <input type="text" class="input-text" value="{$name}" style="width:250px" placeholder="素材名称"  name="name">
+                    <button onclick="send_submit()" id="submit_button" class="btn btn-search radius" style="padding: 5px 12px;margin-left: 5px;border-radius: 3px;box-sizing:border-box;background: #ebebeb;border: 1px solid #dcdfe6;"><i class="Hui-iconfont" style="    color: #a2a2a2;
+    font-size: 18px;">&#xe665;</i></button>
+                </div>
+        </div>
+        <table class="table table-border table-bordered table-bg">
+            <thead>
+            <tr class="text-c">
+                <th width="150">素材名称</th>
+                <th width="150">图片</th>
+                <th width="150">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="vo"}
+            <tr class="text-c">
+                <td>{$vo['name']}</td>
+                <td><img width="60" height="60" class="product-thumb" src="{$vo['pic_url']}"></td>
+                <td>
+                    <a title="删除" href="javascript:;"  onclick="poster_del('{$vo.id}','{$vo.rid}')" class="ml-5 caozuo" style="text-decoration:none;margin-right:15px;">删除</a>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    {else}
+    <div id="3D" style="max-width: 1480px;">
+        {volist name="list" id="m"}
+        <div class="programCode" style="position: relative;">
+            <dl>
+                <dt>
+                    <div style="max-width: 225px; position: relative; overflow: hidden; height: 297px; ">
+                        {if $m.is_dow==1}
+                            <img class="down_load_icon" src="/public/menu/images/down_load_icon.png" style="max-width: 225px;" alt="已下载">
+                        {/if}
+                        <a href="{$m['pic_url']}" target="_blank">
+                            <img src="{$m['pic_url']}" alt="模板图" title="点击放大预览" style="cursor: zoom-in;max-width: 225px;">
+                        </a>
+                    </div>
+                </dt>
+                {if $status==1}
+                {else}
+                <div class="float_btn">
+                    <dd style="position: absolute;top:150px; text-align: center;">
+                        {if $m.is_dow==0}
+                        <button onclick="dow_mod('{$m.id}','{$m.pic_url}','{$m.name}')" class="btn btn-danger radius" style="background-color:#00c1de;z-index:1000;padding: 10px 20px;">下载模版</button><p></p>
+                        {else}
+                        <button class="btn btn-danger radius" style="background-color:#81c151;z-index:1000;padding: 10px 20px;">已下载</button><p></p>
+                        {/if}
+                    </dd>
+                    <div class="btn_bg"></div>
+                </div>
+                {/if}
+            </dl>
+        </div>
+        {/volist}
+    </div>
+    {/if}
+    </article>
+    <div class="n_page_no">
+        {if   $isfounder==1}
+        <ul class="pagination">
+            {if $page==1}
+            <a href="javascript:;" class="n_page_button page_disable">首页</a>
+            <a href="javascript:;" class="n_page_button page_disable">上一页</a>
+            {else}
+            <a onclick="load_page('__CONF_SITE__admin/menu/import_mod&page=1&mod_name={$mod_name}&status={$status}')" href="javascript:;" class="n_page_button">首页</a>
+            <a class="n_page_button" href="javascript:;"  onclick="load_page('__CONF_SITE__admin/menu/import_mod&page=1&mod_name={$mod_name}&status={$status}')">上一页</a>
+            {/if}
+            {if $count==1}
+            <a href="javascript:;" class="n_page_button current">1</a>
+            {else}
+            {for start="1" end="$count"}
+            {if $i==$page}
+            <a href="javascript:;" class="n_page_button current">{$i}</a>
+            {else}
+            <a class="n_page_button" onclick="load_page('__CONF_SITE__admin/menu/import_mod&page={$i}&mod_name={$mod_name}&status={$status}')" href="javascript:;" >{$i}</a>
+            {/if}
+            {/for}
+            {/if}
+            {if $page==$count-1 || ($count-1)==0}
+            <a href="javascript:;" class="n_page_button page_disable">下一页</a>
+            <a href="javascript:;" class="n_page_button page_disable">末页</a>
+            {else}
+            <a class="n_page_button" onclick="load_page('__CONF_SITE__admin/menu/import_mod&page={$page+1}&mod_name={$mod_name}&status={$status}')" href="javascript:;" >下一页</a>
+            <a onclick="load_page('__CONF_SITE__admin/menu/import_mod&page={$count-1}&mod_name={$mod_name}&status={$status}')" href="javascript:;"  class="n_page_button">末页</a>
+            {/if}
+        </ul>
+        {else}
+        {$page}
+        {/if}
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script>
+    function send_submit() {
+        load_page("__CONF_SITE__admin/Poster/index",'',{name:$("input[name=name]").val()});
+    }
+    function poster_del(id,rid){
+        layer.confirm('确认要删除吗？',function(index){
+            $.ajax({
+                type : "post",
+                url : "{:url('admin/Poster/del_poster')}",
+                data : {
+                    "id" : id,
+                    "rid":rid
+                },
+                success : function(data) {
+                    if(data['code'] > 0){
+                        layer.msg('删除成功', {icon: 1, time: 1000},function () {
+                            parent_flash();
+                        });
+                    }else {
+                        layer.msg('删除失败', {icon: 2, time: 1000});
+                    }
+                }
+            })
+        });
+    }
+    function dow_mod(id,url,name) {
+        $.ajax({
+            type : "post",
+            url : "{:url('admin/Poster/update_img')}",
+            data : {
+                "id" : id,
+                "name" : name,
+                "url" : url
+            },
+            beforeSend:function(XMLHttpRequest){
+                layer.msg('正在下载请稍后！', {
+                    icon: 16
+                    ,shade: 0.05
+                    ,time:900000
+                });
+            },
+            success : function(data) {
+                if(data['code'] > 0){
+                    layer.msg('操作成功', {icon: 1, time: 1000},function () {
+                        parent_flash();
+                    });
+                }else {
+                    layer.msg('已下载', {icon: 2, time: 1000});
+                }
+            }
+        })
+    }
+</script>
+{/block}

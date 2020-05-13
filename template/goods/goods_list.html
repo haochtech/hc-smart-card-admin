@@ -1,0 +1,394 @@
+﻿{extend name="base"/}
+{block name="main"}
+<style>.btn { margin-bottom: 0; } .page_btn a { height: 40px; line-height: 30px; }
+</style>
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div class="tabBar clearfix" style="position:relative;">
+            <span class="current" onclick="load_page('__CONF_SITE__admin/goods/goodslist')">商品列表</span>
+            <span onclick="load_page('__CONF_SITE__admin/order/orderlist2')">到店核销</span>
+            <span onclick="load_page('__CONF_SITE__admin/goods/goodsCategoryList')">商品分类</span>
+            <span onclick="load_page('__CONF_SITE__admin/goods/goods_attr_mod')">规格属性</span>
+            <span onclick="load_page('__CONF_SITE__admin/express/express_list')">物流模板</span>
+            <span onclick="load_page('__CONF_SITE__admin/Order/OrderList')">订单列表</span>
+            <span onclick="load_page('__CONF_SITE__admin/order/OrderRefund')">退款/退单</span>
+            <span onclick="layer_open('数据统计','__CONF_SITE__admin/count/OrderCount',1000,1000)">数据统计</span>
+            <div onclick="load_page('__CONF_SITE__admin/goods/add_goods','','',2)" class="n_tab_add">
+                <i class="Hui-iconfont">&#xe600;</i>
+                添加商品
+            </div>
+        </div>
+        <div>
+            <style>.page_btn {
+                float: left;
+            }
+
+            .tabBar span {
+                /*color: #988989;*/
+                font-size: 14px;
+                font-weight: normal;
+            }
+            </style>
+            <div class="cl pd-5 bg-1 bk-gray mt-20">
+                日期范围：
+                <input type="text" onfocus="WdatePicker()" value="{$star_time}" name="star_time"
+                       class="input-text Wdate"
+                       style="width:120px;">
+                -
+                <input type="text" onfocus="WdatePicker()" value="{$end_time}" name="end_time" class="input-text Wdate"
+                       style="width:120px;">
+                <input type="text" name="search_text" value="{$search_text}" placeholder=" 商品名称" style="width:250px"
+                       class="input-text">
+                <select class="input-text" name="goods_cate" id="goods_cate" style="width: auto">
+                    <option value="0">全部</option>
+                    {volist name="goods_cate" id="c"}
+                    <option {if condition="$cate_id==$c.cate_id" } selected {/if} value="{$c.cate_id}">{$c.cate_name}</option>
+                    {/volist}
+                </select>
+                <button onclick="send_submit()" id="submit_button" class="btn btn-search radius"
+                        style="padding: 5px 12px;margin-left: 5px;border-radius: 3px;box-sizing:border-box;background: #ebebeb;border: 1px solid #dcdfe6;">
+                    <i class="Hui-iconfont" style="    color: #a2a2a2;
+    font-size: 18px;">&#xe665;</i></button>
+            </div>
+        </div>
+        <div id="tab_demo" class="HuiTab" style="margin-top: 15px;">
+            <div class="tabBar clearfix">
+                <span {if condition="$status==''" } class="current" {/if}
+                onclick="load_page('__CONF_SITE__admin/goods/goodslist')">全部</span>
+                <span {if condition="$status==1" } class="current" {/if}
+                onclick="load_page('__CONF_SITE__admin/goods/goodslist&status=1')">出售中</span>
+                <span {if condition="$status==2" } class="current" {/if}
+                onclick="load_page('__CONF_SITE__admin/goods/goodslist&status=2')">仓库中</span>
+                <span {if condition="$status==3" } class="current" {/if}
+                onclick="load_page('__CONF_SITE__admin/goods/goodslist&status=3')">已售罄</span>
+                <span {if condition="$status==4" } class="current" {/if}
+                onclick="load_page('__CONF_SITE__admin/goods/goodslist&status=4')">回收站</span>
+            </div>
+        </div>
+        <div class="cl pd-5 bg-1 bk-gray mt-20" style="padding:10px;border-bottom:0;margin-top: 15px;">
+            <span class="page_btn"><a href="javascript:;" onclick="goods_pldel()" class="btn btn-new radius"><i
+                    class="Hui-iconfont">&#xe6e2;</i> 删除</a></span>
+            <span class="page_btn" style="margin-left: 10px;margin-right: 10px;"><a href="javascript:;"
+                                                                                    onclick="goods_re()"
+                                                                                    class="btn btn-new radius"><i
+                    class="Hui-iconfont">&#xe6c1;</i> 热卖</a></span>
+            <span class="page_btn" style="margin-right: 10px;"><a href="javascript:;" onclick="goods_new()"
+                                                                  class="btn btn-new radius"><i class="Hui-iconfont">&#xe630;</i> 新品</a></span>
+            <span class="page_btn"><a href="javascript:;" onclick="goods_tui()" class="btn btn-new radius"><i
+                    class="Hui-iconfont">&#xe6cf;</i> 推荐</a></span></div>
+        <div>
+            <table class="table table-border table-bordered table-bg table-hover table-sort" style="margin-top: 0;">
+                <thead>
+                <tr class="text-c">
+                    <th style="width: 50px"><input id="xs-all" name="" type="checkbox" value=""></th>
+                    <th>缩略图</th>
+                    <th>产品名称</th>
+                    <th>单价</th>
+                    <th>添加时间</th>
+                    <th>状态</th>
+                    <th>发布</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody id="tbody">
+                {volist name="result" id="r"}
+                <tr class="text-c va-m">
+                    <td><input name="sub" type="checkbox" value="{$r['goods_id']}"></td>
+                    <td><img width="60" height="60" class="radius" src="{$r['img_cover']}"></a></td>
+                    <td class="text-l">{$r['goods_name']}</td>
+                    <td><span class="price">{$r['price']}</span></td>
+                    <td>{$r['create_time']}</td>
+                    <td class="td-status">
+                        {if $r['is_new']==1}
+                        <a onclick="goods_type_all(this,'{$r.goods_id}','new')" style="text-decoration:none"
+                           href="javascript:;" title="新品"><span class="label label-secondary radius">新</span></a>
+                        {/if}
+                        {if $r['is_hot']==1}
+                        <a onclick="goods_type_all(this,'{$r.goods_id}','hot')" style="text-decoration:none"
+                           href="javascript:;" title="热销"> <span class="label label-danger radius">热</span></a>
+                        {/if}
+                        {if $r['is_recommend']==1}
+                        <a onclick="goods_type_all(this,'{$r.goods_id}','tui')" style="text-decoration:none"
+                           href="javascript:;" title="推荐"> <span class="label label-primary radius">荐</span></a>
+                        {/if}
+                        {if $r['is_hot']==0&&$r['is_new']==0&&$r['is_recommend']==0}
+                        无
+                        {/if}
+                    </td>
+                    <td class="td-status">
+                        {if $r['state']==1}
+                        <a style="text-decoration:none;margin-right:15px;"
+                           onClick="goods_stop(this,'{$r.goods_id}')" href="javascript:;" title="下架"><span
+                                class="label label-success radius ">已发布</span></a>
+                        {/if}
+                        {if $r['state']==0}
+                        <a style="text-decoration:none;margin-right:15px;"
+                           onClick="goods_star(this,'{$r.goods_id}')" href="javascript:;" title="上架"><span
+                                class="label label-danger radius ">仓库中</span></a>
+                        {/if}
+                        {if $r['stock']==0}
+                        <a style="text-decoration:none;margin-right:15px;" href="javascript:;"
+                           title="已售罄"><span class="label label-warning radius ">已售罄</span></a>
+                        {/if}
+                        {if $r['state']==10}
+                        <a style="text-decoration:none;margin-right:15px;" href="javascript:;"
+                           title="违规商品"><span class="label label-default radius ">违规商品</span></a>
+                        {/if}
+                    </td>
+                    <td class="td-manage">
+                        <a style="text-decoration:none;margin-right:15px;" class="ml-5 show_layer" href="javascript:;" onclick="load_page('__CONF_SITE__admin/goods/add_goods&goodsId={$r.goods_id}','','',2)" title="编辑">
+                            编辑
+                        </a>
+                        <a style="text-decoration:none;margin-right:15px;" class="ml-5 caozuo" onClick="goods_del(this,'{$r.goods_id}')" href="javascript:;" title="删除">删除
+                        </a></td>
+                </tr>
+                {/volist}
+                </tbody>
+            </table>
+            <div class="n_page_no">
+                {$page}
+            </div>
+        </div>
+    </article>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    function send_submit() {
+        load_page('__CONF_SITE__admin/goods/goodslist', '', {
+            goods_cate: $("#goods_cate").val(),
+            star_time: $("input[name=star_time]").val(),
+            end_time: $("input[name=end_time]").val(),
+            search_text: $("input[name=search_text]").val()
+        })
+    }
+    $(function () {
+        $('#xs-all').click(function () {
+            var xs_status = $('#xs-all').prop('checked');
+            if (xs_status) {
+                $("[name='sub']").prop('checked', true);
+            } else {
+                $("[name='sub']").prop('checked', false);
+            }
+        });
+        $("[name='sub']").click(function () {
+            var i = 0;
+            var j = 0;
+            $("[name='sub']").each(function () {
+                var xs_stu = $(this).prop('checked');
+                if (xs_stu) {
+                    i++;
+                }
+                j++;
+            });
+            if (i == j) {
+                $('#xs-all').prop('checked', true);
+            } else {
+                $('#xs-all').prop('checked', false);
+            }
+        });
+    });
+    function goods_type_all(obj, id, key) {
+        //后台处理
+        $.ajax({
+            type: "post",
+            url: "{:url('goods/goodTypeEdit')}",
+            data: {
+                "goods_id": id,
+                "key": key
+            },
+            success: function (data) {
+                if (data['code'] > 0) {
+                    $(obj).remove();
+                    layer.msg('取消成功!', {icon: 1, time: 500});
+                } else {
+                    layer.msg(data['message'], {icon: 2, time: 1000});
+                }
+            }
+        })
+    }
+    /*商品-停用*/
+    function goods_stop(obj, id) {
+        layer.confirm('确认要下架吗？', function (index) {
+            $.ajax({
+                type: "post",
+                url: "{:url('goods/ModifyGoodsOffline')}",
+                data: {
+                    "goods_ids": id
+                },
+                success: function (data) {
+                    if (data['code'] > 0) {
+                        layer.msg('下架成功!', {icon: 1, time: 500}, function () {
+                            parent_flash();
+                        });
+                    } else {
+                        layer.msg(data['message'], {icon: 2, time: 1000});
+                    }
+                }
+            })
+        });
+    }
+    /*商品-上架*/
+    function goods_star(obj, id) {
+        layer.confirm('确认要上架吗？', function (index) {
+            $.ajax({
+                type: "post",
+                url: "{:url('goods/ModifyGoodsOnline')}",
+                data: {
+                    "goods_ids": id
+                },
+                success: function (data) {
+                    if (data['code'] > 0) {
+                        layer.msg('上架成功!', {icon: 1, time: 500}, function () {
+                            parent_flash();
+                        });
+                    } else {
+                        layer.msg(data['message'], {icon: 2, time: 1000});
+                    }
+                }
+            })
+        });
+    }
+    /*商品-删除*/
+    function goods_del(obj, id) {
+        layer.confirm('确认要删除商品吗？', function (index) {
+            //后台处理
+            $.ajax({
+                type: "post",
+                url: "{:url('goods/deleteGoods')}",
+                data: {"goods_ids": id.toString()},
+                dataType: "json",
+                success: function (data) {
+                    if (data["code"] > 0) {
+                        $(obj).parents("tr").remove();
+                        layer.msg(data['message'], {icon: 1, time: 1000});
+                    } else {
+                        layer.msg(data['message'], {icon: 2, time: 1000});
+                    }
+                }
+            });
+        });
+    }
+    /*商品-热卖商品*/
+    function goods_re() {
+        var id = '';
+        $('#tbody input[type=checkbox]:checked').each(function () {
+            if (!isNaN($(this).val())) {
+                id = $(this).val() + "," + id;
+            }
+        });
+        if (id == '') {
+            layer.msg('请选择商品', {icon: 5, time: 1000});
+            return false;
+        } else {
+            id = id.substring(0, id.length - 1);
+        }
+        $.ajax({
+            type: "post",
+            url: "{:url('goods/ModifyGoodsRecommend')}",
+            data: {"goods_id": id.toString(), "re": 1},
+            success: function (data) {
+                if (data["code"] > 0) {
+                    layer.msg(data['message'], {icon: 1, time: 1000}, function () {
+                        parent_flash();
+                    });
+                } else {
+                    layer.msg(data['message'], {icon: 5, time: 1000});
+                }
+            }
+        })
+    }
+    /*商品-推荐商品*/
+    function goods_tui() {
+        var id = '';
+        $('#tbody input[type=checkbox]:checked').each(function () {
+            if (!isNaN($(this).val())) {
+                id = $(this).val() + "," + id;
+            }
+        });
+        if (id == '') {
+            layer.msg('请选择商品', {icon: 5, time: 1000});
+            return false;
+        } else {
+            id = id.substring(0, id.length - 1);
+        }
+        $.ajax({
+            type: "post",
+            url: "{:url('goods/ModifyGoodsRecommendTui')}",
+            data: {"goods_id": id.toString(), "tui": 1},
+            success: function (data) {
+                if (data["code"] > 0) {
+                    layer.msg(data['message'], {icon: 1, time: 1000}, function () {
+                        parent_flash();
+                    });
+                } else {
+                    layer.msg(data['message'], {icon: 5, time: 1000});
+                }
+            }
+        })
+    }
+    /*商品-新品商品*/
+    function goods_new() {
+        var id = '';
+        $('#tbody input[type=checkbox]:checked').each(function () {
+            if (!isNaN($(this).val())) {
+                id = $(this).val() + "," + id;
+            }
+        });
+        if (id == '') {
+            layer.msg('请选择商品', {icon: 5, time: 1000});
+            return false;
+        } else {
+            id = id.substring(0, id.length - 1);
+        }
+        $.ajax({
+            type: "post",
+            url: "{:url('goods/ModifyGoodsRecommendNew')}",
+            data: {"goods_id": id.toString(), "new": 1},
+            success: function (data) {
+                if (data["code"] > 0) {
+                    layer.msg(data['message'], {icon: 1, time: 1000}, function () {
+                        parent_flash();
+                    });
+                } else {
+                    layer.msg(data['message'], {icon: 5, time: 1000});
+                }
+            }
+        })
+    }
+    /*商品-PL删除*/
+    function goods_pldel() {
+        var id = '';
+        $('#tbody input[type=checkbox]:checked').each(function () {
+            if (!isNaN($(this).val())) {
+                id = $(this).val() + "," + id;
+            }
+        });
+        if (id == '') {
+            layer.msg('请选择商品', {icon: 5, time: 1000});
+            return false;
+        } else {
+            id = id.substring(0, id.length - 1);
+        }
+        layer.confirm('确认要删除商品吗？', function (index) {
+            //后台处理
+            $.ajax({
+                type: "post",
+                url: "{:url('goods/deleteGoods')}",
+                data: {"goods_ids": id.toString()},
+                dataType: "json",
+                success: function (data) {
+                    if (data["code"] > 0) {
+                        layer.msg(data['message'], {icon: 1, time: 1000}, function () {
+                            parent_flash();
+                        });
+                    } else {
+                        layer.msg(data['message'], {icon: 2, time: 1000});
+                    }
+                }
+            });
+        });
+    }
+</script>
+{/block}

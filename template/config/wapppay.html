@@ -1,0 +1,195 @@
+{extend name="base"/}
+{block name="main"}
+<style>.form_message { display: block; height: 38px; line-height: 38px; text-align: left; color: #999; } .formControls .btn { float: left; margin-right: 15px; } .clear { clear: both; } .input-text { padding-left: 10px !important; }
+</style>
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+            <div class="tabBar clearfix">
+                <span class="current">小程序管理</span>
+                <span onclick="load_page('__CONF_SITE__admin/menu/wxapp_page')">小程序页面</span>
+                <span onclick="load_page('__CONF_SITE__admin/Menu/user_center')">会员中心</span>
+                <span onclick="load_page('__CONF_SITE__admin/config/wxrefund')">微信退款设置</span>
+            </div>
+        </div>
+        <form id="main_form" method="post">
+            <input type="hidden" value="{$info['id']}" id="id" name="id">
+            <div class="form form-horizontal" id="main">
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>小程序名称：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <input type="text" autocomplete="off" value="{$wxappinfo.name}"
+                               placeholder="请点击左侧 返回系统 在小程序管理界面 配置相关参数" readonly class="input-text" id="APP_NAME"
+                               name="APP_NAME">
+                        <p>小程序名称 如需更改 请 <a href="{$siteroot}">返回平台</a> 在【小程序管理界面】 配置相关参数</p>
+                    </div>
+                </div>
+                <div class="row cl" style="margin-top:2px;">
+                    <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>小程序应用编号：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <input type="text" autocomplete="off" value="{$wxappinfo.key}"
+                               placeholder="请点击左侧 返回系统 在小程序管理界面 配置相关参数" readonly class="input-text" id="APP_ID"
+                               name="APP_ID">
+                        <p>小程序应用编号 APPID 如需更改 请 <a href="{$siteroot}">返回平台</a> 在【小程序管理界面】 配置相关参数</p>
+                    </div>
+                </div>
+                <div class="row cl" style="margin-top:2px;">
+                    <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>小程序应用秘匙：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <input type="text" autocomplete="off" value="{$wxappinfo.secret}"
+                               placeholder="请点击左侧 返回系统 在小程序管理界面 配置相关参数" readonly class="input-text" id="APP_SECRET"
+                               name="APP_SECRET">
+                        <p>小程序应用秘匙 APP_SECRET 如需更改 请 <a href="{$siteroot}">返回平台</a> 在【小程序管理界面】 配置相关参数</p>
+                    </div>
+                </div>
+                <div v-if="pay_type == 0">
+                    <div class="row cl" style="margin-top:2px;">
+                        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>微信支付商户号：</label>
+                        <div class="formControls col-xs-8 col-sm-9">
+                            <input type="text" autocomplete="off" value="{$info['value']['APP_MCHID']}"
+                                   placeholder="请输入APP_MCHID" class="input-text" id="APP_MCHID" name="APP_MCHID">
+                            <span class="form_message">商户号 APP_MCHID <a href="https://pay.weixin.qq.com/"
+                                                                        target="_blank">登录微信支付商户平台</a>，在【账户中心-账户设置-商户信息】中查看</span>
+                        </div>
+                    </div>
+                    <div class="row cl" style="margin-top:2px;">
+                        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>微信支付密钥：</label>
+                        <div class="formControls col-xs-8 col-sm-9">
+                            <input type="text" autocomplete="off" value="{$info['value']['APP_KEY']}"
+                                   placeholder="请输入APP_KEY" class="input-text" id="APP_KEY" name="APP_KEY">
+                            <span class="form_message">微信支付密钥 APP_KEY <a href="https://pay.weixin.qq.com/"
+                                                                         target="_blank">登录微信支付商户平台</a>，在【账户中心-账户设置-API安全】中设置</span>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="pay_type == 1">
+                    <div class="row cl" style="margin-top:2px;">
+                        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>服务商APPID：</label>
+                        <div class="formControls col-xs-8 col-sm-9">
+                            <input type="text" autocomplete="off" value="{$info['value']['SERVICE_APPID']}"
+                                   placeholder="请输入APP_MCHID" class="input-text" id="SERVICE_APPID"
+                                   name="SERVICE_APPID">
+                            <span class="form_message">服务商APPID,一般情况为认证的服务号appid</span>
+                        </div>
+                    </div>
+                    <div class="row cl" style="margin-top:2px;">
+                        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>服务商商户号：</label>
+                        <div class="formControls col-xs-8 col-sm-9">
+                            <input type="text" autocomplete="off" value="{$info['value']['SERVICE_MCHID']}"
+                                   placeholder="请输入APP_KEY" class="input-text" id="SERVICE_MCHID" name="SERVICE_MCHID">
+                            <span class="form_message">服务商商户号</span>
+                        </div>
+                    </div>
+                    <div class="row cl" style="margin-top:2px;">
+                        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>服务商支付密钥：</label>
+                        <div class="formControls col-xs-8 col-sm-9">
+                            <input type="text" autocomplete="off" value="{$info['value']['SERVICE_KEY']}"
+                                   placeholder="请输入APP_KEY" class="input-text" id="SERVICE_KEY" name="SERVICE_KEY">
+                            <span class="form_message">微信支付密钥 APP_KEY <a href="https://pay.weixin.qq.com/"
+                                                                         target="_blank">登录微信支付商户平台</a>，在【账户中心-账户设置-API安全-密钥设置】中设置</span>
+                        </div>
+                    </div>
+                    <div class="row cl" style="margin-top:2px;">
+                        <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>支付子商户号：</label>
+                        <div class="formControls col-xs-8 col-sm-9">
+                            <input type="text" autocomplete="off" value="{$info['value']['SUB_MCHID']}"
+                                   placeholder="请输入APP_MCHID" class="input-text" id="SUB_MCHID" name="SUB_MCHID">
+                            <span class="form_message">子商户号,服务商平台为当前用户创建的子商户号</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row cl" style="margin-top:2px;display: flex;align-items: center;">
+                    <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>支付类型：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <input id="che1" type="radio" name="PAY_TYPE" value="0" v-model="pay_type" style="margin-right: 2px;"/><label for="che1">普通支付</label>
+                        <input id="che2" type="radio" name="PAY_TYPE" value="1" v-model="pay_type" style="margin-left: 8px;margin-right: 2px;"/><label for="che2">服务商支付</label>
+                    </div>
+                </div>
+                <div class="row cl" style="margin-top:2px;display: flex;align-items: center;">
+                    <label class="form-label col-xs-4 col-sm-2">商城按钮位置：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <input id="che11" type="radio" name="shop_site" value="2" v-model="shop_site" style="margin-right: 2px;"/><label for="che11">顶部</label>
+                        <input id="che22" type="radio" name="shop_site" value="1" v-model="shop_site" style="margin-left: 8px;margin-right: 2px;"/><label for="che22">右侧</label>
+                    </div>
+                </div>
+                <div class="row cl" style="margin-top:2px;display: flex;align-items: center;">
+                    <label class="form-label col-xs-4 col-sm-2">自定义名片背景：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <div style="position: absolute;top:5px;left:200px;color: #aaa;">参照图 <a href="/public/upload/navigat/card_mod_bg02.png" download="参照图">点击下载</a></div>
+                        <img width="120"  v-if="card_img!=''"  :src="card_img" class="thumbnail">
+                        <input type="hidden" :value="card_img" name="card_img">
+                        <input onclick="select_img('1','head_photo');" class="btn btn-default" type="button" value="选择图片">
+                        <p style="margin-top: 26px;">请严格按照参照图[名片模板3]样式进行自定义</p>
+                    </div>
+                </div>
+                <div class="row cl">
+                    <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+                        <input class="btn btn-primary radius" onclick="addAdvertAjax()" type="button" value="   提交   " >
+                    </div>
+                </div>
+            </div>
+        </form>
+        <input type="hidden" id="bus_id" value="{$user_info['id']}">
+        <input type="hidden" value="" id="fabu">
+    </article>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    var vm = new Vue({
+        el: '#main',
+        data: {
+            pay_type: {$info['value']['PAY_TYPE']},
+            shop_site: {$info['value']['shop_site']},
+            card_img: "{$info['value']['card_img']}"
+        }
+    });
+    $("#main_form").on('submit', function () {
+        return false;
+    });
+    function head_photo(id,path) {
+        vm.card_img=path;
+        $("input[name=card_img]").val(path);
+    }
+    function select_img(number,type) {
+        layer_open("我的图片001",'__CONF_SITE__admin/images/dialogalbumlist&number=' + number + '&type=' + type,900,620);
+    }
+    var flag = false;
+    function addAdvertAjax() {
+        if (flag) {
+            return
+        }
+        ;
+        flag = true;
+        check_users(do_send_wx);
+    }
+    var do_send_wx=function () {
+        $.ajax({
+            url: "{:url('config/WAppPay')}",
+            type: 'POST',
+            cache: false,
+            data: new FormData($('#main_form')[0]),
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            success: function (res) {
+                flag = false;
+                if (res["code"] > 0) {
+                    layer.msg('提交成功!', {icon: 1, time: 1000}, function () {
+                        parent_flash();
+                    });
+                } else {
+                    layer.msg(res['message'], {icon: 5, time: 1000});
+                }
+            },
+            error: function (err) {
+                flag = false;
+            }
+        }).done(function (res) {
+        }).fail(function (res) {
+        });
+    }
+</script>
+{/block}

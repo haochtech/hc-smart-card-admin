@@ -1,0 +1,130 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div class="tabBar clearfix" style="position:relative;">
+            <span onclick="load_page('__CONF_SITE__admin/activity/user_share')">分销商列表</span>
+            <span onclick="load_page('__CONF_SITE__admin/activity/share_order')">订单列表</span>
+            <span onclick="load_page('__CONF_SITE__admin/distribute/index')">单商品分销</span>
+            <span onclick="load_page('__CONF_SITE__admin/activity/share_cash')">分销商提现</span>
+            <span onclick="load_page('__CONF_SITE__admin/activity/share_set')" >基础设置</span>
+            <span class="current" onclick="load_page('__CONF_SITE__admin/activity/share_pay')" >佣金设置</span>
+            <span onclick="load_page('__CONF_SITE__admin/activity/share_other')">自定义设置</span>
+        </div>
+    <div>
+    <div class="mt-20">
+        {if $share.level eq '6'}
+        <h4>当前未开启分销,如要使用,请从基础设置中开启</h4>
+        {else}
+        <table class="table table-border table-bordered table-bg table-hover table-sort">
+            <tbody id="tbody">
+            <tr class="text-c">
+                <td style="text-align: right;width:15%;">佣金类型</td>
+                <td style="width:5%;">　</td>
+                <td style="width:80%; text-align: left;">
+                <input type="radio" value="0" name="type" <?php if($share['price_type']=='0') echo("checked");?>>百分比&nbsp;&nbsp;&nbsp;
+                <input type="radio" value="1" name="type" <?php if($share['price_type']=='1') echo("checked");?>>固定金额
+                </td>
+            </tr>
+            <tr class="text-c">
+                <td style="text-align: right;width:15%;">一级名称</td>
+                <td style="width:5%;">　</td>
+                <td style="width:80%; text-align: left;">
+                    <input type="text" value="{$share['first_name']|default='一级'}" class="input-text" id="fname">
+                </td>
+            </tr>
+            <tr class="text-c">
+                <td style="text-align: right;width:15%;">一级佣金</td>
+                <td style="width:5%;">　</td>
+                <td style="width:80%; text-align: left;">
+                    <input type="text" value="{$share['first']|default='0.00'}" class="input-text" id="fprice">
+                    <span class="span_type">{$share['icon']}</span>
+                </td>
+            </tr>
+                {if $share['second'] != '-1'}
+                <tr class="text-c">
+                    <td style="text-align: right;width:15%;">二级名称</td>
+                    <td style="width:5%;">　</td>
+                    <td style="width:80%; text-align: left;">
+                        <input type="text" value="{$share['second_name']|default='二级'}" class="input-text" id="sname">
+                    </td>
+                </tr>
+                <tr class="text-c">
+                    <td style="text-align: right;width:15%;">二级佣金</td>
+                    <td style="width:5%;">　</td>
+                    <td style="width:80%; text-align: left;">
+                        <input type="text" value="{$share['second']|default='0.00'}" class="input-text" id="sprice">
+                        <span class="span_type">{$share['icon']}</span>
+                    </td>
+                </tr>
+                {/if}
+                {if $share['third'] != '-1'}
+                <tr class="text-c">
+                    <td style="text-align: right;width:15%;">三级名称</td>
+                    <td style="width:5%;">　</td>
+                    <td style="width:80%; text-align: left;">
+                        <input type="text" value="{$share['third_name']|default='三级'}" class="input-text" id="tname">
+                    </td>
+                </tr>
+                <tr class="text-c">
+                    <td style="text-align: right;width:15%;">三级佣金</td>
+                    <td style="width:5%;">　</td>
+                    <td style="width:80%; text-align: left;">
+                        <input type="text" value="{$share['third']|default='0.00'}" class="input-text" id="tprice">
+                        <span class="span_type">{$share['icon']}</span>
+                    </td>
+                </tr>
+                {/if}
+            </tbody>
+        </table>
+        <div class="row cl">
+            <div class="col-xs-5 col-sm-5"></div>
+            <div class="col-xs-7 col-sm-7">
+                <input class="btn btn-primary radius" onclick="save_pay()" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;" >
+            </div>
+        </div>
+        {/if}
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('input[type=radio]').change(function () {
+           var s=$('input[type=radio]:checked').val();
+           if(s=='0'){
+               $(".span_type").html('%');
+           }else if (s=='1'){
+               $(".span_type").html('元');
+           }
+        });
+    });
+    function save_pay() {
+        var s=$('input[type=radio]:checked').val();
+        $.ajax({
+            type: "post",
+            url: "{:url('activity/share_pay')}",
+            data: {
+                'price_type':s,
+                'first_name':$('#fname').val(),
+                'first':$('#fprice').val(),
+                'second_name':$('#sname').val(),
+                'second':$('#sprice').val(),
+                'third_name':$('#tname').val(),
+                'third':$('#tprice').val()
+            },
+            success: function (data) {
+                if (data == '0') {
+                    layer.msg('保存成功!', {icon: 1, time: 1000}, function () {
+                        parent_flash("__CONF_SITE__admin/activity/share_pay");
+                    });
+                }else {
+                    flags = false;
+                    layer.msg('保存失败', {icon: 5, time: 1000});
+                }
+            }
+        });
+    }
+</script>
+{/block}

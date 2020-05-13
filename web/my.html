@@ -1,0 +1,194 @@
+<html style="font-size: 48px;">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <title>我的</title>
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+    <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT">
+    <link rel="stylesheet" href="./vue/css/my.css?v=1.162">
+    <link rel="stylesheet" href="./vue/css/iosSelect.css">
+    <link rel="stylesheet" href="./vue/css/iconfont.css">
+    <link rel="stylesheet" href="./vue/css/swiper.min.css">
+    <style type="text/css">
+        .me_wrapper[data-v-7bc48476] {
+            position: relative !important;
+        }
+        /*.my_info_small_wrapper[data-v-7bc48476] {width: 100% !important;}*/
+        .my_info_small_box[data-v-7bc48476] {margin: 0.5rem auto !important;    position: relative !important;left: 0 !important;}
+        .line-me1[data-v-7bc48476] {width: calc(100% - 1.2rem) !important;}
+        footer img{max-height: 20px;min-height: 20px;}
+    </style>
+    <!--<link href="./vue/css/app.50a85c26cede62dc9f92fbf57afb373e.css"-->
+    <!--rel="stylesheet">-->
+    <script src="https://pingjs.qq.com/h5/stats.js?v2.0.4" name="MTAH5" sid="500619036"></script>
+    <script src="vue/js/common.js"></script>
+    <script src="./vue/js/jquery-1.7.2.js"></script>
+    <script src="./vue/js/layer.js"></script>
+    <script src="vue/js/vue.js"></script>
+    <script src="./vue/js/vue-resource.js"></script>
+    <script src="./vue/js/my.js?v=1.2"></script>
+    <script type="text/ecmascript">
+        var winWidth = 750
+        window.onresize = function () {
+            getRem(winWidth, 100)
+        }
+        function getRem(pwidth, prem) {
+            var html = document.getElementsByTagName('html')[0]
+            var oWidth = document.documentElement.clientWidth
+            html.style.fontSize = oWidth / pwidth * prem + 'px'
+        }
+        (function () {
+            if (typeof WeixinJSBridge == "object" && typeof WeixinJSBridge.invoke == "function") {
+                handleFontSize();
+            } else {
+                document.addEventListener("WeixinJSBridgeReady", handleFontSize, false);
+            }
+            function handleFontSize() {
+                // 设置网页字体为默认大小
+                WeixinJSBridge.invoke('setFontSizeCallback', {
+                    'fontSize': 0
+                });
+                // 重写设置网页字体大小的事件
+                WeixinJSBridge.on('menu:setfont', function () {
+                    WeixinJSBridge.invoke('setFontSizeCallback', {
+                        'fontSize': 0
+                    });
+                });
+            }
+            function onBridgeReady() {
+                WeixinJSBridge.call('hideOptionMenu');
+            }
+            if (typeof WeixinJSBridge == "undefined") {
+                if (document.addEventListener) {
+                    document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+                } else if (document.attachEvent) {
+                    document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                    document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+                }
+            } else {
+                onBridgeReady();
+            }
+        })()
+        getRem(winWidth, 100)
+    </script>
+</head>
+<body>
+<div id="app">
+    <section data-v-7bc48476="">
+        <div data-v-7bc48476="" class="me_wrapper" style="display:none" v-show="show">
+            <div data-v-7bc48476="" class="me_container"
+                 style="transition-property: transform; transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1); transition-duration: 0ms; transform: translate(0px, 0px) scale(1) translateZ(0px);">
+                <div data-v-7bc48476="" class="my_info_small_wrapper" style="pointer-events: auto;">
+                    <div data-v-7bc48476="" class="my_info_small_box">
+                        <section data-v-7bc48476="" style="position: relative;" @click='url("userinfo")'><span class="my_info_img" data-v-7bc48476="" class="my_info_img">
+                            <img data-v-7bc48476="" :src="userinfo.head_photo?userinfo.head_photo:'./vue/img/defaultlogo.png'" this.style.border='1px solid #e5e5e5' onerror="this.src='./vue/img/defaultlogo.png'">
+                            </span>
+                            <div data-v-7bc48476="" class="my_info2">
+                                <p data-v-7bc48476="" class="my_info2_name">
+                                    {{userinfo.user_name}}</p>
+                                <p data-v-7bc48476="" class="my_info2_role">{{userinfo.position}}</p>
+                            </div>
+                            <img
+                                    data-v-7bc48476=""
+                                    src="vue/img/red/bianji.png"
+                                    alt="" style="position: absolute;top: 15px;right: 15px;width: 15px;">
+                        </section>
+                        <ul data-v-7bc48476="" class="my_info_small_box_bottom clearfix">
+                            <li data-v-7bc48476="" @click='url("poster")'><img data-v-7bc48476="" src="vue/img/red/ewm.png" alt=""
+                                                                               style="width:0.32rem;height: 0.32rem;margin-left: 0.8rem;"> <span data-v-7bc48476="" class="my_info_small_box-text" @click='url("poster")'>名片海报</span>
+                            </li>
+                            <li data-v-7bc48476="" @click="poster_jx()"><img data-v-7bc48476="" src="vue/img/red/ewm.png" alt="" style="width: 0.32rem; height: 0.32rem; margin-left: 0.55rem;margin-left: 0.8rem" @click="poster_jx()">
+                                <span data-v-7bc48476="" class="my_info_small_box-text" @click="poster_jx()">每日海报</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div data-v-7bc48476="" class="me_manage_box_white" style="pointer-events: auto;background: #fff"></div>
+                <div data-v-7bc48476="" class="me_manage_box1" style="margin-bottom: 0.2rem; pointer-events: auto;">
+                    <div class="white" style="width: 100%;height: 2.4rem
+;display: inline-block;margin-top: -3.4rem;background: #fff"></div>
+                    <div data-v-7bc48476="" style="height: 0.8rem;margin-top: -1.5rem;" @click="url('get_user_dynamic')">
+                        <img
+                                data-v-7bc48476=""
+                                src="vue/img/red/dongtai.png"
+                                alt="">
+                        <div data-v-7bc48476="" class="line-me1 line-me"><span data-v-7bc48476="">我的动态</span> <img
+                                data-v-7bc48476=""
+                                src="vue/img/red/jiantou.png"
+                                alt="">
+                        </div>
+                    </div>
+                    <div data-v-7bc48476="" style="height: 0.8rem;" @click='url("huashu")'><img data-v-7bc48476=""
+                                                                                                 src="vue/img/red/guanli.png"
+                                                                                                 alt="">
+                        <div data-v-7bc48476="" class="line-me1 line-me"><span data-v-7bc48476="" >话术管理</span> <img
+                                data-v-7bc48476=""
+                                src="vue/img/red/jiantou.png"
+                                alt=""></div>
+                    </div>
+                </div>
+                <div data-v-7bc48476="" class="me_manage_box1" style="margin-bottom: 0.2rem; pointer-events: auto;">
+                    <div data-v-7bc48476="" @click='get_goods("userinfo")'><img data-v-7bc48476=""
+                                                                                src="vue/img/red/chanpin.png"
+                                                                                alt="">
+                        <div data-v-7bc48476="" class="line-me1 line-me"><span data-v-7bc48476="">我的产品</span> <img
+                                data-v-7bc48476=""
+                                src="vue/img/red/jiantou.png"
+                                alt=""></div>
+                    </div>
+                    <div data-v-7bc48476="" @click='url("mychart")'><img data-v-7bc48476=""
+                                                                         src="vue/img/red/baobiao.png"
+                                                                         alt="">
+                        <div data-v-7bc48476="" class="line-me1 line-me"><span data-v-7bc48476="">我的报表</span> <img
+                                data-v-7bc48476=""
+                                src="vue/img/red/jiantou.png"
+                                alt=""></div>
+                    </div>
+                </div>
+                <div data-v-7bc48476="" class="me_manage_box1" style="margin-bottom: 0.2rem; pointer-events: auto;">
+                    <div data-v-7bc48476="" @click='url("suggest")'><img data-v-7bc48476=""
+                                                                         src="vue/img/red/yijian.png"
+                                                                         alt="">
+                        <div data-v-7bc48476="" class="line-me1 line-me"><span data-v-7bc48476="">意见反馈</span> <img
+                                data-v-7bc48476=""
+                                src="vue/img/red/jiantou.png"
+                                alt=""></div>
+                    </div>
+                    <div data-v-7bc48476=""  @click='url("setting")'><img data-v-7bc48476=""
+                                                                          src="vue/img/red/shezhi.png"
+                                                                          alt="" style="margin-left: 22px;position: absolute">
+                        <div data-v-7bc48476="" class="line-me1"><span data-v-7bc48476="">设置</span> <img
+                                data-v-7bc48476=""
+                                src="vue/img/red/jiantou.png"
+                                alt=""></div>
+                    </div>
+                </div>
+            </div>
+            <footer data-v-23f17f48="" class="home_footer">
+                <div replace="" @click='url("index_ai")'><img
+                        src="vue/img/home.png"
+                        alt="">
+                    <p class="">雷达</p></div>
+                <div replace="" @click='url("news_ai")'>
+                    <span class="all-no-read" v-show="wd_news>0">{{wd_news}}</span>
+                    <img
+                            src="vue/img/news.png">
+                    <p class="">消息</p></div>
+                <div replace="" @click='url("people")'>
+                    <!--  <span class="red_point"></span> -->
+                    <img
+                            src="vue/img/people.png" alt="">
+                    <p class="">客户</p></div>
+                <div replace="" @click='url("message")'><img
+                        src="vue/img/find.png">
+                    <p class="">动态</p></div>
+                <div replace="" @click='url("my")'><img
+                        src="vue/img/my2.png">
+                    <p class="choosed_tab">我的</p></div>
+            </footer>
+        </div>
+    </section> <!----></div>
+<script src="vue/js/swiper.min.js"></script>
+</body>
+</html>

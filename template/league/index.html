@@ -1,0 +1,73 @@
+{extend name="base"/}
+{block name="main"}
+<article class="cl pd-20">
+<style>
+.form_li {height:50px; line-height:50px; text-align:center;font-size:14px;}
+.form_li .form_input {width:220px; height:26px; line-height:26px;padding:3px 6px;background:#fff;border:1px solid #ededed;}
+.form_about {font-size:13px; color:#949494; text-align:center;height:50px; line-height:50px; }
+</style>
+<div class="n_tab_line">
+            <a href="{:url('league/setting')}" class="n_tab_list">APP登录密码设置</a>
+            <div class="cl"></div>
+        </div>
+<!--<div class="form_about">请设置您的APP登录密码</div>-->
+<div class="form_li">
+用户名：<input class="form_input" type="text" name="name" {if !empty($list.account)}value="{$list.account}" style="background-color:#c3c5c5;" disabled{/if} /></div>
+<div class="form_li">
+密　码：<input class="form_input" type="password" name="password"></div>
+<div class="form_li">
+<input class="btn btn-primary radius" onclick="comm();" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;"></div>
+<div style="height:30px; line-height:30px;"></div>
+</article>
+<script>
+    var lock = false;
+    function comm() {
+        if (!lock) {
+            lock = true;
+            var bled = $("[name='name']").attr('disabled');
+            var conf = '确认创建用户吗？';
+            if (bled == 'disabled') {
+                conf = '确定要修改密码吗？';
+            }
+            layer.confirm(conf, function (index) {
+                $.ajax({
+                    type: "post",
+                    url: "__CONF_SITE__admin/league/shape",
+                    data: {
+                        uniacid: '{$uniacid}',
+                        account: $("[name='name']").val(),
+                        password: $("[name='password']").val()
+                    },
+                    success: function (data) {
+                        if (data == 1) {
+                            var aonf = '创建成功';
+                            if (bled == 'disabled') {
+                                aonf = '修改成功！';
+                            }
+                            layer.msg(aonf, {icon: 1, time: 1000}, function () {
+                                location.reload();
+                            });
+                        } else if (data == 3) {
+                            layer.msg('很抱歉，用户名存在！', {icon: 5, time: 1000});
+                            lock = false;
+                        } else if (data == 5) {
+                            layer.msg('很抱歉，此版本不支持创建APP，如有需求，请联系QQ：2300078021！', {icon: 5, time: 3000});
+                            lock = false;
+                        }
+                        else {
+                            var aonf = '创建失败';
+                            if (bled == 'disabled') {
+                                aonf = '修改失败！';
+                            }
+                            layer.msg(aonf, {icon: 5, time: 1000});
+                            lock = false;
+                        }
+                    }
+                });
+            }, function () {
+                lock = false;
+            })
+        }
+    }
+</script>
+{/block}

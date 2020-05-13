@@ -1,0 +1,91 @@
+﻿{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <div class="n_tab_line">
+            <a href="{:url('admin/admin_permission')}" class="n_tab_list">权限列表</a>
+            <a href="{:url('admin/admin_permission_add')}" class="n_tab_add">添加权限</a>
+            <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a>
+            <div class="cl"></div>
+        </div>
+        <div class="text-c">
+            <form class="Huiform" method="post" action="__CONF_SITE__admin/admin/admin_permission" target="_self">
+                <input type="text" class="input-text" style="width:250px" placeholder="权限名称" value="{$search_text}" name="search_text">
+                <button type="submit" class="btn btn-success"><i class="Hui-iconfont">&#xe665;</i> 搜权限节点
+                </button>
+            </form>
+        </div>
+        <table class="table table-border table-bordered table-bg">
+            <thead>
+            <tr>
+                <th scope="col" colspan="7">权限节点</th>
+            </tr>
+            <tr class="text-c">
+                <th>ID</th>
+                <th width="200">模块名</th>
+                <th>URL地址</th>
+                <th>是否是菜单</th>
+                <th width="100">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="vo"}
+            <tr class="text-c">
+                <td>{$vo['module_id']}</td>
+                <td>{$vo['module_name']}</td>
+                <td>{$vo['url']}</td>
+                <td>
+                    {if $vo['is_menu']==0}
+                        否
+                    {/if}
+                    {if $vo['is_menu']==1}
+                        是
+                    {/if}
+                </td>
+                <td>
+                    <a title="编辑" onclick="admin_role_edit('编辑权限','admin_permission_edit?mod_id={$vo.module_id}')" href="javascript:;" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>
+                    <a title="删除" href="javascript:;" onclick="admin_permission_del(this,{$vo['module_id']})" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </article>
+    <div class="n_page_no">
+       {$page}
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    /*管理员-权限-编辑*/
+    function admin_role_edit(title,url,w,h){
+        layer_show(title,url,w,h);
+    }
+    /*管理员-权限-删除*/
+    function admin_permission_del(obj, id) {
+        layer.confirm('权限删除须谨慎，确认要删除吗？', function (index) {
+            //删除
+            $.ajax({
+                type : "post",
+                url : "{:url('admin/del_admin_permission')}",
+                data : {
+                    "module_id" : id,
+                },
+                success : function(data) {
+                    if(data==0){
+                        layer.msg('删除失败!', {icon: 2, time: 1000});
+                    }
+                    if(data==1){
+                        layer.msg('删除成功!', {icon: 1, time: 1000});
+                        $(obj).parents("tr").remove();
+                    }
+                    if(data==2){
+                        layer.msg('请先删除上级节点!', {icon: 5, time: 1500});
+                    }
+                }
+            })
+        });
+    }
+</script>
+{/block}

@@ -1,0 +1,81 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div class="n_tab_line">
+            <a href="{:url('goods/goodsbrand')}" class="n_tab_list">品牌列表</a>
+            <a href="{:url('goods/goodsbrand_add')}" class="n_tab_add">添加品牌</a>
+            <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px;display: none;" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a>
+            <div class="cl"></div>
+        </div>
+        <div class="mt-10">
+            <table class="table table-border table-bordered table-bg table-sort">
+                <thead>
+                <tr class="text-c">
+                    <th>品牌名称</th>
+                    <th>LOGO</th>
+                    <th>首字母</th>
+                    <th>推荐</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {volist name="result" id="vo"}
+                    <tr class="text-c">
+                        <td>{$vo['brand_name']}</td>
+                        <td>
+                            <img src="/{$vo['brand_pic']}" width="50" height="50" class="thumbnail">
+                        </td>
+                        <td>{$vo['brand_initial']}</td>
+                        <td>
+                            {if $vo['brand_recommend']==1}
+                            <span class="label label-success radius">推荐</span>
+                            {else}
+                            <span class="label label-warning radius">未推荐</span>
+                            {/if}
+                        </td>
+                        <td class="f-14 product-brand-manage">
+                            <a style="text-decoration:none" onClick="brand_edit('品牌编辑','goodsbrand_edit?brand_id={$vo.brand_id}')" href="javascript:;" title="编辑"><i class="Hui-iconfont">&#xe6df;</i></a>
+                            <a style="text-decoration:none" class="ml-5" onClick="brand_del(this,'{$vo.brand_id}')" href="javascript:;" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a>
+                        </td>
+                    </tr>
+                {/volist}
+                </tbody>
+            </table>
+            <div class="n_page_no">
+                {$page}
+            </div>
+        </div>
+    </article>
+</div>
+{/block}
+{block name="script"}
+<script>
+    /*品牌-编辑*/
+    function brand_edit(title,url,w,h){
+        layer_show(title,url,w,h);
+    }
+    /*品牌-删除*/
+    function brand_del(obj,id){
+        layer.confirm('确定要删除吗？',function(index){
+            //后台处理
+            $.ajax({
+                type : "post",
+                url : "{:url('goods/deleteGoodsBrand')}",
+                data : {
+                    "brand_id" : id
+                },
+                success : function(data) {
+                    if (data['code'] > 0) {
+                        $(obj).parents("tr").remove();
+                        layer.msg('删除成功!',{icon: 1,time:500});
+                    }else{
+                        layer.msg(data['message'], {icon: 2, time: 1000});
+                    }
+                }
+            })
+        });
+    }
+</script>
+{/block}

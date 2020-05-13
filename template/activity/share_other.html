@@ -1,0 +1,69 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div class="tabBar clearfix" style="position:relative;">
+            <span onclick="load_page('__CONF_SITE__admin/activity/user_share')">分销商列表</span>
+            <span onclick="load_page('__CONF_SITE__admin/activity/share_order')">订单列表</span>
+            <span onclick="load_page('__CONF_SITE__admin/distribute/index')">单商品分销</span>
+            <span onclick="load_page('__CONF_SITE__admin/activity/share_cash')">分销商提现</span>
+            <span onclick="load_page('__CONF_SITE__admin/activity/share_set')" >基础设置</span>
+            <span onclick="load_page('__CONF_SITE__admin/activity/share_pay')" >佣金设置</span>
+            <span class="current" onclick="load_page('__CONF_SITE__admin/activity/share_other')">自定义设置</span>
+        </div>
+        <div>
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-bg table-hover table-sort">
+                    <thead>
+                    <tr class="text-c">
+                        <th>特殊字符</th>
+                        <th></th>
+                        <th>小程序端显示</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    {foreach name="share" item='vo' index='k'}
+                    <tr class="text-c va-m">
+                        <td>
+                            <span style="text-align: center" class="share_span" span_targ="mytarg{$k}" >{$share_default[$k]}</span>
+                        </td>
+                        <td>==>></td>
+                        <td>
+                            <input type="text" value="{$vo}" onchange="set_share_title('{$k}',this.value)" class="input-common" id="mytarg{$k}" style="text-align: center">
+                        </td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </article>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    function set_share_title(type,val) {
+        $.ajax({
+            type : "post",
+            url : "__CONF_SITE__admin/Activity/set_share_title",
+            data : {
+                "type" : type,
+                'val':val
+            },
+            success : function(data) {
+                if (data['code'] >0) {
+                    layer.msg('成功!',{icon:1,time:1000},function () {
+                        parent_flash("__CONF_SITE__admin/activity/share_other");
+                    });
+                }
+                else
+                {
+                    layer.msg('失败', {icon: 2, time: 1000});
+                }
+            }
+        })
+    }
+
+</script>
+</script>
+{/block}

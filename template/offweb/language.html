@@ -1,0 +1,92 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+             <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+                    <div class="tabBar clearfix">
+                        <span class="current">话术列表</span>
+                        <span onclick="load_page('__CONF_SITE__admin/offweb/follow')">跟进用语</span>
+                        <span onclick="load_page('__CONF_SITE__admin/offweb/language&up=3')">话术分类</span>
+<div onclick="layer_open('新增话术','__CONF_SITE__admin/offweb/language&up=1',600,300)"  class="n_tab_add"><i class="Hui-iconfont">&#xe600;</i>添加话术</div>
+                    </div>
+             </div>
+        <div>
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-bg table-hover table-sort">
+                    <thead>
+                    <tr class="text-c">
+                        <th>话术</th>
+                        <th>分类</th>
+                        <th>添加时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    {volist name="list" id="r"}
+                    <tr class="text-c va-m">
+                        <td>{$r['value']|subtext=20}</td>
+                        <td>{$r['name']|default="自定义"}</td>
+                        <td>{$r['create_time']|date="Y-m-d H:i:s",###}</td>
+                        <td>
+                            <a  style="text-decoration:none;margin-right:15px;"   class="show_layer" title="编辑" href="javascript:void(0);" onclick="layer_open('话术编辑','__CONF_SITE__admin/offweb/language&up=2&id={$r.id}',600,300)" >编辑</a>
+                             <a  style="text-decoration:none;margin-right:15px;"  class="caozuo" title="删除" href="javascript:void(0);" onclick="article_del(this,'{$r.id}')"   value="删除">删除</a>
+                        </td>
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+                <div class="n_page_no">
+                    {$page}
+                </div>
+            </div>
+        </div>
+        {/block}
+        {block name="script"}
+        <script type="text/javascript">
+            /*文章-删除*/
+            function article_del(obj,id){
+                layer.confirm('确认要删除吗？',function(index){
+                    //后台处理
+                    $.ajax({
+                        type : "post",
+                        url : "{:url('admin/offweb/del_lang')}",
+                        data : {
+                            "id" : id
+                        },
+                        success : function(data) {
+                            if (data['code'] >0) {
+                                $(obj).parents("tr").remove();
+                                layer.msg('删除成功!',{icon:1,time:1000});
+                            }
+                            else
+                            {
+                                layer.msg('删除失败', {icon: 2, time: 1000});
+                            }
+                        }
+                    })
+                });
+            }
+            function pickrsve(wid,cid,vals,clas,type) {
+                $.ajax({
+                    type: "post",
+                    url: "{:url('admin/offweb/language')}",
+                    data: {
+                        wid: wid,
+                        cid: cid,
+                        vals: vals,
+                        type: type,
+                        clas: clas
+                    },
+                    success: function (data) {
+                        if (data['code'] > 0) {
+                            layer.msg('操作成功', {icon: 1, time: 500});
+                            parent_flash();
+                        } else {
+                            layer.msg('操作失败', {icon: 2, time: 1000});
+                        }
+                    }
+                });
+            }
+        </script>
+        {/block}

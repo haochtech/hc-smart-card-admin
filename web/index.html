@@ -1,0 +1,294 @@
+<html >
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <title>雷达</title>
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <link rel="stylesheet" href="./vue/css/index.css?v=1.8">
+    <link rel="stylesheet" href="./vue/css/iconfont.css">
+    <link rel="stylesheet" type="text/css" href="https://res.wx.qq.com/open/libs/weui/0.4.1/weui.css">
+    <style>
+        .event_content_item {
+            min-height: 1.5rem;
+            max-height: 2.0rem;
+        }
+        .feeds_title_container {position: fixed;top: 0;left: 0rem;width: 100%;background: #fff;z-index: 100}
+        .do_wrapper {position: relative !important;}
+        .home_wrapper[data-v-23f17f48] {position: relative !important;}
+        .time_left ,.time_right {position: relative;}
+        input.time {border:0;}
+        .time_left img ,.time_right img {position: absolute;right:0.1rem;top:0rem;}
+        .time-sign {width: 0.9rem !important;text-align: right !important;}
+        .feeds_people_wrapper{position: fixed;top: 70px; left: 0rem;position: relative;overflow: auto;}
+        .event_content_item[data-v-23f17f48] {background: #fff;}
+        .img_box {width: 1.58rem;height: 1.58rem; margin-left: .18rem;margin-top: .2rem; display: inline-block; vertical-align: top;position: relative;}
+        footer img{max-height: 20px;min-height: 20px;}
+    </style>
+    <!--<script src="https://pingjs.qq.com/h5/stats.js?v2.0.4" name="MTAH5" sid="500619036"></script>-->
+    <script type="text/javascript">
+        var winWidth = 750
+        window.onresize = function () {
+           // getRem(winWidth, 100)
+        }
+        function getRem(pwidth, prem) {
+            var html = document.getElementsByTagName('html')[0]
+            var oWidth = document.documentElement.clientWidth
+            html.style.fontSize = oWidth / pwidth * prem + 'px'
+        }
+        (function () {
+            if (typeof WeixinJSBridge == "object" && typeof WeixinJSBridge.invoke == "function") {
+                handleFontSize();
+            } else {
+                document.addEventListener("WeixinJSBridgeReady", handleFontSize, false);
+            }
+            function handleFontSize() {
+                // 设置网页字体为默认大小
+                WeixinJSBridge.invoke('setFontSizeCallback', {
+                    'fontSize': 0
+                });
+                // 重写设置网页字体大小的事件
+                WeixinJSBridge.on('menu:setfont', function () {
+                    WeixinJSBridge.invoke('setFontSizeCallback', {
+                        'fontSize': 0
+                    });
+                });
+            }
+            function onBridgeReady() {
+                WeixinJSBridge.call('hideOptionMenu');
+            }
+            if (typeof WeixinJSBridge == "undefined") {
+                if (document.addEventListener) {
+                    document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+                } else if (document.attachEvent) {
+                    document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                    document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+                }
+            } else {
+                onBridgeReady();
+            }
+        })();
+        getRem(winWidth, 100)
+    </script>
+    <script src="./vue/js/jquery-2.1.1.min.js"></script>
+    <script src="./vue/js/common.js"></script>
+    <script src="./vue/js/vue.js"></script>
+    <script src="./vue/js/vue-resource.js"></script>
+    <script src="./vue/js/layer.js"></script>
+    <script src="./vue/js/index.js?v=1.4"></script>
+    <script src="./vue/js/Mdate/iScroll.js"></script>
+    <script src="./vue/js/Mdate/Mdate.js"></script>
+    <script type="text/javascript">
+        new Mdate("dateSelectorOne",{
+            beginYear: "2017",
+            endYear: "2018",
+            format: "-"
+        });
+        new Mdate("dateSelectorTwo", {
+            beginYear: "2017",
+            endYear: "2018",
+            format: "-"
+        })
+    </script>
+</head>
+<body>
+<div id="app">
+    <div data-v-23f17f48="" class="home" >
+        <div data-v-23f17f48="" class="home_wrapper" v-show="type==1">
+            <div class="home_content_box" @touchstart="touchStart($event)"
+                 @touchmove="touchMove($event)"
+                 @touchend="touchEnd($event)">
+                <div data-v-23f17f48="" class="home_event_item" v-for="(k,v) in index_data">
+                    <div data-v-23f17f48="" class="event_label_item" v-if='k==0 || index_data[k-1].date!=v.date'>
+                        <span data-v-23f17f48="" class="event_time_label" v-text="v.date"></span>
+                    </div>
+                    <div data-v-23f17f48="" class="event_content_item clearfix">
+                        <span data-v-23f17f48="" class="event_head_img" @click="to_cus_detail(v.user_id,k)"><img data-v-23f17f48="" :src="v.user.user_headimg" class="home_event_user_logo"></span>
+                        <div data-v-23f17f48="" class="table">
+                            <div data-v-23f17f48="" class="table_center">
+
+                                <p data-v-23f17f48="" style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 2;overflow: hidden;margin-top: 0.4rem">
+                                    <span data-v-23f17f48="" v-text="v.user.nick_name">
+                                    </span>
+                                <span data-v-23f17f48="">
+                                    <span class="xingxin" v-text="v.op_type"></span>了你的
+                                    <span class="xingxin" v-text="v.op_name"></span>第
+                                    <span v-text="v.times"></span>
+                                    次
+                                </span>
+                            </p>
+                                <span data-v-23f17f48="" class="time-sign" v-text="v.time"></span>
+                                <img src="vue/img/red/xiaoxi.png" alt="" style="width: 0.6rem;height: 0.6rem;z-index: 99;margin-left: .7rem" @click="url('tonews',v.user_id)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--<div class="loading_div" style="pointer-events: auto;" v-show="loaded"><img-->
+                        <!--src="vue/img/logo1.png"-->
+                        <!--alt="数据加载中...">数据加载中...-->
+                <!--</div>-->
+                <div class="loading_div2" style=" pointer-events: auto;" v-show='!down && index_data.length>0'>没有更多数据
+                </div>
+                 <div class="loading_div2" style=" pointer-events: auto;" v-show='!down && index_data.length==0'>暂无数据
+                </div>
+                <div class="loading_div3" style=" pointer-events: auto;" v-show="bug" @click='get_list()'>
+                    <img src="vue/img/logo1.png" alt="" v-text="请求超时或网络出错,点击再次请求">
+                </div>
+            </div>
+        </div>
+        <div class="do_wrapper" v-show="type==2">
+            <div style="transition-property: transform; transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1); transition-duration: 0ms; transform: translate(0px, 0px) scale(1) translateZ(0px);">
+                <div class="select_date" style="pointer-events: auto;"><span v-show="str_time_b==''" v-text="7天内被查看的行为统计"></span> <span
+                       v-show="str_time_b!='' && end_time_b!=''" v-text="str_time_b+'至'+end_time_b"></span>
+                    <img src="vue/img/red/riqi.png"
+                        alt="" id="clear_date" @click="clear_time" v-show="str_time_b!='' && end_time_b!=''">
+                    <img @click='show_date=show_date?false:true' id="rili2"
+                                                                            src="vue/img/red/riqi.png"
+                                                                            alt="">
+                </div>
+                <div class="do_important_item1 do_important_item" style="pointer-events: auto;">
+                    <div class="item_wai" @click="to_detail(1,'商城')">
+                        <img src="vue/img/red/shangcheng.png"
+                            alt="" style="width: 0.53rem; height: 0.55rem; margin: 0.2rem 0.18rem 0px 0.66rem;">
+                        <div class="item_li">
+                            <p v-text="index_behavior.ck_sc?index_behavior.ck_sc:0"></p>
+                            <span class="do_span1">查看商城</span>
+                        </div>
+                    </div>
+                    <div class="item_wai" @click="to_detail(1,'官网')"><img
+                            src="vue/img/red/guanwang.png"
+                            alt="" style="width: 0.56rem; height: 0.6rem; margin: 0.25rem 0.23rem 0.05rem 0.5rem;">
+                        <div class="item_li">
+                            <p v-text="index_behavior.ck_gw?index_behavior.ck_gw:0"></p>
+                            <span class="do_span1">查看官网</span>
+                        </div>
+                    </div>
+                    <div class="item_wai" @click="to_detail(6,'商品')"><img
+                            src="vue/img/red/shangpin.png"
+                            alt="" style="width: 0.58rem; height: 0.55rem; margin: 0.25rem 0.15rem 0px 0.64rem;">
+                        <div class="item_li">
+                            <p v-text="index_behavior.ll_sp?index_behavior.ll_sp:0"></p>
+                            <span class="do_span1">浏览商品</span>
+                        </div>
+                    </div>
+                    <div class="item_wai" @click="to_detail(2,'名片')"><img
+                            src="vue/img/red/zhuanfa.png"
+                            alt="" style="width: 0.56rem; height: 0.5rem; margin: 0.25rem 0.23rem 0px 0.5rem;">
+                        <div class="item_li">
+                            <p v-text="index_behavior.zf_mp?index_behavior.zf_mp:0"></p>
+                            <span class="do_span1">转发名片</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="do_common_item" @click="to_detail(1,'名片')" style="pointer-events: auto;"><img
+                        src="vue/img/red/mingpian.png"
+                        alt="">
+                    <div class="do_common_item_div"><span class="item_name">查看名片</span>
+                        <p class="item_num" v-text="index_behavior.ck_mp?index_behavior.ck_mp:0"></p></div>
+                </div>
+                <div class="do_common_item" @click="to_detail(1,'动态')" style="pointer-events: auto;"><img
+                        src="vue/img/red/chakan.png"
+                        alt="">
+                    <div class="do_common_item_div"><span class="item_name">查看动态</span>
+                        <p class="item_num" v-text="index_behavior.ck_dt?index_behavior.ck_dt:0"></p></div>
+                </div>
+                <div class="do_common_item" @click="to_detail(3,'微信')" style="pointer-events: auto;"><img
+                        src="vue/img/red/weixin.png"
+                        alt="">
+                    <div class="do_common_item_div"><span class="item_name">复制微信</span>
+                        <p class="item_num" v-text="index_behavior.fz_wx?index_behavior.fz_wx:0"></p></div>
+                </div>
+                <div class="do_common_item" @click="to_detail(4,'电话')" style="pointer-events: auto;"><img
+                        src="vue/img/red/baocun.png"
+                        alt="">
+                    <div class="do_common_item_div"><span class="item_name">保存电话</span>
+                        <p class="item_num" v-text="index_behavior.bc_dh?index_behavior.bc_dh:0"></p></div>
+                </div>
+                <div class="do_common_item" style="pointer-events: auto;" @click="to_detail(7,'靠谱')"><img
+                        src="vue/img/red/kaopu.png"
+                        alt="">
+                    <div class="do_common_item_div"><span class="item_name">觉得靠谱</span>
+                        <p class="item_num" v-text="index_behavior.likes"></p></div>
+                </div>
+                <div class="do_common_item" @click="to_detail(5,'电话')" style="pointer-events: auto;"><img
+                        src="vue/img/red/dianhua.png"
+                        alt="">
+                    <div class="do_common_item_div"><span class="item_name">拨打电话</span>
+                        <p class="item_num" v-text="index_behavior.bd_dh?index_behavior.bd_dh:0"></p></div>
+                </div>
+                <div class="do_common_item" @click="to_detail(4,'邮箱')" style="pointer-events: auto;"><img
+                        src="vue/img/red/fuzhi.png"
+                        alt="">
+                    <div class="do_common_item_div"><span class="item_name">复制邮箱</span>
+                        <p class="item_num" v-text="index_behavior.fz_yx?index_behavior.fz_yx:0"></p></div>
+                </div>
+            </div>
+        </div>
+        <div class="select_date_box" style="z-index:100;display: none" v-show="show_date">
+            <div class="date_background"></div>
+            <div class="select_box"><p class="hint"><span>选择时间段</span></p>
+                <div class="time_item">
+                    <div class="time_left">
+                   <input class="time" readonly="readonly" type="text" id="dateSelectorOne" style="width:100%"> <img
+                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACIAAAAgCAYAAAB3j6rJAAAAAXNSR0IArs4c6QAAAfJJREFUWAntVz1PAkEQZQ8ClVY25y+ggILEVu1NLCEURDsbW200UqAxEv+FwYSPWlsxtFQUlFbG+wM2QLjzvQtHlgu38nFLrmCTvezOzps3OzN3uYnFFhiFQuGNcwHVGZVlcIkZZMDGcZyTgCOleBnc1JFisXho2/Y1wAewbpKh1WqJeUz5fN6ZJ/dkC+AsIUTXMIzner3eIc7gAyG8GY/Hn3DiFFvXCco1DpNcuHib3ORJYHEE4QPWI3hZTiaTL7VazVI5EXRjFYZnHq5UKpnD4fAMvBVw3iMbHabmChN7UW42m1UC/ANn7wAp0+HHcB+Em1y0iiDEYPaJJSGQ7x9gzFQqtf9fJOaRrSNjZAaDAfkt1ohbE5t2gheQOE1GZOmQ00jYw31rwja6ir3pd8Sr6FWMrIPxMhKZiGwd8adTGRHmz8uhDAxLLttUOiIr6l5PvyPbt2YS6sikRulIWEUZZEeuO6UjsqLu9bZY/RGOTGqUjgQVWVhyOSpKR2RF3etIFavbOvBHVvet/fYlTsvAL3+XCuwz/Iq69x4nfYhns9lvEJ6jvzjOZDKjXC731ev1fnU6wUik0+lLcLLBEmg9L9zeFm/BLfYVHGy0eMFp48J3aOwe47x5v9/vIDIfWO5h7mLuYOocbMLbjESj0Xgl0R+a4OzbcYyQKQAAAABJRU5ErkJggg=="
+                            alt=""></div>
+                    <span class="word">至</span>
+                    <div class="time_right" >
+                        <input class="time" readonly="readonly" type="text" id="dateSelectorTwo" style="width:100%"><img
+                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACIAAAAgCAYAAAB3j6rJAAAAAXNSR0IArs4c6QAAAfJJREFUWAntVz1PAkEQZQ8ClVY25y+ggILEVu1NLCEURDsbW200UqAxEv+FwYSPWlsxtFQUlFbG+wM2QLjzvQtHlgu38nFLrmCTvezOzps3OzN3uYnFFhiFQuGNcwHVGZVlcIkZZMDGcZyTgCOleBnc1JFisXho2/Y1wAewbpKh1WqJeUz5fN6ZJ/dkC+AsIUTXMIzner3eIc7gAyG8GY/Hn3DiFFvXCco1DpNcuHib3ORJYHEE4QPWI3hZTiaTL7VazVI5EXRjFYZnHq5UKpnD4fAMvBVw3iMbHabmChN7UW42m1UC/ANn7wAp0+HHcB+Em1y0iiDEYPaJJSGQ7x9gzFQqtf9fJOaRrSNjZAaDAfkt1ohbE5t2gheQOE1GZOmQ00jYw31rwja6ir3pd8Sr6FWMrIPxMhKZiGwd8adTGRHmz8uhDAxLLttUOiIr6l5PvyPbt2YS6sikRulIWEUZZEeuO6UjsqLu9bZY/RGOTGqUjgQVWVhyOSpKR2RF3etIFavbOvBHVvet/fYlTsvAL3+XCuwz/Iq69x4nfYhns9lvEJ6jvzjOZDKjXC731ev1fnU6wUik0+lLcLLBEmg9L9zeFm/BLfYVHGy0eMFp48J3aOwe47x5v9/vIDIfWO5h7mLuYOocbMLbjESj0Xgl0R+a4OzbcYyQKQAAAABJRU5ErkJggg=="
+                            alt=""></div>
+                </div>
+                <div class="select_box2">
+                    <div class="select_cancel" @click="show_date=false">取消</div>
+                    <div class="select_ok" @click="time_select">确定</div>
+                </div>
+                <div class="btn"></div>
+            </div>
+        </div>
+        <div class="feeds_title_container">
+            <div data-v-3391e832="" class="feeds_title">
+                <div data-v-3391e832="" :class="type==1?'feeds_click_span':''" @click="type=1"><span data-v-3391e832="">时间</span>
+                </div>
+                <div data-v-3391e832="" :class="type==2?'feeds_click_span':''" @click="type=2"><span data-v-3391e832="">行为</span>
+                </div>
+                <!--<div data-v-3391e832="" :class="type==3?'feeds_click_span':''" @click='type=3'><span data-v-3391e832="">人</span>-->
+                <!--</div>-->
+            </div>
+        </div>
+        <div style="height: 150px"></div>
+        <footer data-v-23f17f48="" class="home_footer">
+            <div replace="">
+                <img src="vue/img/home2.png" alt="">
+                <p class="choosed_tab">雷达</p>
+            </div>
+            <div replace="" @click='url("news")'>
+                 <span class="all-no-read" v-show="wd_news>0" v-text="wd_news"></span>
+                <img src="vue/img/news.png">
+                <p class="">消息</p>
+            </div>
+            <div replace="" @click='url("people")'>
+                <img src="vue/img/people.png" alt="">
+                <p class="">客户</p>
+            </div>
+            <div replace="" @click='url("message")'><img src="vue/img/find.png">
+                <p class="">动态</p>
+            </div>
+            <div replace="" @click='url("my")'>
+                <img src="vue/img/my.png">
+                <p class="">我的</p>
+            </div>
+        </footer>
+    </div>
+    <div style="display: none" v-show="show_jurisdiction">
+        <!--<div>该名片已被禁用，请联系公司管理员</div>-->
+        <div class="weui_msg">
+            <div class="weui_icon_area"><i class="weui_icon_info weui_icon_msg"></i></div>
+            <div class="weui_text_area">
+                <h4 class="weui_msg_title" v-text="show_jurisdiction_msg"></h4>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

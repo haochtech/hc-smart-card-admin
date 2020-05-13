@@ -1,0 +1,403 @@
+<html style="font-size: 48px;">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <title>
+        动态
+    </title>
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+    <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT">
+    <link rel="stylesheet" href="./vue/css/message.css?v=1.38">
+    <link rel="stylesheet" href="./vue/css/index.css">
+    <link rel="stylesheet" href="./vue/css/iosSelect.css" type="text/css">
+    <link rel="stylesheet" href="./vue/css/iconfont.css" type="text/css">
+    <link rel="stylesheet" href="./vue/css/swiper.min.css" type="text/css">
+    <style>
+    .friend_want_to_show_of_one {background: #ffffff !important;}
+    .friend_show_img img {margin-right: 5px;}
+    /*.dongtai_btn {width: 7rem !important;    background-position: 6.4rem .0rem !important;}*/
+    .friend_caozuo_choose {width:2.5rem; height: 1rem;margin-left: 4.5rem;position: relative}
+    footer img{max-height: 20px;min-height: 20px;}
+       .friend_want_to_show .friend_show_img {width:31%;float: left;margin-bottom: 6px;padding-right:2%;}
+       .friend_want_to_show {padding-top: 5px;padding-bottom: 5px;}
+        .clear {            clear: both;}
+</style>
+    <script src="https://pingjs.qq.com/h5/stats.js?v2.0.4" name="MTAH5" sid="500619036" type="text/javascript"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js" type="text/javascript"></script>
+    <script src="./vue/js/jquery-1.7.2.js" type="text/javascript"></script>
+    <script src="./vue/js/common.js" type="text/javascript"></script>
+    <script src="./vue/js/layer.js" type="text/javascript"></script>
+    <script src="vue/js/vue.js" type="text/javascript"></script>
+    <script src="./vue/js/vue-resource.js" type="text/javascript"></script>
+    <script src="./vue/js/message.js?v=1.255" type="text/javascript"></script>
+    <script type="text/ecmascript">
+        var winWidth = 750
+        window.onresize = function () {
+            getRem(winWidth, 100)
+        }
+        function getRem(pwidth, prem) {
+            var html = document.getElementsByTagName('html')[0]
+            var oWidth = document.documentElement.clientWidth
+            html.style.fontSize = oWidth / pwidth * prem + 'px'
+        }
+        (function () {
+            if (typeof WeixinJSBridge == "object" && typeof WeixinJSBridge.invoke == "function") {
+                handleFontSize();
+            } else {
+                document.addEventListener("WeixinJSBridgeReady", handleFontSize, false);
+            }
+            function handleFontSize() {
+                // 设置网页字体为默认大小
+                WeixinJSBridge.invoke('setFontSizeCallback', {
+                    'fontSize': 0
+                });
+                // 重写设置网页字体大小的事件
+                WeixinJSBridge.on('menu:setfont', function () {
+                    WeixinJSBridge.invoke('setFontSizeCallback', {
+                        'fontSize': 0
+                    });
+                });
+            }
+            function onBridgeReady() {
+                WeixinJSBridge.call('hideOptionMenu');
+            }
+            if (typeof WeixinJSBridge == "undefined") {
+                if (document.addEventListener) {
+                    document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+                } else if (document.attachEvent) {
+                    document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                    document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+                }
+            } else {
+                onBridgeReady();
+            }
+        })()
+        getRem(winWidth, 100)
+    </script>
+</head>
+<body>
+<div id="app" class="wadaxiwa">
+    <div class="friend_shows_wrapper" style="display: none" v-show="show_menu">
+        <div style="background-color: white; transition-property: transform; transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1); transition-duration: 0ms; transform: translate(0px, 0px) scale(1) translateZ(0px);">
+            <div class="refresh_shows" style="pointer-events: auto; display: none;">
+                <img src="" alt="">
+                <p>
+                    正在刷新
+                </p>
+            </div>
+            <div class="refresh_hint" style="pointer-events: auto;">
+                <img src="" alt=""> <img src="" alt="" style="display: none;">
+                <p>
+                    下拉刷新
+                </p>
+            </div>
+            <div id="dynamic" v-for="(k,x) in dynamic" @touchstart="touchStart($event)" @touchmove="touchMove($event)" @touchend="touchEnd($event)">
+                <div style="pointer-events: auto;" v-if="x.staff" :data-show="x.id">
+                    <section class="friend_show_item">
+                        <img :src="x.head_photo" alt="" class="friend_user_logo" onerror="this.src='./vue/img/defaultlogo.png'">
+                        <div class="friend_context">
+                            <h3 class="friend_name">{{x.user_name}}</h3>
+                            <span class="show_fabu_time" style="font-size: 0.24rem; color: rgb(178, 178, 178);display: inline-block;float: right;margin-top: -15px">{{x.time}}</span>
+                            <pre class="friend_want_to_say">{{x.u_con}}</pre>
+                            <div v-if="x.user_img_num >1">
+                                <div class="friend_want_to_show">
+                                    <div class="friend_show_img" v-for="y in x.user_img">
+                                        <img :src="y" alt="" @click="previewImage(y,k,1)" onerror="this.src='./vue/img/defaultlogo.png'">
+                                    </div>
+                                    <div class="clear"></div>
+                                </div>
+                            </div>
+                            <div v-if="x.user_img_num ==1">
+                                <div class="friend_want_to_show_of_one">
+                                    <div class="friend_show_img" v-for="y in x.user_img">
+                                        <img :src="y" alt="" @click="previewImage(y,y,2)" onerror="this.src='./vue/img/defaultlogo.png'">
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <span class="delete_show_sign" v-if="x.del" @click="dynamic_del(x.id)">删除</span>
+                                <div class="dongtai_btn"> <!--onclick="xiucaozuo(this)"-->
+                                    <div class="friend_caozuo_choose" name="8384" v-if="!x.is_like">
+                                        <span @click="give_like(x.like_staff,x.mch_id,x.id,k)"><img
+                                                src="vue/img/red/dianzan.png"
+                                                alt="" style="width: 0.4rem; height: 0.35rem;"> 点赞</span>
+                                        <span @click="add_comment(x.like_staff,x.mch_id,x.id)">
+                                            <img
+                                                src="vue/img/red/dianji.png"
+                                                alt="" style="width: 0.4rem; height: 0.35rem; margin-top: 0.06rem;">
+                                            评论</span>
+                                    </div>
+                                    <div class="friend_caozuo_choose change" name="8384" v-else>
+                                        <span @click="give_like(x.like_staff,x.mch_id,x.id,k)"><img
+                                                src="vue/img/red/le.png"
+                                                alt="" style="width: 0.4rem; height: 0.35rem;"> 取消</span>
+                                        <span @click="add_comment(x.like_staff,x.mch_id,x.id)">
+                                            <img src="vue/img/red/dianji.png"
+                                                alt="" style="width: 0.4rem; height: 0.35rem; margin-top: 0.06rem;"> 评论</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div :class="{'friend_context2':x.comments.length!=0}" v-if="x.likes.length!=0 || x.comments.length!=0">
+                                <img src="vue/img/red/zhengsanjiao.png" alt="" v-if="x.likes.length!=0" style="width:18px;height: 5px ">
+                                <div class="thumb_up_people"  :id="x.id" style="justify-content:flex-start;display: flex;" v-if="x.likes.length!=0" >
+                                    <div style="height: 20px;width: 20px;">
+                                    <img style="margin-top: 5px; width: 15px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAWCAYAAADeiIy1AAAAAXNSR0IArs4c6QAABFNJREFUSA2dVl1MXEUUPmfu3WWXUlAK/tDVxGoairEPJjUmRms1NUb7ZopQIlFpAWEBSdT4ZPbZ2vRnWWBtsRoxbEgaf2qITU2q2PhEUsGHarAaK1Gkaw1su7/33vE7kAsbZGH1JLMzc/6+OWfOmbtMqygU0mr6r2itRXo3a7qNyJkxPSVfDx89+NMq1cVtU9fJgCZrt+PoACm+ph3jYqzv0DQzrPOI89bU2NUPAzpFpGuYSUOzhDSnsDeZ1WU2VM/I8baLYtPUE9llO3xMO/Qg5Bli8pGmLEQGxowyef/I8Y4p0RVaBmoMDrzhaOct8DaBi4DoJsQe4FmaeBP4Cg6TplLdjuasJnsQPL+cRnQRgdLQhU0ZGAJG4PTEwsETi2v5aegefFI79jkYLCkQfcyKTivyXtLK3mbbuhspfBpyAUwuRos1DiDrsxgRrzJ+zTr2A6SdVmThKeD7AJVgxa/Gwq+8x63RqGd+ypKQQZxUTE0jfR2fLO1Xfhs7B/faZJ9FCkpcLivVIk7cvTs3BCMtiBRXAGK6tqOqOqBS36sAjNMIPYdxZC0Q0R+JtJ9XivfKWogNemQtEJHF+jqHkPII/DqShSvx+a0qx9YepCCHUG9C8JUoFqJYuOMbf2npnaaqqIid6Py2kJ7wtWGeh98EjmTnKPuECV4ZADyoMWaf98p6xiJ7//BLsxvpiNzUNG2zRmDsQRBlChcJQ50Fy+JMLlCMk2J0tNZ3AQAFqrMIZFahD+ZwYQJeajM1FOOkGB1HUwNLW2i20Rl/Aozo+WDkR1zadiyTuIN7i01PIcDmnujdGdv6AT79KLDpWF/HdjShVCC9jWkBafSlk8nJF14bwNPz/6i5d2BrxrIvIRIfMc9jHBZPi0BSjkCT3kmhnW/JpvWF1lC09L9CNXUNl2eyepxYl6MKkrj7T9ECJ5eBZPHcY9UvY5rQ5CCndM9C3P5CHliRFUPS+JZeOIfs1OA5tRDJxI6quhbXdtlRfX297fFtfhYhX8VpTHT2rsvxyJiruN6MCuP5SXsMLbIT0aCy6WplVdW+UGgP3r4lWiwGdyPzi6+fviOVSk6hYrY4WqeR3c/rqmub8o3y9bu6xkrmnF/+RurxepEHB1Qej1kzfKztj3y9fwGJUL4xlpP9DUt5QtJwMuH1b37mw3ea8aKv0IE3+2+1E/pLlFMtuHgDtVXmLakZOnrw+orW0mo5dfmCj8KHZrx+dTsMZ3FOE9E9lE0nJlp6T1W6eg3BoRr7Bn2HQ9yPasX3iuYML9etBSI2a0bkOmvu/GBLhm5cwP4+DHmuZlCn7QrNjRRF0fWVuHi8k/yz8hmPjxxpi7u2q+d1gUS5t3fU/3su/hkK5GHcOT6KOiFGACpHM15HIUxWVJv73g21oZwL04ZAYjo6OmqcGY+jH/R+bA35N4BoHCTkjLSFVGxhiCVJUUCuk8ae/p34WD+K+1AGq/HhcPukK9to/geluLiO2X9eVQAAAABJRU5ErkJggg==" alt="" v-if="x.likes.length!=0" style="width: 0.24rem; height: 0.2rem; vertical-align: middle;">
+                                   </div> <div>
+                                        <span v-for="z in x.likes">{{z.user_name}}<span style="color: black;" class="douhao">,</span></span>
+                                    </div>
+                                </div>
+                                <div :class="{'people_comment':x.comments.length!=0}" :name="x.id">
+                                    <div class="people_comment has_thumbUp_comment" v-for="y in x.comments">
+                                        <div style="padding: 0px 0.1rem;">
+                                            <span class="comment_span1">{{y.user_name}}</span>:<span class="comment_span2">{{y.details}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--<p class="zhankai" v-show="show_all_like" @click="show_all_(x.id)" :name="x.id"-->
+                                   <!--v-if="x.likes.length!=0>0 || x.comments.length!=0">-->
+                                    <!--展开全部1-->
+                                <!--</p>-->
+                                <!--<p class="zhankai" v-show="show_part_like" @click="show_part_(x.id)" :name="x.id">-->
+                                    <!--收起-->
+                                <!--</p>-->
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div style="pointer-events: auto;" v-else>
+                    <section class="friend_show_item">
+                    <img :src="x.logo" alt="" class="friend_user_logo" onerror="this.src='./vue/img/defaultlogo.png'">
+                    <div class="friend_context">
+                        <p class="friend_name">{{x.bus_name}}
+                            <span class="show_fabu_time" style="font-size: 0.24rem; color: rgb(178, 178, 178);float: right;display: inline-block;">{{x.time}}</span>
+                        </p>
+                        <pre class="friend_want_to_say">{{x.title}}<br></pre>
+
+                        <div class="friend_want_to_show_of_one">
+                            <div class="friend_show_img">
+                                <img :src="x.image" alt="" onerror="this.src='./vue/img/defaultlogo.png'">
+                            </div>
+                        </div>
+                        <div>
+                        <a @click="show_content(x.c_con,x.title)">查看原文</a>
+                        <div class="dongtai_btn" ><!--onclick="xiucaozuo(this)"-->
+                        <div class="friend_caozuo_choose" name="8384" v-if="!x.is_like">
+                            <span @click="give_like(x.like_staff,x.mch_id,x.id,k)"><img src="vue/img/red/dianzan.png" alt="" style="width: 0.4rem; height: 0.35rem;"> 点赞</span>
+                            <span @click="add_comment(x.like_staff,x.mch_id,x.id)"><img src="vue/img/red/dianji.png" alt="" style="width: 0.4rem; height: 0.35rem; margin-top: 0.06rem;"> 评论</span>
+                        </div>
+                        <div class="friend_caozuo_choose change" name="8384" v-else>
+                            <span @click="give_like(x.like_staff,x.mch_id,x.id,k)"><img src="vue/img/red/le.png" alt="" style="width: 0.4rem; height: 0.35rem;">取消</span>
+                            <span @click="add_comment(x.like_staff,x.mch_id,x.id)">
+                                <img src="vue/img/red/dianji.png" alt="" style="width: 0.3rem; height: 0.26rem; margin-top: 0.06rem;"> 评论</span>
+                        </div>
+                        </div>
+                        </div>
+                        <div :class="{'friend_context2':x.comments.length!=0}"  v-if="x.likes.length!=0 || x.comments.length!=0">
+                            <div class="thumb_up_people" :id="x.id" v-if="x.likes.length!=0" >
+                                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAWCAYAAADeiIy1AAAAAXNSR0IArs4c6QAABFNJREFUSA2dVl1MXEUUPmfu3WWXUlAK/tDVxGoairEPJjUmRms1NUb7ZopQIlFpAWEBSdT4ZPbZ2vRnWWBtsRoxbEgaf2qITU2q2PhEUsGHarAaK1Gkaw1su7/33vE7kAsbZGH1JLMzc/6+OWfOmbtMqygU0mr6r2itRXo3a7qNyJkxPSVfDx89+NMq1cVtU9fJgCZrt+PoACm+ph3jYqzv0DQzrPOI89bU2NUPAzpFpGuYSUOzhDSnsDeZ1WU2VM/I8baLYtPUE9llO3xMO/Qg5Bli8pGmLEQGxowyef/I8Y4p0RVaBmoMDrzhaOct8DaBi4DoJsQe4FmaeBP4Cg6TplLdjuasJnsQPL+cRnQRgdLQhU0ZGAJG4PTEwsETi2v5aegefFI79jkYLCkQfcyKTivyXtLK3mbbuhspfBpyAUwuRos1DiDrsxgRrzJ+zTr2A6SdVmThKeD7AJVgxa/Gwq+8x63RqGd+ypKQQZxUTE0jfR2fLO1Xfhs7B/faZJ9FCkpcLivVIk7cvTs3BCMtiBRXAGK6tqOqOqBS36sAjNMIPYdxZC0Q0R+JtJ9XivfKWogNemQtEJHF+jqHkPII/DqShSvx+a0qx9YepCCHUG9C8JUoFqJYuOMbf2npnaaqqIid6Py2kJ7wtWGeh98EjmTnKPuECV4ZADyoMWaf98p6xiJ7//BLsxvpiNzUNG2zRmDsQRBlChcJQ50Fy+JMLlCMk2J0tNZ3AQAFqrMIZFahD+ZwYQJeajM1FOOkGB1HUwNLW2i20Rl/Aozo+WDkR1zadiyTuIN7i01PIcDmnujdGdv6AT79KLDpWF/HdjShVCC9jWkBafSlk8nJF14bwNPz/6i5d2BrxrIvIRIfMc9jHBZPi0BSjkCT3kmhnW/JpvWF1lC09L9CNXUNl2eyepxYl6MKkrj7T9ECJ5eBZPHcY9UvY5rQ5CCndM9C3P5CHliRFUPS+JZeOIfs1OA5tRDJxI6quhbXdtlRfX297fFtfhYhX8VpTHT2rsvxyJiruN6MCuP5SXsMLbIT0aCy6WplVdW+UGgP3r4lWiwGdyPzi6+fviOVSk6hYrY4WqeR3c/rqmub8o3y9bu6xkrmnF/+RurxepEHB1Qej1kzfKztj3y9fwGJUL4xlpP9DUt5QtJwMuH1b37mw3ea8aKv0IE3+2+1E/pLlFMtuHgDtVXmLakZOnrw+orW0mo5dfmCj8KHZrx+dTsMZ3FOE9E9lE0nJlp6T1W6eg3BoRr7Bn2HQ9yPasX3iuYML9etBSI2a0bkOmvu/GBLhm5cwP4+DHmuZlCn7QrNjRRF0fWVuHi8k/yz8hmPjxxpi7u2q+d1gUS5t3fU/3su/hkK5GHcOT6KOiFGACpHM15HIUxWVJv73g21oZwL04ZAYjo6OmqcGY+jH/R+bA35N4BoHCTkjLSFVGxhiCVJUUCuk8ae/p34WD+K+1AGq/HhcPukK9to/geluLiO2X9eVQAAAABJRU5ErkJggg==" alt="" style="width: 0.24rem; height: 0.2rem; vertical-align: middle;">
+                                <div >
+                                    <span v-for="z in x.likes">{{z.user_name}}<span style="color: black;" class="douhao">,</span></span>
+                                </div>
+                                <span style="display: none;">...</span>
+                            </div>
+                            <div :class="{'people_comment':x.comments.length!=0}" :name="x.id">
+                                <div class="people_comment has_thumbUp_comment" v-for="y in x.comments">
+                                    <div style="padding: 0px 0.1rem;">
+                                        <span class="comment_span1">{{y.user_name}}</span>:<span class="comment_span2">{{y.details}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--<p class="zhankai" v-show="show_all_like" @click="show_all_(x.id)" :name="x.id" v-if="x.likes.length!=0>0 || x.comments.length!=0">-->
+                                <!--展开全部-->
+                            <!--</p>-->
+                            <!--<p class="zhankai" v-show="show_part_like" @click="show_part_(x.id)" :name="x.id">-->
+                                <!--收起-->
+                            <!--</p>-->
+                    </div>
+                </div>
+                    </section>
+            </div>
+            </div>
+            <!--<div class="loading_div" style="pointer-events: auto;" v-show="loaded"><img-->
+                    <!--src="vue/img/logo1.png"-->
+                    <!--alt="">数据加载中...-->
+            <!--</div>-->
+            <div class="loading_div2" style=" pointer-events: auto;" v-show='!down && dynamic.length>0'>没有更多数据
+            </div>
+            <div class="loading_div2" style=" pointer-events: auto;" v-show='!down && dynamic.length==0'>
+                暂无数据
+            </div>
+            <div class="loading_div3" style=" pointer-events: auto;" v-show="bug" @click='get_list()'>
+                <img src="vue/img/logo1.png"
+                     alt="">请求超时或网络出错,点击再次请求
+            </div>
+        </div>
+        <footer class="home_footer" v-if="type==1 && USER_DYNAMIC==0">
+            <div replace="" @click='url("index_ai")'>
+                <img src="vue/img/home.png" alt="">
+                <p class="">雷达</p>
+            </div>
+            <div replace="" @click='url("news_ai")'>
+                <img src="vue/img/news.png">
+                <p class="">消息</p>
+            </div>
+            <div replace="" @click='url("people")'>
+                <img src="vue/img/people.png" alt="">
+                <p class="">客户</p>
+            </div>
+            <div replace=""><img src="vue/img/find2.png">
+                <p class="choosed_tab">动态</p>
+            </div>
+            <div replace="" @click='url("my")'>
+                <img src="vue/img/my.png">
+                <p class="">我的</p>
+            </div>
+        </footer>
+        <div class="copy_box" style="display: none;">
+            <div class="copy_div" style="top: 0px; left: 0px;">
+                复制
+            </div>
+            <div class="copy_div2" style="top: 0px; left: 0px; display: none;">
+                复制
+            </div>
+        </div>
+        <div class="loading" style="display: none;">
+            <div class="loading_circle"></div>
+        </div>
+        <div data-v-11364152="" style="display: none;">
+            <div data-v-11364152="" class="alert_hint">
+                <div data-v-11364152="">
+                    <p data-v-11364152="">
+                        请上传图片类型
+                    </p>
+                </div>
+                <div data-v-11364152=""></div>
+                <div data-v-11364152="">
+                    知道了
+                </div>
+            </div>
+            <div data-v-11364152="" class="background"></div>
+        </div>
+        <div style="display: none;">
+            <div class="confirm_container">
+                <p class="confirm_title">
+                    删除
+                </p>
+                <p class="content">
+                    确定删除此评论?
+                </p>
+                <div class="choose_type">
+                    <div>
+                        取消
+                    </div>
+                    <div>
+                        确定
+                    </div>
+                </div>
+            </div>
+            <div class="background"></div>
+        </div>
+        <div data-v-86d66f7a="" style="display: none;">
+            <div data-v-86d66f7a="" class="prompt_container">
+                <p data-v-86d66f7a="" class="prompt_title">
+                    评论
+                </p>
+                <p data-v-86d66f7a="" class="error" style="display: none;"></p><input data-v-86d66f7a="" type="text" placeholder="评论">
+                <div data-v-86d66f7a="" class="choose_type">
+                    <div data-v-86d66f7a="">
+                        取消
+                    </div>
+                    <div data-v-86d66f7a="">
+                        确定
+                    </div>
+                </div>
+            </div>
+            <div data-v-86d66f7a="" class="big_container"></div>
+        </div>
+    </div>
+    <div class="friend_camera" @click="gagagaga" v-show="show_img_choose">
+        <img src="./vue/img/camera.png" alt="" id="show_img_choose">
+    </div>
+    <div class="woyaodong" style="display: none" v-show="show_bus_content">
+        <section class="company_show_item" style="border-bottom: none;">
+            <div>
+                <div class="fuwenben_box">
+                    <div>
+                        <h2>{{c_title}}</h2>
+                    </div>
+                    <div>
+                        <div class="fuwenben" v-html="c_con">{{c_con}}</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div style="display: none" v-show="show_add_comment">
+        <div data-v-86d66f7a="">
+            <div data-v-86d66f7a="" class="prompt_container">
+                <p data-v-86d66f7a="" class="prompt_title">
+                    评论
+                </p>
+                <p data-v-86d66f7a="" class="error" style="display: none;"></p>
+                <input data-v-86d66f7a="" type="text" placeholder="评论" v-model="user_add_comments" :value="user_add_comments">
+                <div data-v-86d66f7a="" class="choose_type">
+                    <div data-v-86d66f7a="" @click="go_back_">
+                        取消
+                    </div>
+                    <div data-v-86d66f7a="" @click="sub_commen">
+                        确定
+                    </div>
+                </div>
+            </div>
+            <div data-v-86d66f7a="" class="big_container"></div>
+        </div>
+    </div>
+    <div class="edit_shows_container" style="display: none" v-show="show_add_dynamic">
+        <div style="padding: 0.24rem 0.38rem; position: relative;">
+            <textarea name="" id="edit_show_text" cols="30" rows="4" placeholder="说点什么吧..." v-model="shaya_content">{{shaya_content}}</textarea><span class="text_length"></span>
+        </div>
+        <div class="edit_shows_img">
+            <div class="img_box"  v-for="(key,value) in pic_data">
+                <div class="edit_shows_img_box"
+                     :style="{backgroundImage:'url(' +value + ')'}" style="transform: rotate(0deg);"></div>
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAA7xJREFUSA3FV0tPE1EUPnPbJjxEBORNIUIkRmFFovGBUsqj7kzUEBd170IT42/QnTHxH0AXSsQEd7zaEjUYHyxEo5GFBitPRUHkIbQznu/WGdrSgamCnqS9Z+4993xz7nncMwpZIE3ThM9375hK6hkWr1OISnjEDzSh8Y/HYUGi2+s9P6QoiipXNvljHeYUDAbTQqGZKxqp1zSNCswl11cUhWYUEjedzoLbLpdrZX0lnjMF9vk6z0ZU7RaR5ozfYvVJCdmEctXrbbufbIdInORjVdrbO69HVLXrz0GhVXNCB3RBZyJO3AQEOnydd3hsSxT8m2f2eedFb9sFHjkcomTTGYyVlQeva6Rdip3bJr5m5OUbR3d3V0DXZ1gc9SmOd+fIJsQ53efSx4jeaCDtHCg0AwNY4CUwUsYskHL2ZFN9/VHaw+NWJISgAwf2E/YkJ80ZxWJgDiSBPE0uSFRYVECV+yqotcVF2dm7zcQIoC7XCTpyuI5qag+aykVrgiZsVVWHjjP4ZTPJr1/nKC8vh3Jzc6i8vIxCoXFaXV2NE7fZbNTkPkmlJcW0srJCQ0+e8/gzTibmIfPVyNsB8bsMxszHs6qqUjD4mCYnpygjI11anpmZaQjZ7XZqbmqg4uIiWlpapp7eAM3NzRvryRhgwsd1yRZj5wDuDzyi6enPBFAce0Z6OjkcDmphvrAwnxYXFxnUT/Pz32O3mvF1SnvH3Xd81NVmErHzsA5A+XvzJEA4HJFuWFj4Qb19QQkeK2/GcyEZhcX6LWMmZ8yHw2Hq7x+k2dlvMtDge1jY0+O3DPpbWYlMJ0OzBcbBVtvt6wUPVq/xC6VCfNNpAMZdaongX4/HLa2F1bAWVjc3N/DL2C3pgBBfnZOcw9aAs7J20WlPI2H8/GWWfRqgPvYr/AufN7lPEdLKCgETFg9vJYzC4Wl1y4hGZANwbW2NlpaXjaBCZLsb62Uh2UqfoikvuN6I7s0EUSo9rY0yh5HL/QODhCDTCWmEiEYOI5dRvVDFNiOO6gci2iPRjJlgLZe/tLQ0+jQ+QQP+hxSJRDaI4rj7+oOyapWVllB1ddUGGX0CrREwBaOr6JH0hcTx9as39PTZsKxeKCRmhECD5e8/jNH0lKkdBKwoJmvCVTX2cXrU7IYyA0t9XglVlBdWowmUzgCDxix1RantAIbeeRpRgM6Aj+FGaqqsS0O33n1gl9H64IFr9j9r9gyL5VtwFyi7wW20HJYmdpgSC3/JaKcb+rijTnyB//IJE/sS6Mu2+6PtFzpGqlD2G9T5AAAAAElFTkSuQmCC"
+                     alt="" @click="DelPic(key)"></div>
+            <div class="add_shows_img" @click="ChooseImage()">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAE0AAABNCAYAAADjCemwAAAAAXNSR0IArs4c6QAAAmBJREFUeAHt3DFOAlEQxnF2IybGwsoLeACgoPYGdhYSKs5g6xU8gpbWnsMECAlHsNdChSAB5xliyGa/CU7BrvFPs+zMDvvyY+JSzDNr1Oi1Xq+z0Wh0Z8fBZllzO/a63e5jjZbZyOq0GAPrrVarh8KaZs1m87Tdbr8X4pWd5pXdufzGJyXhoyzLDkvilYXqhlYZxG9uDNpvtDbXggZaQCBQQqeBFhAIlNBpoAUEAiV0GmgBgUAJnQZaQCBQQqeBFhAIlNBpoAUEAiV0GmgBgUAJnQZaQCBQQqeBFhAIlNBpoAUEAiV0GmgBgUAJnQZaQCBQQqeBFhAIlNBpoAUEAiVZGtkcj8dXVls2UBf4yHiJTUGeW3Wv+Al5nl9b7KMY3/e5rWPU6XSesuFweL8147rvdfyp+9lE5sIWfJkDtvv3ZlZpjLXPg2B3s58rE1oaO+e1o4B12zyhpT+8sx1r/vtlUxvPv/neRzCZTI7rMHa+XC4H9gS9LX4zttAzW99rMb7v88Vi8WYbQT4P0o03Gxsq39xgmy9Kf1YksFar9bJvJHU/HgRKxomD5uCoFGhKxomD5uCoFGhKxomD5uCoFGhKxomD5uCoFGhKxomD5uCoFGhKxomD5uCoFGhKxomD5uCoFGhKxomD5uCoFGhKxomD5uCoFGhKxomD5uCoFGhKxomD5uCoFGhKxomD5uCoFGhKxomD5uCoFGhKxomD5uCoFGhKxomD5uCoFGhKxomD5uCoVK3Q0pz+Zux8e73TNIG4Haj6fa3+DXXCsH0NF3bop/dpKDjNuNqk5nM6r8vrC+cxYI7aLr7oAAAAAElFTkSuQmCC" alt="">
+        </div>
+        </div>
+        <div>
+
+        </div>        <div class="loading" style="display: none;">
+            <div class="loading_circle">
+                <svg width="65px" height="65px" viewbox="0 0 66 66" xmlns="https://www.w3.org/2000/svg" class="spinner"><circle fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30" class="path"></circle></svg>
+            </div>
+        </div>
+        <div class="edit_choose_btn" style="display: none" v-show="show_add_dynamic">
+            <div @click="sub_message">
+                发布
+            </div>
+            <div style="margin-top: 0.12rem;" @click="go_back_">
+                取消
+            </div>
+        </div>
+    </div>
+</div>
+<!--<script>-->
+    <!--$(document).ready(function () {-->
+        <!--$(".friend_caozuo_choose").hide();-->
+    <!--});-->
+    <!--function xiucaozuo(e) {-->
+        <!--var x=$(e).children(0).css("display");-->
+        <!--if (x=="none"){-->
+            <!--$(".friend_caozuo_choose").hide();-->
+            <!--$(e).children().show();-->
+        <!--}else{-->
+            <!--$(".friend_caozuo_choose").hide();-->
+            <!--$(e).children().hide();-->
+        <!--}-->
+    <!--}-->
+<!--</script>-->
+</body>
+</html>

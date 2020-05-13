@@ -1,0 +1,99 @@
+{extend name="base"/}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="/public/css/order.css">
+<style>
+    .silider-express{padding-left: 10px;background: #fff;font-size: 12px;}
+    .logistics-tracking{padding-left:5px;}
+    .popover-content{width:700px;}
+    .popover{max-width:900px;}
+    .n_tab_line a {padding: 0 20px;}
+</style>
+{/block}
+{block name="main"}
+<div class="mod-table">
+    <div class="n_tab_line">
+        <a href="javascript:;" onclick="load_page('{:url('group/group_order')}')" class="n_tab_list02">订单列表</a>
+        <a href="javascript:;" class="n_tab_add02">订单详情</a>
+        <div class="cl"></div>
+    </div>
+    <div class="step-region clearfix">
+        <div class="info-region">
+            <div class="info-div">订单信息<span class="secured-title">担保交易</span></div>
+            <table class="info-table">
+                <tbody>
+                <tr><th>订单编号：</th><td>{$info['orderNum']}</td></tr>
+                <tr style="display: table-row;"><th>订单类型：</th><td>{if $info.isGroup==0}直购订单{else}拼团订单{/if}</td></tr>
+                <tr><th>付款方式：</th><td>在线支付</td></tr>
+                <tr><th>买家：</th><td><span>{:getUserName($info['uid'])}</span></td></tr>
+                </tbody>
+            </table>
+            <div class="dashed-line"></div>
+            <table class="info-table">
+                <tbody>
+                <!-- 物流 -->
+                <tr>
+                    <th>收货人：</th>
+                    <td>
+                        <?php $json=json_ecd_all($info['address']); ?>
+                        <p>{$json['userName']}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th>收货电话：</th>
+                    <td>
+                        <p>{$json['telNumber']}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th>收货地址：</th>
+                    <td>
+                        <p>{$json['province']}{$json['county']}{$json['city']}{$json['address']}</p>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="state-region">
+            <div style="padding: 0px 0px 30px 40px;">
+                <div class="state-title"><span class="icon info">!</span>
+                    订单状态：{:get_group_order_status($info['order_status'])}
+                </div>
+            </div>
+            <div class="state-remind-region">
+                <div class="dashed-line"></div>
+                <div class="state-remind"><div class="tixing">提醒：</div>
+                    <ul><li>如果无法发货，请及时与买家联系并说明情况后进行退款；</li>
+                        <li>买家申请退款后，须征得买家同意后再发货，否则买家有权拒收货物；</li>
+                        <li>买家付款后超过7天仍未发货，将有权申请客服介入发起退款维权；</li></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <table class="ui-table ui-table-simple goods-table order-detail-goods-table">
+        <thead>
+        <tr>
+            <th style="width:8%;">商品图</th>
+            <th class="cell-10" style="width:30%;">商品</th>
+            <th style="width:10%;">数量</th>
+            <th style="width:10%;">订单价格(元)</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- 待发货商品 -->
+        <tr class="test-item">
+            <td class="td-goods-image" rowspan="1">
+                <div class="ui-centered-image" style="width: 80px; height: 80px;">
+                    <img src="{:get_img_src($info['img'])}" style="max-width: 80px; max-height:80px;">
+                </div>
+            </td>
+            <td class="cell-10" style="width:200px;">
+                <a href="javascript:;" target="_blank">{$info['name']}</a>
+            </td>
+            <td>{$info['goodsNum']}</td>
+            <td>{$info['totalPrice']}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<input type="hidden" id="order_id" value="{$info['id']}" />
+{/block}

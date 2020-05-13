@@ -1,0 +1,133 @@
+{extend name="base"/}
+{block name="main"}
+<style>
+    .table>tbody>tr>td{
+        text-align: center;
+    }
+</style>
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div class="tabBar clearfix">
+            <span onclick="load_page('__CONF_SITE__admin/bargain/index')">活动列表</span>
+            <span onclick="load_page('__CONF_SITE__admin/bargain/activity_carousel')">轮播图</span>
+            <span onclick="load_page('__CONF_SITE__admin/bargain/activity_class')">砍价分类</span>
+            <span class="current" onclick="load_page('__CONF_SITE__admin/bargain/bargain_order')" >砍价订单</span>
+        </div>
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+                <div class="text-c"> 活动名称：
+                    <input type="text" class="input-text" value="{$search_text}" style="width:250px" placeholder="输入活动名称"  name="search_text">
+                    <button onclick="send_submit()" class="btn btn-search radius"  name=""><i class="Hui-iconfont">&#xe665;</i> 搜活动</button>
+                </div>
+        </div>
+        <div id="tab_demo" class="HuiTab" style="margin-top: 15px;">
+            <div class="tabBar clearfix">
+               <a href="javascript:;" onclick="load_page('__CONF_SITE__admin/bargain/bargain_order&status=-2')"><span {if condition="$status==-2"} class="current" {/if}>全部</span></a>
+                <a href="javascript:;" onclick="load_page('__CONF_SITE__admin/bargain/bargain_order&status=0')"><span {if condition="$status==0"} class="current" {/if}>待付款</span></a>
+                <a href="javascript:;" onclick="load_page('__CONF_SITE__admin/bargain/bargain_order&status=1')"><span {if condition="$status==1"} class="current" {/if}>待发货</span></a>
+                <a href="javascript:;" onclick="load_page('__CONF_SITE__admin/bargain/bargain_order&status=2')"><span {if condition="$status==2"} class="current" {/if}>已发货</span></a>
+                <a href="javascript:;" onclick="load_page('__CONF_SITE__admin/bargain/bargain_order&status=-1')"><span {if condition="$status==-1"} class="current" {/if}>取消订单</span></a>
+                <a href="javascript:;" onclick="load_page('__CONF_SITE__admin/bargain/bargain_order&status=4')"><span {if condition="$status==4"} class="current" {/if}>退款申请</span></a>
+                <a href="javascript:;" onclick="load_page('__CONF_SITE__admin/bargain/bargain_order&status=5')"><span {if condition="$status==5"} class="current" {/if}>已退款</span></a>
+                <a href="javascript:;" onclick="load_page('__CONF_SITE__admin/bargain/bargain_order&status=3')"><span {if condition="$status==3"} class="current" {/if}>已完成</span></a>
+            </div>
+        </div>
+        <table class="table table-border table-bordered table-hover table-bg">
+            <thead>
+            <!--<tr>-->
+                <!--<th scope="col" colspan="13">活动订单</th>-->
+            <!--</tr>-->
+            <tr class="text-c">
+                <th>订单编号</th>
+                <th>活动名称</th>
+                <th>活动主图</th>
+                <th>发起用户</th>
+                <th>真实姓名</th>
+                <th>手机号</th>
+                <th>用户地址</th>
+                <th>发起金额</th>
+                <th>支付金额</th>
+                <th>订单状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="vo"}
+            <tr>
+                <td>{$vo['order_no']}</td>
+                <td>{$vo['bargain_name']}</td>
+                <td><img src="{$vo['img_cover']}" style="height: 80px; width: auto;"></td>
+                <td>{$vo['user_name']}</td>
+                <td>{$vo['receiver_name']}</td>
+                <td>{$vo['receiver_mobile']}</td>
+                <td>{:getCity($vo['receiver_area'])}{$vo['receiver_address']}</td>
+                <td>￥{$vo['original_price']}</td>
+                <td>￥{$vo['order_money']}</td>
+                <td>{:bargain_order_status($vo['order_status'])}</td>
+                <td>
+                    {if $vo['order_status']==4}
+                        <a href="javascript:;" onclick="getderefund({$vo['order_id']})" class="caozuo">退款</a>
+                    {elseif $vo['order_status']==1}
+                    <a href="javascript:;" onclick="do_fahuo({$vo['order_id']})" class="caozuo">发货</a>
+                    {else}
+                    -
+                    {/if}
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </article>
+    <div class="n_page_no">
+        {$page}
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    function send_submit() {
+        load_page("{:url('bargain/bargain_order')}",'',{search_text:$("input[name=search_text]").val()});
+    }
+    function getderefund(order_id){
+        var refund_type = "<?php echo $refund_type;?>";
+        var title = refund_type == 0 ? "系统未配置微信退款, 需要先手动退款给用户, 确定已退款?" : "系统已配置微信退款, 点击确定此订单款项会立即退回用户微信, 是否确认退款?";
+        layer.confirm(title,function(index){
+            $.ajax({
+                type : "post",
+                url : "{:url('bargain/orderTakeRefund')}",
+                data : { "order_id" : order_id },
+                success : function(data) {
+                    if(data["code"] > 0 ){
+                        layer.msg('退款成功', {icon: 1, time: 1000},function () {
+                            parent_flash('__CONF_SITE__admin/bargain/bargain_order')
+                        });
+                    }else {
+                        layer.msg(data['message'], {icon: 2, time: 2000});
+                    }
+                }
+            })
+        });
+    }
+    function do_fahuo(id) {
+        var msg='确定已发货?';
+        layer.confirm(msg,function(){
+            $.ajax({
+                type : "post",
+                url : "{:url('bargain/bargain_order_send')}",
+                data : {
+                    "id" : id
+                },
+                success : function(data) {
+                    if (data['code'] > 0) {
+                        layer.msg('操作成功',{icon:1,time:1000},function () {
+                            parent_flash('__CONF_SITE__admin/bargain/bargain_order')
+                        });
+                    }else{
+                        layer.msg(data['message'], {icon: 2, time: 1000});
+                    }
+                }
+            })
+        });
+    }
+</script>
+{/block}

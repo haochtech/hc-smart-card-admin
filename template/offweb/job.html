@@ -1,0 +1,89 @@
+{extend name="base"/}
+{block name="main"}
+<style>
+    .formControls select { height:40px; line-height: 40px;padding:0 20px;border-radius: 3px;border: 1px solid #ccc;}
+</style>
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <div class="form form-horizontal">
+            <h3 id="dont_touch_this"></h3>
+            <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+                <div class="tabBar clearfix">
+                    <span onclick="load_page('__CONF_SITE__admin/offweb/join_us')">工作交接</span>
+                </div>
+            </div>
+        <div>
+            <p>提示：交接将删除交出方员工并将交出方员工客户全部转移至接收方员工名下</p>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">选择交出方：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <select name="id1" id="id1">
+                    <option value="0">选择</option>
+                    {foreach name="id1" item="s"}
+                    <option value="{$s.id}">{$s.user_name}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+            <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-2">选择接收方：</label>
+                <div class="formControls col-xs-8 col-sm-9">
+                    <select name="id2" id="id2">
+                        <option value="0">选择</option>
+                        {foreach name="id2" item="s"}
+                        <option value="{$s.id}">{$s.user_name}</option>
+                        {/foreach}
+                    </select>
+                </div>
+            </div>
+            <div class="row cl">
+                <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2" style="position: relative;">
+                    <input class="btn btn-primary radius" onclick="sub_info()" type="button" value="&nbsp;&nbsp;交接&nbsp;&nbsp;">
+                </div>
+            </div>
+        </div>
+    </article>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript" src="/public/js/jquery-2.1.1.js"></script>
+<script type="text/javascript" src="/public/static/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript">
+    var id1=0;
+    var id2=0;
+    function sub_info(){
+        id1=$("#id1 :selected").val();
+        id2=$("#id2 :selected").val();
+        if(id1==0 || id2==0){
+            layer.msg('请选择用户!', {icon: 2, time: 1000});
+        }else {
+            if (id1 == id2) {
+                layer.msg('不可选择同一用户!', {icon: 2, time: 1000});
+                return false;
+            }
+            check_users(do_send_job);
+        }
+    }
+    var do_send_job=function () {
+        layer.confirm('确认要交接吗？',function(index){
+            $.ajax({
+                type : "post",
+                url : "{:url('offweb/job')}",
+                data : {
+                    "id1" : id1,
+                    "id2" : id2
+                },
+                success : function(data) {
+                    if (data['code'] > 0) {
+                        layer.msg('移交成功!',{icon:1,time:1000});
+                        parent_flash();
+                    }else{
+                        layer.msg('移交失败!', {icon: 2, time: 1000});
+                    }
+                }
+            })
+        });
+    }
+</script>
+{/block}

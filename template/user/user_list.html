@@ -1,0 +1,70 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div class="tabBar clearfix" style="position:relative;">
+            <span class="current" onclick="load_page('__CONF_SITE__admin/user/user_list')">微信会员</span>
+            <span onclick="load_page('__CONF_SITE__admin/user/level')">等级列表</span>
+            <span onclick="load_page('__CONF_SITE__admin/user/integral_details')">积分详情</span>
+            <span onclick="load_page('__CONF_SITE__admin/user/integral_rule')">积分规则设置</span>
+        </div><style>.btn:hover {color:#fff;}</style>
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+                <div class="text-c">
+                    日期范围：
+                    <input type="text" onfocus="WdatePicker()" value="{$star_time}" name="star_time" class="input-text Wdate" style="width:120px;">
+                    -
+                    <input type="text" onfocus="WdatePicker()" value="{$end_time}" name="end_time" class="input-text Wdate" style="width:120px;">
+                    <input type="text" class="input-text" value="{$search_text}" style="width:250px" placeholder="输入会员昵称"  name="search_text">
+                    <button onclick="send_submit()" class="btn btn-search radius" style="padding: 5px 12px;margin-left: 5px;border-radius: 3px;box-sizing:border-box;background: #ebebeb;border: 1px solid #dcdfe6;"><i class="Hui-iconfont" style="    color: #a2a2a2;
+    font-size: 18px;">&#xe665;</i></button>
+                </div>
+        </div>
+        <table class="table table-border table-bordered table-bg">
+            <thead>
+            <tr class="text-c">
+                <th>排序</th>
+                <th>头像</th>
+                <th>昵称</th>
+                <th>总累计积分</th>
+                <th>当前可用积分</th>
+                <th>积分更改</th>
+                <th>会员等级</th>
+                <th>注册时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="user_list" id="vo"  key="k"}
+            <tr class="text-c">
+                <td>{$num*20-20+$k}</td>
+                <td>
+                    <img src="{$vo.user_headimg}" width="50px" class="round">
+                </td>
+                <td>{$vo['nick_name']}</td>
+                <td>{$vo['consume']}</td>
+                <td>{$vo['integral']}</td>
+                <td>
+                    <i class="Hui-iconfont Hui-iconfont-shuru show_layer"
+                       style="cursor: pointer;"
+                       onclick="layer_open('积分更改','__CONF_SITE__admin/user/edit_integral&id={$vo.uid}','650px','400px');">编辑</i>
+                </td>
+                <td>{$vo['level_name']|default="无"}</td>
+                <td>{$vo['reg_time']|date='Y-m-d H:i:s',###}</td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </article>
+    <div class="n_page_no">
+        {$page}
+    </div>
+</div>
+<script>
+    function send_submit() {
+        load_page("__CONF_SITE__admin/user/user_list",'',{star_time:$("input[name=star_time]").val(),end_time:$("input[name=end_time]").val(),search_text:$("input[name=search_text]").val()})
+    }
+</script>
+{/block}
+{block name="script"}
+<script type="text/javascript" src="/public/static/My97DatePicker/4.8/WdatePicker.js"></script>
+{/block}

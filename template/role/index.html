@@ -1,0 +1,99 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div class="tabBar clearfix">
+            <span onclick="load_page('__CONF_SITE__admin/Role/permission')">用户列表</span>
+            <span class="current" onclick="load_page('__CONF_SITE__admin/Role/index')">用户组</span>
+            <div onclick="role_add_mod()" class="n_tab_add"><i class="Hui-iconfont">&#xe600;</i>添加用户组</div>
+        </div>
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+            <div class="text-c">
+                <input type="text" class="input-text" value="{$role_name}" style="width:250px" placeholder="输入用户组"  name="role_name">
+                <button type="submit" id="submit_button" class="btn btn-search radius" style="padding: 5px 12px;margin-left: 5px;border-radius: 3px;box-sizing:border-box;background: #ebebeb;border: 1px solid #dcdfe6;"><i class="Hui-iconfont" style="    color: #a2a2a2;
+font-size: 18px;">&#xe665;</i></button>
+            </div>
+        </div>
+        <table class="table table-border table-bordered table-bg">
+            <thead>
+            <tr class="text-c">
+                <th>名称</th>
+                <th>描述</th>
+                <th>添加时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="vo"}
+            <tr class="text-c">
+                <td>{$vo['role_name']}</td>
+                <td>{$vo['info']|default="无"}</td>
+                <td>{$vo['create_time']|date='Y-m-d H:i:s',###}</td>
+                <td>
+                    <a title="编辑" href="javascript:;" onclick="role_edit('{$vo.role_id}')" class="ml-5 show_layer" style="text-decoration:none;margin-right:15px;" >编辑</a>
+
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </article>
+    <div class="n_page_no">
+        {$list->render()}
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript" src="/public/js/jquery-2.1.1.js"></script>
+<script type="text/javascript">
+    function send_submit() {
+        load_page("__CONF_SITE__admin/Role/index",'',{role_name:$("input[name=role_name]").val()});
+    }
+    function role_add_mod() {
+        layer.open({
+            type: 2,
+            area: ['900px', '700px'],
+            fix: false, //不固定
+            maxmin: true,
+            shade:0.4,
+            title: '添加用户组',
+            content: '__CONF_SITE__admin/role/role_add',
+            scrollbar:false,
+            shadeClose:true,
+        });
+    }
+    function role_edit(id) {
+        layer.open({
+            type: 2,
+            area: ['900px', '700px'],
+            fix: false, //不固定
+            maxmin: true,
+            shade:0.4,
+            title: '编辑用户组',
+            content: '__CONF_SITE__admin/role/role_edit&id='+id,
+            scrollbar:false,
+            shadeClose:true,
+        });
+    }
+    function role_del(role_id) {
+        layer.confirm('确认要删除吗？',function(index){
+            $.ajax({
+                type : "post",
+                url : "__CONF_SITE__admin/role/role_del",
+                data : {'role_id':role_id},
+                success : function(data) {
+                    console.log(data);
+                    if(data['code']>0 ){
+                        layer.msg('成功',{icon:1,time:1000},function () {
+                            parent_flash();
+                        });
+                    }else{
+                        layer.msg('失败',{icon:5,time:1000});
+                    }
+                }
+            });
+        })
+    }
+</script>
+{/block}

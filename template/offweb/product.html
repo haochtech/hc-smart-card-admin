@@ -1,0 +1,104 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+             <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+                    <div class="tabBar clearfix">
+                        <span onclick="load_page('__CONF_SITE__admin/offweb/product')" {if $type==''}class="current"{/if}>产品列表</span>
+                        <span onclick="load_page('__CONF_SITE__admin/offweb/pro_class')">产品分类</span>
+                        <span onclick="load_page('__CONF_SITE__admin/offweb/product&type=1')" {if $type==1}class="current"{/if}>公司产品</span>
+                        <span onclick="load_page('__CONF_SITE__admin/offweb/product&type=2')" {if $type==2}class="current"{/if}>个人产品</span>
+<div onclick="layer_open('添加产品','__CONF_SITE__admin/offweb/pro_edit',1000,700)"  class="n_tab_add"><i class="Hui-iconfont">&#xe600;</i>添加产品</div>
+                    </div>
+             </div>
+        <div>
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-bg table-hover table-sort">
+                    <thead>
+                    <tr class="text-c">
+                        <th>封面图</th>
+                        <th>产品名称</th>
+                        <th>所属类型</th>
+                        <th>添加时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    {volist name="info" id="r"}
+                    <tr class="text-c va-m">
+                        <td><img width="60" height="60" class="product-thumb" src="{$r['pic']}" title="展示图"></td>
+                        <td>{$r['name']|subtext=20}</td>
+                        <td>
+                            {if $r['type']==1}
+                            公司
+                            {else}
+                            个人
+                            {/if}
+                        </td>
+                        <td>{$r['create_time']|date="Y-m-d H:i:s",###}</td>
+                        <td>
+                            <a  style="text-decoration:none;margin-right:15px;"  class="show_layer" title="编辑" href="javascript:void(0);" onclick="layer_open('编辑产品','__CONF_SITE__admin/offweb/pro_edit&id={$r.id}',1000,700)" >编辑</a>
+                             <a  style="text-decoration:none;margin-right:15px;" title="删除" href="javascript:void(0);"  class="caozuo" onclick="article_del(this,'{$r.id}')">删除</a>
+                        </td>
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+                <div class="n_page_no">
+                    {$page}
+                </div>
+            </div>
+        </div>
+        {/block}
+        {block name="script"}
+        <script type="text/javascript">
+            function article_del(obj,id){
+                layer.confirm('确认要删除吗？',function(index){
+                    //后台处理
+                    $.ajax({
+                        type : "post",
+                        url : "{:url('admin/article/del_article')}",
+                        data : {
+                            "article_id" : id.toString(),
+                        },
+                        success : function(data) {
+                            if (data['code'] >0) {
+                                $(obj).parents("tr").remove();
+                                layer.msg('删除成功!',{icon:1,time:1000});
+                            }
+                            else
+                            {
+                                layer.msg('删除失败', {icon: 2, time: 1000});
+                            }
+                        }
+                    })
+                });
+            }
+            function article_type(id,type) {
+                var msg='';
+                if (type==1){
+                    msg='确定要显示文章吗？';
+                }else {
+                    msg='确定要隐藏文章吗？';
+                }
+                layer.confirm(msg,function(index){
+                    $.ajax({
+                        type : "post",
+                        url : "__CONF_SITE__admin/article/article_type",
+                        data : {'id':id,'type':type},
+                        success : function(data) {
+                            console.log(data);
+                            if(data['code']>0 ){
+                                layer.msg('成功',{icon:1,time:1000},function () {
+                                    parent_flash();
+                                });
+                            }else{
+                                layer.msg('失败',{icon:5,time:1000});
+                            }
+                        }
+                    });
+                })
+            }
+        </script>
+        {/block}

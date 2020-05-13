@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<link rel="stylesheet" type="text/css" href="/public/static/h-ui-{$skin}/css/H-ui.min.css" />
+<body>
+<div style="display: flex;align-items: center; height: 50px; padding-left: 12px;">
+    <input id="keyword" type="text"  style="width: 300px;height:35px;padding-left:6px; margin-right: 8px;" placeholder="输入关键字" class="input-text radius size-MINI">
+    <input style="margin-bottom:0px;" class="btn btn-success radius" onclick="searchKeyword()" type="button" value="搜索">
+</div>
+<div id="container" style="border: 1px solid #000000;min-width:300px;min-height:467px;"></div>
+<input class="btn btn-primary radius" onclick="submit_pos()" type="button" value="确定" style="margin-left: 12px; margin-top: 8px;margin-bottom: 8px;">
+<input type="hidden" id="lat" value="34.618130">
+<input type="hidden" id="lng" value="112.454020">
+<script type="text/javascript" src="/public/js/jquery-2.1.1.js"></script>
+<script type="text/javascript" src="/public/static/layer/2.4/layer.js"></script>
+<script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp&key=UFVBZ-TCCCF-GWTJD-N3VQY-JHEQH-ZZBDM"></script>
+<script type="text/javascript" src="https://3gimg.qq.com/lightmap/components/geolocation/geolocation.min.js"></script>
+<script>
+    $(function(){
+        init();
+    });
+    var map;
+    var latlngBounds;
+    var searchService,markers = [];
+    var geolocation = new qq.maps.Geolocation("UFVBZ-TCCCF-GWTJD-N3VQY-JHEQH-ZZBDM", "lyyibaiwq");
+    function getLocation(){
+        var position_option = {
+            timeout: 20000
+        };
+        geolocation.getLocation(showPosition,showError,position_option);
+    }
+    function showPosition(position)
+    {
+        curr_lat = position.lat;
+        curr_lng = position.lng;
+        // 逆地址解析，设置起点的地址位置
+        var latLng = new qq.maps.LatLng(curr_lat, curr_lng);
+        var geocoder = new qq.maps.Geocoder();
+        geocoder.getAddress(latLng);
+        geocoder.setComplete(function(result) {
+            clearOverlays(markers);
+            $("#lat").val(curr_lat);
+            $("#lng").val(curr_lng);
+            var latLng = new qq.maps.LatLng(curr_lat,curr_lng);
+            map.setCenter(latLng);
+            latlngBounds.extend(latLng);
+            var marker = new qq.maps.Marker({
+                map:map,
+                position: latLng
+            });
+            marker.setTitle(result.detail.address);
+            markers.push(marker);
+            map.fitBounds(latlngBounds);
+        });
+    }
+    function showError(error)
+    {
+        switch(error.code)
+        {
+            case error.PERMISSION_DENIED:
+                //alert("用户拒绝对获取地理位置的请求。");
+                break;
+            case error.POSITION_UNAVAILABLE:
+                //alert("位置信息是不可用的。");
+                break;
+            case error.TIMEOUT:
+                //alert("请求用户地理位置超时。");
+                break;
+            case error.UNKNOWN_ERROR:
+                //alert("未知错误。" );
+                break;
+        }
+    }
+    function init() {
+        var center;
+        var hasloc = false;
+        if (parent.$("#latitude").val()=='' || parent.$("#latitude").val() == undefined){
+            center = new qq.maps.LatLng(34.618130,112.454020);
+        }else {
+            hasloc = true;
+            $("#lat").val(parent.$("#latitude").val());
+            $("#lng").val(parent.$("#longitude").val());
+            center = new qq.maps.LatLng(parent.$("#latitude").val(),parent.$("#longitude").val());
+        }
+        map = new qq.maps.Map(document.getElementById("container"),{
+            center:center,
+            zoom: 14
+        });
+        var marker1 = new qq.maps.Marker({
+            position: center,
+            map: map
+        });
+        markers.push(marker1);
+        //添加监听事件   获取鼠标单击事件
+        qq.maps.event.addListener(map, 'click', function(event) {
+            clearOverlays(markers);
+            var marker=new qq.maps.Marker({
+                position:event.latLng,
+                map:map
+            });
+            qq.maps.event.addListener(map, 'click', function(event) {
+                marker.setMap(null);
+            });
+            $("#lat").val(marker.position.lat);
+            $("#lng").val(marker.position.lng);
+        });
+        latlngBounds = new qq.maps.LatLngBounds();
+        searchService = new qq.maps.SearchService({
+            complete : function(results){
+                if(results.type == "CITY_LIST")
+                {
+                    layer.msg('查询结果过多,请添加所在城市重新搜索',{icon:5,time:1500});
+                    return;
+                }
+                var pois = results.detail.pois;
+                for(var i = 0,l = pois.length;i < l; i++){
+                    if(i == 0)
+                    {   var poi = pois[i];
+                        $("#lat").val(poi.latLng.lat);
+                        $("#lng").val(poi.latLng.lng);
+                        var poi = pois[i];
+                        latlngBounds.extend(poi.latLng);
+                        var marker = new qq.maps.Marker({
+                            map:map,
+                            position: poi.latLng
+                        });
+                        marker.setTitle(i+1);
+                        markers.push(marker);
+                    }
+                    break;
+                }
+                map.fitBounds(latlngBounds);
+            }
+        });
+        if(!hasloc)
+        {
+            getLocation();
+        }
+    }
+    //清除地图上的marker
+    function clearOverlays(overlays){
+        var overlay;
+        while(overlay = overlays.pop()){
+            overlay.setMap(null);
+        }
+        markers.forEach(function (item, index, arr) {
+            item.setMap(null);
+        });
+        markers = [];
+    }
+    //点击搜索
+    function searchKeyword() {
+        var keyword = document.getElementById("keyword").value;
+        var region = "";
+        clearOverlays(markers);//清除地图上的marker
+        searchService.setLocation(region);
+        searchService.search(keyword);
+    }
+    function submit_pos() {
+        parent.get_position($("#lat").val(),$("#lng").val());
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);
+    }
+</script>
+</body>
+</html>

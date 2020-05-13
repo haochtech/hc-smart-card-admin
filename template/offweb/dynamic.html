@@ -1,0 +1,134 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+             <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+                        <div class="tabBar clearfix">
+                            <span class="current">动态列表</span>
+                            <span onclick="load_page('__CONF_SITE__admin/article/article_class&dy=2')">动态分类</span>
+<div onclick="layer_open('添加动态','__CONF_SITE__admin/article/add_article&dynamic=1',1000,700)"  class="n_tab_add"><i class="Hui-iconfont">&#xe600;</i>添加动态</div>
+                        </div>
+             </div>
+        <div>
+            <div class="cl pd-5 bg-1 bk-gray mt-20">
+                    <div class="text-c">
+                        动态类型：
+                        <span class="select-box" style="width: auto;background: #fff;">
+                              <select class="select" size="1" name="class_name" id="class_name">
+                                     <option {if condition="$class_name==0"} selected {/if} value="0">全部</option>
+                                  {volist name="a_list" id="cl"}
+                                <option {if condition="$cl.class_id==$class_name"} selected {/if} value="{$cl['class_id']}">{$cl['name']}</option>
+                                  {/volist}
+                              </select>
+                        </span>
+                        <button onclick="send_submit()" id="submit_button" class="btn btn-search radius" style="padding: 5px 12px;margin-left: 5px;border-radius: 3px;box-sizing:border-box;background: #ebebeb;border: 1px solid #dcdfe6;"><i class="Hui-iconfont" style="    color: #a2a2a2;
+    font-size: 18px;">&#xe665;</i></button>
+                    </div>
+            </div>
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-bg table-hover table-sort">
+                    <thead>
+                    <tr class="text-c">
+                        <th>动态标题</th>
+                        <th>作者</th>
+                        <th>点击量</th>
+                        <!--<th>转发量</th>-->
+                        <th>发布时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    {volist name="list" id="r"}
+                    <tr class="text-c va-m">
+                        <td>{$r['title']|subtext=20}</td>
+                        <td>
+                            {if $r['user_name']==''}
+                            公司
+                            {else}
+                                {$r['position']}--{$r['user_name']}
+                            {/if}
+                        </td>
+                        <td>{$r['click']}</td>
+                        <!--<td>{$r['forward']}</td>-->
+                        <td>{$r['create_time']|date="Y-m-d H:i:s",###}</td>
+                        <td>
+                            {if $r['state']==2}
+                            <a style="text-decoration:none;margin-right:15px;" class="caozuo" title="显示" onclick="article_type('{$r.id}','{$r.article_id}','1')" >显示</a>
+                            {else}
+                            <a style="text-decoration:none;margin-right:15px;" title="隐藏"  class="caozuo"onclick="article_type('{$r.id}','{$r.article_id}','2')" value="隐藏" >隐藏</a>
+                            {/if}
+                            <a  style="text-decoration:none;margin-right:15px;" title="编辑"  class="show_layer"href="javascript:void(0);" onclick="layer_open('动态编辑','__CONF_SITE__admin/offweb/dynamic_edit&article_id={$r.article_id}&id={$r.id}','1000px','700px')" >编辑</a>
+                             <a style="text-decoration:none;margin-right:15px;" title="删除"  class="caozuo"href="javascript:void(0);" onclick="article_del(this,'{$r.id}')"  value="删除" >删除</a>
+                            {if $r.information_num>0}
+                            <a style="text-decoration:none;margin-right:15px;"  title="查看评论"  class="show_layer"href="javascript:void(0);" onclick="layer_open('查看评论','__CONF_SITE__admin/offweb/show_comment&iid={$r.id}','800px','600px')" >查看评论-{$r.information_num}条</a>
+                            {else}
+                            <a style="text-decoration:none;margin-right:15px;"  title="暂无评论" href="javascript:void(0);" >暂无评论</a>
+                            {/if}
+                        </td>
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+                <div class="n_page_no">
+                    {$page}
+                </div>
+            </div>
+        </div>
+        {/block}
+        {block name="script"}
+        <script type="text/javascript">
+            /*文章-编辑*/
+            function send_submit(){
+                load_page("__CONF_SITE__admin/offweb/dynamic",'',{class_name:$("#class_name").val()})
+            }
+            function article_del(obj,id){
+                layer.confirm('确认要删除吗？',function(index){
+                    //后台处理
+                    $.ajax({
+                        type : "post",
+                        url : "{:url('admin/article/del_article')}",
+                        data : {
+                            "id" : id.toString(),
+                            "dynamic":1
+                        },
+                        success : function(data) {
+                            if (data['code'] >0) {
+                                $(obj).parents("tr").remove();
+                                layer.msg('删除成功!',{icon:1,time:1000});
+                            }
+                            else
+                            {
+                                layer.msg('删除失败', {icon: 2, time: 1000});
+                            }
+                        }
+                    })
+                });
+            }
+            function article_type(id,aid,type) {
+                var msg='';
+                if (type==1){
+                    msg='确定要显示动态吗？';
+                }else {
+                    msg='确定要隐藏动态吗？';
+                }
+                layer.confirm(msg,function(index){
+                    $.ajax({
+                        type : "post",
+                        url : "__CONF_SITE__admin/article/article_type",
+                        data : {'id':id,'aid':aid,'type':type},
+                        success : function(data) {
+                            console.log(data);
+                            if(data['code']>0 ){
+                                layer.msg('成功',{icon:1,time:1000},function () {
+                                    parent_flash();
+                                });
+                            }else{
+                                layer.msg('失败',{icon:5,time:1000});
+                            }
+                        }
+                    });
+                })
+            }
+        </script>
+        {/block}

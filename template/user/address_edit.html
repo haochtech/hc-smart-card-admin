@@ -1,0 +1,203 @@
+<!--_meta 作为公共模版分离出去-->
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="Bookmark" href="favicon.ico" >
+    <link rel="Shortcut Icon" href="favicon.ico" />
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="/public/lib/html5.js"></script>
+    <script type="text/javascript" src="/public/lib/respond.min.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="/public/static/h-ui-{$skin}/css/H-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="/public/static/h-ui.admin/css/H-ui.admin.css" />
+    <link rel="stylesheet" type="text/css" href="/public/lib/Hui-iconfont/1.0.8/iconfont.css" />
+    <link rel="stylesheet" type="text/css" href="/public/static/h-ui.admin/skin/default/skin.css" id="skin" />
+    <link rel="stylesheet" type="text/css" href="/public/static/h-ui.admin/css/style.css" />
+    <!--[if IE 6]>
+    <script type="text/javascript" src="/public/js/DD_belatedPNG_0.0.8a-min.js"" ></script>
+    <script>DD_belatedPNG.fix('*');</script><![endif]-->
+    <!--/meta 作为公共模版分离出去-->
+    <title>收货地址管理</title>
+    <meta name="keywords" content="洛阳易购商城">
+    <meta name="description" content="洛阳易购商城">
+
+</head>
+<body>
+<article class="cl pd-20">
+    {foreach name="list" item="vo"}
+    <form action="" method="post" class="form form-horizontal" id="commentForm">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>收货人：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" value="{$vo.consigner}" placeholder="收货人" class="input-text" id="consigner" name="consigner">
+                <p class="error">收货人名字不能为空</p>
+                <p class="error">收货人名字不合法</p>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>电话：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" value="{$vo.phone}" placeholder="电话" class="input-text" id="phone" name="phone">
+                <p class="error">电话号码不正确</p>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">地区：</label>
+            <div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="width:150px;float: left;margin-right: 10px">
+				<select class="select"  id="pro" size="1">
+                    <option value="-1">{$vo.pro}</option>
+                    {volist name="pro" id="v1"}
+                    <option value="{$v1['id']}">&nbsp;&nbsp;{$v1['name']}</option>
+                    {/volist}
+                </select></span>
+                <span class="select-box" style="width:150px;float: left;margin-right: 10px" >
+                <select class="select"  id="city" size="1">
+                    <option value="-1">{$vo.city}</option>
+                </select></span>
+                    <span class="select-box" style="width:150px;float: left">
+                <select class="select" name="area"  id="district" size="1">
+                    <option value="{$vo.area}">{$vo.dist}</option>
+                </select>
+				</span>
+                <p class="error"></p>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">默认地址：</label>
+            <div class="mt-20 skin-minimal">
+                <div class="radio-box">
+                    <input type="radio" id="radio-1" name="is_default" value="1" {if condition="$vo['is_default'] eq '1'"}checked{/if}>
+                    <label for="radio-1">是</label>
+                </div>
+                <div class="radio-box">
+                    <input type="radio" id="radio-2" name="is_default" value="0" {if condition="$vo['is_default'] eq '0'"}checked{/if}>
+                    <label for="radio-2">否</label>
+                </div>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">详细地址：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <textarea name="address" cols="" rows="" id="info" class="textarea"  placeholder="" dragonfly="true" onKeyUp="textarealength(this,100)">{$vo['address']}</textarea>
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" onclick="UserAddressAjax()" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+        <input type="hidden" name="id" value="{$vo['id']}">
+        <input type="hidden" name="uid" value="{$vo['uid']}">
+    </form>
+    {/foreach}
+</article>
+<script type="text/javascript" src="/public/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/public/lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/public/static/h-ui/js/H-ui.js"></script>
+<script type="text/javascript" src="/public/static/h-ui.admin/js/H-ui.admin.page.js"></script>
+<script type="text/javascript" src="/public/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="/public/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="/public/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+    $(function(){
+        $('.skin-minimal input').iCheck({
+            checkboxClass: 'icheckbox-blue',
+            radioClass: 'iradio-blue',
+            increaseArea: '20%'
+        });
+    });
+    //模块输入信息验证
+    function verify() {
+        var consigner = $("#consigner").val();
+        var phone = $("#phone").val();
+        var info = $("#info").val();
+        if (consigner == '') {
+            $("#consigner").next().show();
+            return false;
+        } else {
+            $(".error").hide();
+        }
+        var re=/^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
+        pattern= new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？_]");
+        if(pattern.test(consigner)){
+            $("#consigner").next().next().show();
+            return false;
+        }
+        if(!re.test(phone)){
+            $("#phone").next().show();
+            return false;
+        }
+        return true;
+    }
+    var flag = false;//防止重复提交
+    //添加用户
+    function UserAddressAjax() {
+        var consigner = $("#consigner").val();
+        var phone = $("#phone").val();
+        var info = $("#info").val();
+        var area = $("#area").val();
+        if(verify() && !flag){
+            flag = true;
+            $.ajax({
+                type : "post",
+                url : "{:url('user/user_address_save')}",
+                data :$('#commentForm').serialize(),
+                success : function(data) {
+                    if(data > 0){
+                        layer.msg('修改成功!',{icon:1,time:1000},function () {
+                            window.parent.location.reload();
+                            var index=parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                        });
+                    }
+                    else{
+                        layer.msg('修改失败!',{icon:5,time:1000});
+                        $("#admin-role-save").removeAttr("disabled");
+                    }
+                }
+            });
+        }
+    }
+    $("#pro").change(function(){
+        var proid=$("#pro").val();
+        $.ajax({
+            type:"post",
+            url:"{:url('user/get_city')}",
+            data:{proid:proid},
+            dataType:"json",
+            success:function(data){
+                var html = '';
+                $.each(data, function(i, item){
+                    console.log(data)
+                    html+="<option value='"+data[i].id+"'>"+data[i].name+"</option>";
+                });
+                $('#city').html(html);
+            }
+        });
+    });
+    $("#city").change(function(){
+        var cityid=$("#city").val();
+        $.ajax({
+            type:"post",
+            url:"{:url('user/get_district')}",
+            data:{cityid:cityid},
+            dataType:"json",
+            success:function(data){
+                var html = '';
+                $.each(data, function(i, item){
+                    console.log(data)
+                    html+="<option value='"+data[i].id+"'>"+data[i].name+"</option>";
+                });
+                $('#district').html(html);
+            }
+        });
+    });
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

@@ -1,0 +1,106 @@
+﻿{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div class="tabBar clearfix">
+            <span onclick="load_page('__CONF_SITE__admin/goods/goodslist')">商品列表</span>
+            <span onclick="load_page('__CONF_SITE__admin/order/orderlist2')">到店核销</span>
+            <span onclick="load_page('__CONF_SITE__admin/goods/goodsCategoryList')">商品分类</span>
+            <span onclick="load_page('__CONF_SITE__admin/goods/goods_attr_mod')">规格属性</span>
+            <span class="current" onclick="load_page('__CONF_SITE__admin/express/express_list')">物流模板</span>
+            <span onclick="load_page('__CONF_SITE__admin/Order/OrderList')">订单列表</span>
+            <span onclick="load_page('__CONF_SITE__admin/order/OrderRefund')">退款/退单</span>
+            <span onclick="layer_open('数据统计','__CONF_SITE__admin/count/OrderCount',1000,1000)">数据统计</span>
+            <div onclick="layer_open('添加物流公司','__CONF_SITE__admin/express/express_add',900,800)"  class="n_tab_add"><i class="Hui-iconfont">&#xe600;</i>添加物流公司</div>
+        </div>
+  <div class="cl pd-5 bg-1 bk-gray mt-20">
+            <div class="text-c"> 公司名称：
+               <input type="text" class="input-text" value="{$search_text}" style="width:250px" placeholder="输入公司名称"  name="search_text">
+                <button onclick="send_submit()" class="btn btn-search radius"  name=""><i class="Hui-iconfont">&#xe665;</i> 搜物流</button>
+            </div>
+</div>
+        <table class="table table-border table-bordered table-hover table-bg">
+            <thead>
+            <!--<tr>-->
+                <!--<th scope="col" colspan="9">物流公司列表</th>-->
+            <!--</tr>-->
+            <tr class="text-c">
+                <th>公司Logo</th>
+                <th>公司名称</th>
+                <th>物流编号</th>
+                <th>联系电话</th>
+                <th>是否默认</th>
+                <th>是否启用</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="retval" id="vo"}
+            <tr class="text-c">
+                <td>
+                    <img src="{$vo['express_logo']}" class="radius" width="50px">
+                </td>
+                <td>{$vo['company_name']}</td>
+                <td>{$vo['express_no']}</td>
+                <td>{$vo['phone']|default="无"}</td>
+                <td>
+                    {if $vo['is_default']==1}
+                    <span class="label label-primary radius">默认</span>
+                    {else}
+                    <span class="label label-default radius">否</span>
+                    {/if}
+                </td>
+                <td>
+                    {if $vo['is_enabled']==1}
+                    <span class="label label-success radius">已启用</span>
+                    {else}
+                    <span class="label label-danger radius">已禁用</span>
+                    {/if}
+                </td>
+                <td>
+                    <a title="编辑" href="javascript:;" onclick="layer_open('编辑物流公司','__CONF_SITE__admin/express/express_edit&co_id={$vo.co_id}','1000','800')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>
+                    <a title="设置运费模版" href="javascript:;" onclick="load_page('__CONF_SITE__admin/express/freightTemplateList&co_id={$vo.co_id}')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe72d;</i></a>
+                    <a title="删除" href="javascript:;" onclick="express_del(this,'{$vo.co_id}')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </article>
+    <div class="n_page_no">
+        {$page}
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    function send_submit() {
+        load_page('__CONF_SITE__admin/express/express_list', '', {
+            search_text: $("input[name=search_text]").val()
+        })
+    }
+	/*物流-删除*/
+    function express_del(obj,id){
+        layer.confirm('确认要删除吗？',function(index){
+            //此处请求后台程序
+            //后台处理
+            $.ajax({
+                type : "post",
+                url : "{:url('express/expressDelete')}",
+                data : {
+                    "co_id" : id,
+                },
+                success : function(data) {
+                    if (data['code'] > 0) {
+                        $(obj).parents("tr").remove();
+                        layer.msg('已删除!',{icon:1,time:1000});
+                    }else{
+                        layer.msg(data['message'], {icon: 2, time: 1000});
+                    }
+                }
+            })
+        });
+    }
+</script>
+{/block}

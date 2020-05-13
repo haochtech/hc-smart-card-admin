@@ -1,0 +1,263 @@
+{include file="demo"}
+<article class="cl pd-20">
+    <form action="" method="post" class="form form-horizontal" id="my_bargain">
+        <input type="hidden" value="" id="goods_id">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>活动名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" v-model="goods_name" value="" placeholder="活动名称" class="input-text" id="bargain_name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>活动主图：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+<div style="position: absolute;top:5px;left:200px;color: #ccc;">建议图标尺寸：600*300px</div>
+                <img width="120"  v-if="img_path!=''"  :src="img_path" class="thumbnail">
+                <input onclick="select_img('1','zhu');" type="button" value="选择图片" class="btn btn-default">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>活动分类：</label>
+            <div class="formControls col-xs-8 col-sm-3">
+                <span class="select-box">
+                  <select class="select" size="1" id="class_id">
+                    <option value="">请选择</option>
+                      {volist name="class_list" id="c"}
+                             <option {if $c.id==$list.class_id}selected{/if} value="{$c.id}">{$c.class_name}</option>
+                      {/volist}
+                  </select>
+                </span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>轮播图：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+<div style="position: absolute;top:5px;left:200px;color: #ccc;">建议图标尺寸：600*300px</div>
+                <img v-for="item in array_img" width="120"  :src="item.url" class="thumbnail">
+                <input onclick="select_img('5','lun');" type="button" value="选择图片" class="btn btn-default">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>原价：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input id="original_price" type="number" autocomplete="off" v-model="price" value="" placeholder="原价" class="input-text">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>底价：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input id="lowest_price" type="number" autocomplete="off" value="{$list['lowest_price']}" class="input-text" placeholder="底价">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>完成人数：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input id="completed_number" type="number" autocomplete="off" value="{$list['completed_number']}" class="input-text" placeholder="完成人数">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>活动数量：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input id="bargain_inventory" type="number" autocomplete="off" value="{$list['bargain_inventory']}" class="input-text" placeholder="活动数量" >
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>开始时间：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input id="star_time" value="{$list['star_time']}" class="input-text Wdate" type="text" onclick="WdatePicker({dateFmt:'yyyy-M-d H:mm:ss',minDate:'%y-%M-{%d}'})" style="width:160px;"/>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>结束时间：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input id="end_time" type="text"  onclick="WdatePicker({dateFmt:'yyyy-M-d H:mm:ss',minDate:'%y-%M-{%d}'})" value="{$list['end_time']}"  class="input-text Wdate" style="width:160px;">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>消费截至时间：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input id="consumption_time" type="text"  onclick="WdatePicker({dateFmt:'yyyy-M-d H:mm:ss',minDate:'%y-%M-{%d+1}'})" value="{$list['consumption_time']}" class="input-text Wdate" style="width:160px;">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>活动规则：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <script id="editor" type="text/plain" style="width: 100%; height: 500px;">{$list['activity_rules']}</script></div>
+                </div>
+                <div class="row cl">
+                    <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                    <input class="btn btn-primary radius" onclick="addSuppAjax()" type="button" value="保存">
+                    </div>
+                    </div>
+                    </form>
+                    </article>
+                <!--<script src="/public/menu/js/jquery.artdialog.js"></script>-->
+                <!--<script src="/public/menu/js/iframetools.js"></script>-->
+                <script type="text/javascript">
+                    var bannerVM = new Vue({
+                        el: '#my_bargain',
+                        data: {
+                            goods_id:"",//商品ID
+                            goods_name:"",//商品名称
+                            img_path:"",//图片链接
+                            img_id:"",//图片ID
+                            price:"",//价格
+                            array_img:[],
+                        }
+                    });
+                    $(function () {
+                        bannerVM.img_id = "{$list['img_id']}";
+                        bannerVM.goods_id = "{$list['goods_id']}";
+                        bannerVM.goods_name = "{$list['bargain_name']}";
+                        bannerVM.img_path = "{$list['img_cover']}";
+                        bannerVM.price = "{$list['original_price']}";
+                        bannerVM.array_img =JSON.parse('{$list.array_img}');
+                        var ue =UM.getEditor('editor',{
+                            imageUrl:"__CONF_SITE__app/Umupload/uploadFile", //处理图片上传的接口
+                            imageFieldName:"upfile", //上传图片的表单的name
+                            imagePath: ""
+                        });
+                    })
+                    //选中商品回调函数
+                    function get_images(item) {
+                        bannerVM.img_id = item['img_id'];
+                        //bannerVM.goods_id = item['goods_id'];
+                        bannerVM.goods_name = item['name'];
+                        bannerVM.img_path = item['img_path'];
+                        bannerVM.price = item['price'];
+                        //clook();
+                    }
+                    function lun_images(id_array,path_array) {
+                        var arr=[];
+                        id_array=id_array.split(",");
+                        path_array=path_array.split(",");
+                        for (var i=0;i<id_array.length;i++){
+                            var item={};
+                            item['id']=id_array[i];
+                            item['url']=path_array[i];
+                            arr.push(item);
+                        }
+                        bannerVM.array_img=arr;
+                    }
+                    function zhu_images(id,path) {
+                        bannerVM.img_path=path;
+                        bannerVM.img_id = id;
+                    }
+                    //模块输入信息验证
+                    function verify(bargain_name,bargain_inventory,lowest_price,star_time,end_time,consumption_time,activity_rules,completed_number,array_img,class_id) {
+                        if (bargain_name==''){
+                            layer.msg('活动名称不能为空',{icon:5,time:1000});
+                            return false;
+                        }
+                        if (lowest_price==''){
+                            layer.msg('底价不能为空',{icon:5,time:1000});
+                            return false;
+                        }
+                        if (completed_number==''){
+                            layer.msg('完成人数不能为空',{icon:5,time:1000});
+                            return false;
+                        }
+                        if (bargain_inventory==''){
+                            layer.msg('活动数量不能为空',{icon:5,time:1000});
+                            return false;
+                        }
+                        if (star_time==''){
+                            layer.msg('开始时间不能为空',{icon:5,time:1000});
+                            return false;
+                        }
+                        if (end_time==''){
+                            layer.msg('结束时间不能为空',{icon:5,time:1000});
+                            return false;
+                        }
+                        if (consumption_time==''){
+                            layer.msg('消费截至时间不能为空',{icon:5,time:1000});
+                            return false;
+                        }
+                        if (activity_rules==''){
+                            layer.msg('活动规则不能为空',{icon:5,time:1000});
+                            return false;
+                        }
+                        if (array_img==''){
+                            layer.msg('请选择轮播图',{icon:5,time:1000});
+                            return false;
+                        }
+                        if (class_id == '') {
+                            layer.msg('请选择活动分类', {icon: 5, time: 1000});
+                            return false;
+                        }
+                        return true;
+                    }
+                    var flag = false;//防止重复提交
+                    //添加用户
+                    function addSuppAjax() {
+                        var bargain_name = $("#bargain_name").val();
+                        var bargain_picture =bannerVM.img_id;
+                        var bargain_inventory  = $("#bargain_inventory").val();
+                        var original_price = $("#original_price").val();
+                        var lowest_price = $("#lowest_price").val();
+                        var star_time=$("#star_time").val();
+                        var end_time=$("#end_time").val();
+                        var consumption_time=$("#consumption_time").val();
+                        var activity_rules= UM.getEditor('editor').getContent();
+                        var completed_number=$("#completed_number").val();
+                        var array_img= JSON.stringify(bannerVM.array_img);
+                        var class_id = $("#class_id").val();
+                        if(verify(bargain_name,bargain_inventory,lowest_price,star_time,end_time,consumption_time,activity_rules,completed_number,array_img,class_id) && !flag){
+                            flag = true;
+                            $.ajax({
+                                type : "post",
+                                url : "{:url('bargain/bargain_edit')}",
+                                data : {
+                                    'id' : '{$list.id}',
+                                    'bargain_name' : bargain_name,
+                                    'bargain_picture' : bargain_picture,
+                                    'bargain_inventory' : bargain_inventory,
+                                    'original_price' : original_price,
+                                    'lowest_price':lowest_price,
+                                    'star_time':star_time,
+                                    'end_time':end_time,
+                                    'consumption_time':consumption_time,
+                                    'activity_rules':activity_rules,
+                                    'completed_number':completed_number,
+                                    'array_img':array_img,
+                                    'class_id':class_id,
+                                },
+                                success : function(data) {
+                                    if(data['code']>0){
+                                        parent.layer.msg('保存成功!',{icon:1,time:1000},function () {
+                                            layer_close("{:url('bargain/index')}");
+                                        });
+                                    }
+                                    else{
+                                        flag = false;
+                                        parent.layer.msg(data['message'],{icon:5,time:1000});
+                                    }
+                                }
+                            });
+                        }
+                    }
+                    //选中商品
+                    function selece_goods(title,url,w,h) {
+                        layer.open({
+                            type: 2,
+                            area: [w, h],
+                            fix: false, //不固定
+                            maxmin: true,
+                            shade:0.4,
+                            title: title,
+                            content: url
+                        });
+                    }
+                    function select_img(number,type) {
+                        layer_open("我的图片001",'__CONF_SITE__admin/images/dialogalbumlist&number=' + number + '&type=' + type,900,620);
+//                        art.dialog.open(('__CONF_SITE__admin/images/dialogalbumlist&number=' + number + '&type=' + type), {
+//                            lock: true,
+//                            title: "我的图片",
+//                            width: 900,
+//                            height:620,
+//                            drag: false,
+//                            background: "#000000",
+//                            scrollbar: false
+//                        }, true);
+                    }
+                </script>

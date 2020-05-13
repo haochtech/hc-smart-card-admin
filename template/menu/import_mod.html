@@ -1,0 +1,378 @@
+{extend name="base"/}
+{block name="main"}
+<style> body { background: #FFFFFF !important; } .btn_bg { width: 225px; height: 354px; background: rgba(0, 0, 0, 0.8); position: absolute; top: 0; left: 0; z-index: 998; } .float_btn { display: none; } .down_load_icon { position: absolute; right: 0; bottom: 0; width: 50px !important; height: 50px !important; } #3D { max-width: 1350px; }
+</style>
+<link rel="stylesheet" type="text/css" href="/public/menu/css/mod_list.css"/>
+<script>                $(function () {
+    $("#3D").find('div').hover(
+        function () {
+            $(this).find('.float_btn').fadeIn(500);
+        },
+        function () {
+            $(this).find('.float_btn').fadeOut(500);
+        }
+    )
+})
+</script>
+<div class="Hui-article">
+    <article class="cl pd-20" id="main">
+        <h3 id="dont_touch_this"></h3>
+        <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;margin-left: 10px; margin-top: 20px;z-index: 9999999;">
+            <div class="tabBar clearfix">
+                <span {if condition="$status==0" } class="current" {else} onclick="load_page('__CONF_SITE__admin/menu/import_mod&status=0')" {/if}>全部</span>
+                <span {if condition="$status==1" } class="current" {else} onclick="load_page('__CONF_SITE__admin/menu/import_mod&status=1')" {/if}>已下载</span>
+                <span {if condition="$status==2" } class="current" {else} onclick="load_page('__CONF_SITE__admin/menu/import_mod&status=2')" {/if}>未下载</span>
+                <span {if condition="$status==3" } class="current" {else} onclick="load_page('__CONF_SITE__admin/menu/my_mod')" {/if}>我的模板库</span>
+                {if $status==2}
+                <div onclick="down_page()" class="n_tab_add">一键下载</div>
+                {/if}
+            </div>
+            {if $status<3}
+            <div class="cl pd-5 bg-1 bk-gray mt-20">
+                <div class="text-c" style="justify-content: center; display: flex; height: 31px;line-height: 31px;">
+                    模版标签：
+                    <input type="hidden" value="{$wn_id}" name="wn_id">
+                    <input type="text" class="input-text" value="{$mod_name}" style="width:250px" placeholder="模版标签"
+                           name="mod_name">
+                    <select name="mod_class" id="mod_class" style="height: 40px;font-size: 13px;">
+                        <option value="">可选择</option>
+                        <option value="1" {if $mod_class==1}selected{/if}>官网</option>
+                        <option value="2" {if $mod_class==2}selected{/if}>商城</option>
+                        <option value="4" {if $mod_class==4}selected{/if}>餐饮</option>
+                    </select>
+                    <button onclick="search_mod()" id="submit_button" class="btn btn-search radius"
+                            style="padding: 5px 12px;margin-left: 5px;border-radius: 3px;box-sizing:border-box;background: #ebebeb;border: 1px solid #dcdfe6;">
+                        <i class="Hui-iconfont">&#xe665;</i></button>
+                </div>
+            </div>
+            {else}
+            {if $dd!=2}
+            <h1>{$dd}</h1>
+            {/if}
+            {/if}
+        </div>
+        <div class="content-right fl" style="width: 100%;border-left:0 !important;">
+            <div id="3D" style="max-width: 1480px;">
+                {volist name="bus_mod_id" id="m"}
+                <div class="programCode" style="position: relative;">
+                    <dl>
+                        <dt>
+                        <div style="max-width: 225px; position: relative; overflow: hidden; height: 351px; ">{if $m.is_dow==1}<img class="down_load_icon" src="/public/menu/images/down_load_icon.png" alt="已下载">{/if}<a href="{$m['img']}" target="_blank">
+                        <img src="{$m['img']}" alt="模板图" title="点击放大预览" style="cursor: zoom-in;"></a></div>
+                        </dt>
+                        <div class="float_btn">
+                            <dd style="margin-top: 4px; position: absolute;top:130px;width:100%;z-index: 1000;">
+                                <div style="font-weight: bold; text-align: center; padding: 3px;color:#fff;">
+                                    {$m['name']}
+                                </div>
+                            </dd>
+                            <dd style="position: absolute;top:170px; text-align: center;">
+                                {if $m.is_dow==1}
+                               <!-- {if $isfounder==1}{/if}
+                                <button onclick="update_this_mod('{$m.is_this_id}','{$m.id}')" class="btn btn-warning" style="background-color:#f0ad4e;z-index:1000;padding: 10px 20px;">更新模版
+                                </button>-->
+                                <p></p>
+                                {/if}
+                                {if $m.is_dow==0}
+                                <!--<input type="hidden" name="page_down" value="{$m.id}">
+                                <button onclick="dow_mod('{$m.id}')" class="btn btn-danger radius" style="background-color:#00c1de;z-index:1000;padding: 10px 20px;">下载模版
+                                </button>-->
+                                <p></p>
+                                {/if}
+                                {if $status==3}
+                                <button onclick="del_page('{$m.id}')" class="btn btn-warning" style="background-color:#f0ad4e;z-index:1000;padding: 10px 20px;">删除
+                                </button>
+                                <p></p>
+                                {/if}
+                            </dd>
+                            <div class="btn_bg"></div>
+                        </div>
+                    </dl>
+                </div>
+                {/volist}
+            </div>
+            <div class="n_page_no" style="clear: both; float: left; margin-right: 15px; margin-top: 10px;">
+                {if $status!=1&&$status!=3}
+                <ul class="pagination">
+                    {if $page==1}
+                    <a href="javascript:;" class="n_page_button page_disable">首页</a>
+                    <a href="javascript:;" class="n_page_button page_disable">上一页</a>
+                    {else}
+                    <a onclick="load_page('__CONF_SITE__admin/menu/import_mod&mod_class={$mod_class}&page=1&mod_name={$mod_name}&status={$status}')"
+                       href="javascript:;" class="n_page_button">首页</a>
+                    <a class="n_page_button" href="javascript:;"
+                       onclick="load_page('__CONF_SITE__admin/menu/import_mod&mod_class={$mod_class}&page=1&mod_name={$mod_name}&status={$status}')">上一页</a>
+                    {/if}
+                    {if $count==1}
+                    <a href="javascript:;" class="n_page_button current">1</a>
+                    {else}
+                    {for start="1" end="$count"}
+                    {if $i==$page}
+                    <a href="javascript:;" class="n_page_button current">{$i}</a>
+                    {else}
+                    <a class="n_page_button"
+                       onclick="load_page('__CONF_SITE__admin/menu/import_mod&mod_class={$mod_class}&page={$i}&mod_name={$mod_name}&status={$status}')"
+                       href="javascript:;">{$i}</a>
+                    {/if}
+                    {/for}
+                    {/if}
+                    {if $page==$count-1 || ($count-1)==0}
+                    <a href="javascript:;" class="n_page_button page_disable">下一页</a>
+                    <a href="javascript:;" class="n_page_button page_disable">末页</a>
+                    {else}
+                    <a class="n_page_button"
+                       onclick="load_page('__CONF_SITE__admin/menu/import_mod&mod_class={$mod_class}&page={$page+1}&mod_name={$mod_name}&status={$status}')"
+                       href="javascript:;">下一页</a>
+                    <a onclick="load_page('__CONF_SITE__admin/menu/import_mod&mod_class={$mod_class}&page={$count-1}&mod_name={$mod_name}&status={$status}')"
+                       href="javascript:;" class="n_page_button">末页</a>
+                    {/if}
+                </ul>
+                {else}
+                {$page}
+                {/if}
+            </div>
+        </div>
+    </article>
+    <div id="app2" style="display: none;position: fixed;width: 90%;
+height: 96%;background: rgba(0,0,0,0.2);top: 5%; z-index: 99999999;font-size: 30px;color: #009887;" v-show="show && all!=0">
+
+        <div style="width:550px;height: 300px;background: #fff;border-radius: 10px;margin-left: 35%;margin-top: 15%; ">
+            <div style="margin-top: 70px;margin-left: 45%;font-size: 18px;color: #666;display: inline-block">下载中</div>
+            <div class="progress progress-striped" style="margin-left: 8%;">
+                <div class="kuandu" id="progress" :style="{  width: progress/all*100 + '%' }" v-if="all!=0">
+                </div>
+            </div>
+            <span style="font-size: 16px;color: #666;position: absolute;margin-top: -45px;margin-left: 460px">共{{all}}个</span>
+            <div  v-if="all!=0" style="font-size: 16px;color: #333;position: absolute;margin-top: -35px;margin-left: 238px">进度{{progress/all*100}}%</div>
+            <div v-show="success!=0" style="margin-left: 37%;color: #20c364;font-size: 22px">已成功下载{{success}}个</div>
+            <div v-show="fail!=0" style="margin-left: 39%;color: #20c364;font-size: 22px">失败{{fail}}个</div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript" src="/public/js/jquery-2.1.1.js"></script>
+<script type="text/javascript" src="/public/static/layer/2.4/layer.js"></script>
+<script>
+    var app = new Vue({
+        el: '#app2',
+        data: {
+            success: 0,
+            fail:0,
+            all:0,
+            progress:0,
+            show:false
+        },
+        watch: {
+            progress: function (val, oldVal) {
+                var that = this;
+                var all = that.all;
+                if (val == all) {
+                    layer.msg('下载已完成！', {icon: 1, time: 1000}, function () {
+                        parent_flash();
+                    });
+                }
+            }
+        }
+    });
+    var sl=0;
+    function down_page(){
+        var res=[];
+        $("input[name=page_down]").each(function () {
+            res.push($(this).val());
+        })
+        if (typeof(res)=="undefined" || res.length==0){
+            layer.msg('无可下载模板', {icon: 2, time: 3000});
+        }else {
+            app.all = res.length;
+            app.show = true;
+            dow_mod_all(res);
+        }
+    }
+    function get_down(id){
+        $.ajax({
+            type : "post",
+            url : "{:url('admin/download/download_mod')}",
+            data : {
+                "id" : id
+            },
+            async: false,
+            success : function(data) {
+                app.progress++;
+                if(typeof(data)=='string'){
+                    data=JSON.parse(data);
+                }
+                if (parseInt(data.code)==0) {
+                    app.fail++;
+                }else{
+                    app.success++;
+                }
+            },
+            error : function() {
+                app.progress++;
+                app.fail++;
+            }
+        })
+    }
+    function dow_mod_all(res) {
+        var res=res||[];
+        if(res.length>1){
+            var a=res[0];
+            sl++;
+            res.splice(0,1);
+            setTimeout(function(){get_down(a);console.log("sl:"+sl);dow_mod_all(res);},1000);
+        }else if(res.length==1){
+            sl++;
+            setTimeout(function(){get_down(res[0])},1000);
+        }else {
+        }
+    }
+
+//    function down_page() {
+//        var res='';
+//        layer.confirm("整页下载加载较慢，请耐心等待",function () {
+//            $("input[name=page_down]").each(function () {
+//                res+=$(this).val()+",";
+//            })
+//            if (typeof(res)=="undefined" || res.length==0){
+//                layer.msg('无可下载模板', {icon: 2, time: 3000});
+//            }else {
+//                dow_mod(res.substr(0, res.length - 1));
+//            }
+//        })
+//    }
+    function del_page(id) {
+        $.ajax({
+            type: "post",
+            url: "{:url('menu/del_my_page')}",
+            data: {
+                "id": id
+            },
+            success: function (data) {
+                if (data > 0) {
+                    layer.msg('删除成功!', {icon: 1, time: 1000}, function () {
+                        load_page("__CONF_SITE__admin/menu/my_mod");
+                    });
+                } else {
+                    layer.msg('删除失败', {icon: 2, time: 1000});
+                }
+            },
+            error: function () {
+                layer.msg('网络忙，请稍后再试', {icon: 2, time: 3000});
+            }
+        })
+    }
+    function search_mod() {
+        load_page("__CONF_SITE__admin/menu/import_mod", '', {
+            wn_id: $("input[name=wn_id]").val(),
+            mod_class: $("#mod_class").val(),
+            mod_name: $("input[name=mod_name]").val()
+        })
+    }
+    $(function () {
+        $(".hPage-tpls-overlay").hide();
+        $(".showActions").mouseover(function () {
+            $(this).find(".hPage-tpls-overlay").show();
+        });
+        $(".showActions").mouseout(function () {
+            $(this).find(".hPage-tpls-overlay").hide();
+        });
+        $('.btn-tpllist').click(function () {
+        });
+    })
+    /**
+     * 用户选择了模版
+     */
+    function this_mod(id) {
+        layer.confirm('选择模版会清空原有小程序设置！请谨慎操作！', function (index) {
+            //后台处理
+            $.ajax({
+                type: "post",
+                url: "{:url('menu/import_mod')}",
+                data: {
+                    "mod_id": id,
+                },
+                success: function (data) {
+                    if (data['code'] > 0) {
+                        layer.msg('选择成功!', {icon: 1, time: 1000}, function () {
+                            load_page("__CONF_SITE__admin/menu/index_module");
+                        });
+                    } else {
+                        layer.msg(data['message'], {icon: 2, time: 1000});
+                    }
+                },
+                error: function () {
+                    layer.msg('网络忙，请稍后再试', {icon: 2, time: 3000});
+                }
+            })
+        });
+    }
+    function dow_mod(id) {
+        $.ajax({
+            type: "post",
+            url: "{:url('admin/download/download_mod')}",
+            data: {
+                "id": id,
+            },
+            beforeSend: function (XMLHttpRequest) {
+                layer.msg('正在下载请稍后！', {
+                    icon: 16
+                    , shade: 0.05
+                    , time: 900000
+                });
+            },
+            success: function (data) {
+                if (data==1) {
+                    layer.msg('下载成功!', {icon: 1, time: 1000}, function () {
+                        parent_flash("__CONF_SITE__admin/menu/import_mod&status=2");
+                    });
+                } else if(data==2){
+                    layer.msg('部分下载成功!', {icon: 1, time: 1000}, function () {
+                        parent_flash("__CONF_SITE__admin/menu/import_mod&status=2");
+                    });
+                }else if(data==0){
+                    layer.msg("下载失败", {icon: 2, time: 3000});
+                }else {
+                    console.log(data);
+                    layer.msg("网络忙，请稍后再试", {icon: 2, time: 3000});
+                }
+            },
+            error: function () {
+                layer.msg('网络忙，请稍后再试', {icon: 2, time: 3000});
+            }
+        })
+    }
+    function update_this_mod(mod_id, id) {
+        layer.confirm('确定要更新模版吗？', function (index) {
+            //后台处理
+            $.ajax({
+                type: "post",
+                url: "{:url('admin/download/update_download_mod')}",
+                data: {
+                    "mod_id": mod_id,
+                    "id": id,
+                },
+                beforeSend: function (XMLHttpRequest) {
+                    layer.msg('正在更新请稍后！', {
+                        icon: 16
+                        , shade: 0.05
+                        , time: 900000
+                    });
+                },
+                success: function (data) {
+                    if (data['code'] > 0) {
+                        layer.msg('更新成功!', {icon: 1, time: 1000}, function () {
+                            parent_flash();
+                        });
+                    } else {
+                        layer.msg(data['message'], {icon: 2, time: 3000});
+                    }
+                },
+                error: function () {
+                    layer.msg('网络忙，请稍后再试', {icon: 2, time: 3000});
+                }
+            })
+        });
+    }
+</script>
+{/block}

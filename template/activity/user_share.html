@@ -1,0 +1,227 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div class="tabBar clearfix" style="position:relative;">
+            <span class="current" onclick="load_page('__CONF_SITE__admin/activity/user_share')">分销商列表</span>
+            <span onclick="load_page('__CONF_SITE__admin/activity/share_order')">订单列表</span>
+            <span onclick="load_page('__CONF_SITE__admin/distribute/index')">单商品分销</span>
+            <span onclick="load_page('__CONF_SITE__admin/activity/share_cash')">分销商提现</span>
+            <span onclick="load_page('__CONF_SITE__admin/activity/share_set')" >基础设置</span>
+            <span onclick="load_page('__CONF_SITE__admin/activity/share_pay')" >佣金设置</span>
+            <span onclick="load_page('__CONF_SITE__admin/activity/share_other')">自定义设置</span>
+        </div>
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+                <div class="text-c"> 分销商名称：
+                    <input type="text" class="input-text" value="{$search_name}" style="width:250px"
+                           placeholder="输入名称或微信昵称" name="search_name">
+                    <button onclick="send_submit()" class="btn btn-search radius" name=""><i class="Hui-iconfont">&#xe665;</i> 搜索
+                    </button>
+                </div>
+        </div>
+        <div id="tab_demo" class="HuiTab" style="margin-top: 15px;">
+            <div class="tabBar clearfix">
+                <span {if condition="$status==''" } class="current" {/if}
+                onclick="load_page('__CONF_SITE__admin/activity/user_share')">全部</span>
+                <span {if condition="$status=='0'" } class="current" {/if}
+                onclick="load_page('__CONF_SITE__admin/activity/user_share&status=0')">审核中</span>
+                <span {if condition="$status=='1'" } class="current" {/if}
+                onclick="load_page('__CONF_SITE__admin/activity/user_share&status=1')">已通过</span>
+            </div>
+        </div>
+        {if $status>=1}{else}
+        <div class="cl pd-5 bg-1 bk-gray mt-20" style="padding:10px;border-bottom:0;margin-top: 15px;">
+            <span class="page_btn"><a href="javascript:;" onclick="all_pass()" class="btn btn-new radius"><i
+                    class="Hui-iconfont">&#xe630;</i> 批量通过</a></span>
+        </div>
+        {/if}
+        <table class="table table-border table-bordered table-hover table-bg">
+            <thead>
+            <tr class="text-c">
+                {if $status>=1}{else}
+                <th><input id="all_select" name="" type="checkbox" value=""></th>
+                {/if}
+                <th>微信信息</th>
+                <th>姓名<br/>手机号</th>
+                <th>累计佣金<br/>可提现佣金</th>
+                <th>推荐人</th>
+                <th>下级数量</th>
+                <th>状态</th>
+                <th>时间</th>
+                <th>备注信息</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody id="tbody">
+            {volist name="list" id="vo"}
+            <tr class="text-c">
+                {if $status>=1}{else}
+                <td><input name="sub" type="checkbox" value="{$vo['sid']}"></td>
+                {/if}
+                <td>{$vo['nick_name']}</td>
+                <td>{$vo['name']}<br/>{$vo['mobile']}</td>
+                <td>{$vo['total_price']} ￥<br/>{$vo['price']} ￥</td>
+                <td>{$vo['father']}</td>
+                <td>
+                    {if $deep >=1}
+                    <a href="javascript:;" onclick="child_show('展示下线','__CONF_SITE__admin/activity/child_show&pid={$vo.sid}&deep=1','600','800','{$vo.sid}1')" class="ml-5 show_layer" style="text-decoration:none">等级一：<span id="{$vo.sid}1">{$vo['child'][1]['cnum']|default=0}</span></a><br/>
+                    {/if}
+                    {if $deep >=2}
+                    <a href="javascript:;" onclick="child_show('展示下线','__CONF_SITE__admin/activity/child_show&pid={$vo.sid}&deep=2','600','800','{$vo.sid}2')" class="ml-5 show_layer" style="text-decoration:none">等级二：<span id="{$vo.sid}2">{$vo['child'][2]['cnum']|default=0}</span></a><br/>
+                    {/if}
+                    {if $deep >=3}
+                    <a href="javascript:;" onclick="child_show('展示下线','__CONF_SITE__admin/activity/child_show&pid={$vo.sid}&deep=3','600','800','{$vo.sid}3')" class="ml-5 show_layer" style="text-decoration:none">等级三：<span id="{$vo.sid}3">{$vo['child'][3]['cnum']|default=0}</span></a>
+                    {/if}
+                </td>
+                {if $vo['status']==1}
+                <td>已通过</td>
+                {elseif $vo['status']==2}
+                <td>未通过</td>
+                {else}
+                <td>审核中</td>
+                {/if}
+                <td>{$vo['create_time']|date='Y-m-d H:i:s',###}</td>
+                <td>{$vo['seller_comments']|default="无留言"}</td>
+                <td>
+                    {if $vo['status']==1}
+                    <a href="javascript:;" onclick="del_share(this,'{$vo.sid}')" title="删除分销商"
+                       style="text-decoration:none;" class="ml-5 caozuo">删除分销商</a>
+                    {elseif $vo['status']==2}
+                    <a href="javascript:;" onclick="is_pass(this,'{$vo.sid}')" title="通过"
+                       style="text-decoration:none;" class="ml-5 caozuo">通过</a>
+                    {else}
+                    <a href="javascript:;" onclick="is_pass(this,'{$vo.sid}')" title="通过"
+                       style="text-decoration:none;" class="ml-5 caozuo">通过</a>
+                    <a href="javascript:;" onclick="no_pass(this,'{$vo.sid}')" title="不通过"
+                       style="text-decoration:none;" class="ml-5 caozuo">不通过</a>
+                    {/if}
+                    <a href="javascript:;"
+                       onclick="layer_open('修改备注','__CONF_SITE__admin/activity/comment_edit&id={$vo.sid}','800','500')"
+                       title="修改备注" style="text-decoration:none;" class="ml-5 show_layer">修改备注</a>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </article>
+    <div class="n_page_no">
+        {$page}
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script>
+    function send_submit() {
+        load_page("__CONF_SITE__admin/activity/user_share",'',{search_name:$("input[name=search_name]").val()});
+    }
+    $(function () {
+        $("#all_select").click(function () {
+            $("#tbody input[name=sub]").each(function () {
+                var jj = $(this).prop('checked');
+                if (jj) {
+                    $(this).prop('checked', false);
+                } else {
+                    $(this).prop('checked', true);
+                }
+            })
+        })
+    });
+    function del_share(obj, sid) {
+        $.ajax({
+            type: 'post',
+            url: "{:url('Activity/user_share_edit')}",
+            data: {
+                "id": sid,
+                "types": 'del_share'
+            },
+            success: function (res) {
+                if (res > 0) {
+                    $(obj).parents("tr").remove();
+                    layer.msg('操作成功', {icon: 1, time: 500});
+                    parent_flash("__CONF_SITE__admin/activity/user_share");
+                } else {
+                    layer.msg('操作失败', {icon: 2, time: 1000});
+                }
+
+            }
+        });
+    }
+    function is_pass(e, sid) {
+        $.ajax({
+            type: 'post',
+            url: "{:url('activity/user_share_edit')}",
+            data: {
+                "id": sid,
+                "types": 'is_pass'
+            },
+            success: function (data) {
+                if (data > 0) {
+                    layer.msg('操作成功', {icon: 1, time: 500});
+                    parent_flash("__CONF_SITE__admin/activity/user_share");
+                } else {
+                    layer.msg('操作失败', {icon: 2, time: 1000});
+                }
+            }
+        });
+    }
+    function no_pass(e, sid) {
+        $.ajax({
+            type: 'post',
+            url: "{:url('activity/user_share_edit')}",
+            data: {
+                "id": sid,
+                "types": 'no_pass'
+            },
+            success: function (data) {
+                if (data > 0) {
+                    layer.msg('操作成功', {icon: 1, time: 500});
+                    parent_flash("__CONF_SITE__admin/activity/user_share");
+                } else {
+                    layer.msg('操作失败', {icon: 2, time: 1000});
+                }
+            }
+        });
+    }
+    function all_pass() {
+        var id = '';
+        $('#tbody input[type=checkbox]:checked').each(function () {
+            if (!isNaN($(this).val())) {
+                id = $(this).val() + ',' + id;
+            }
+        });
+        if (id == '') {
+            layer.msg('请选择用户', {icon: 5, time: 1000});
+            return false;
+        } else {
+            id = id.substring(0, id.length - 1);
+        }
+        $.ajax({
+            type: 'post',
+            url: "{:url('activity/user_share_edit')}",
+            data: {
+                "id": id,
+                "types": 'all_pass'
+            },
+            success: function (data) {
+                if (data > 0) {
+                    layer.msg('操作成功', {icon: 1, time: 500});
+                    parent_flash("__CONF_SITE__admin/activity/user_share");
+                } else {
+                    layer.msg('操作失败', {icon: 2, time: 1000});
+                }
+            }
+        });
+    }
+    function child_show(title, url, w, h, o) {
+        var check = $('#' + o).text();
+        if (check == '0') {
+            alert('当前等级无下线');
+            return false;
+        }
+        layer_open(title, url, w, h);
+    }
+
+
+</script>
+{/block}

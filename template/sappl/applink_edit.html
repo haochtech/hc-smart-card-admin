@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="/public/static/h-ui-{$skin}/css/H-ui.min.css" />
+    <link rel="stylesheet" href="/public/static/h-ui-{$skin}/css/H-ui.admin.css"/>
+
+</head>
+<script src="/public/js/all.js"></script>
+<body>
+<article class="cl pd-20">
+    <form action="" method="post" class="form form-horizontal" id="">
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-3"><span class="c-red">*</span>网页名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" id="name" value="{$info.name}" placeholder="请输入要跳转的网页名称" class="input-text">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-3"><span class="c-red">*</span>网页地址：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" id="url" value="{$info.url}" placeholder="请输入要跳转的网页地址" class="input-text" >
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" onclick="addSuppAjax()" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</article>
+<input type="hidden" id="id" value="{$info.id}">
+<script type="text/javascript" src="/public/js/jquery-2.1.1.js"></script>
+<script type="text/javascript" src="/public/static/layer/2.4/layer.js"></script>
+<script type="text/javascript">
+    //模块输入信息验证
+    function verify(name,url) {
+        if (name == '') {
+            layer.msg('请填写名称', {icon: 5, time: 1000});
+            return false;
+        }
+        if (url == '') {
+            layer.msg('请填写链接', {icon: 5, time: 1000});
+            return false;
+        }
+        return true;
+    }
+    var flag = false;//防止重复提交
+    function addSuppAjax() {
+        var name = $("#name").val();
+        var url = $("#url").val();
+        var id = $("#id").val();
+        if(verify(name,url) && !flag){
+            flag = true;
+            $.ajax({
+                type : "post",
+                url : "{:url('Sappl/applink_edit')}",
+                data : {
+                    'id':id,
+                    'name':name,
+                    'url':url
+                },
+                success : function(data) {
+                    if(data['code']>0){
+                        layer.msg('修改成功!',{icon:1,time:1000},function () {
+                            layer_close();
+                        });
+                    }
+                    else{
+                        flag = false;
+                        layer.msg(data['message'],{icon:5,time:1000});
+                    }
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>

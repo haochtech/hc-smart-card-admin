@@ -1,0 +1,100 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+            <div class="tabBar clearfix">
+                <span class="current">消息模板设置</span>
+            </div>
+        </div>
+        <div>
+            <div class="mt-20"><style>.input-text {width:85% !important;}</style>
+                <table class="table table-border table-bordered table-bg table-hover table-sort">
+                    <thead>
+                    <tr class="text-c">
+                        <th>微信模版ID</th>
+                        <th>标题</th>
+                        <th>关键词（按顺序）</th>
+                        <th>我的模版ID</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    <tr class="text-c va-m">
+                        <td>AT0210</td>
+                        <td>订单提交成功通知</td>
+                        <td>订单号、待付金额、商品信息、备注【请按照关键字顺序设置】</td>
+                        <td>
+                            <input type="text" autocomplete="off" value="{$list.AT0210}" class="input-text" id="AT0210">
+                        </td>
+                    </tr>
+                    <tr class="text-c va-m">
+                        <td>AT0891</td>
+                        <td>留言消息通知</td>
+                        <td>回复者、回复时间、回复内容【请按照关键字顺序设置】</td>
+                        <td>
+                            <input type="text" autocomplete="off" value="{$list.AT0891}" class="input-text" id="AT0891">
+                        </td>
+                    </tr>
+                    <tr class="text-c va-m">
+                        <td>AT0048</td>
+                        <td>支付成功通知</td>
+                        <td>订单号、会员昵称、物品名称、支付金额、备注【请按照关键字顺序设置】</td>
+                        <td>
+                            <input type="text" autocomplete="off" value="{$list.AT0048}" class="input-text" id="AT0048">
+                        </td>
+                    </tr>
+                    <tr class="text-c va-m">
+                        <td>AT1186</td>
+                        <td>中奖结果通知</td>
+                        <td>中奖时间、开奖结果【请按照关键字顺序设置】</td>
+                        <td>
+                            <input type="text" autocomplete="off" value="{$list.AT1186}" class="input-text" id="AT1186">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="row cl">
+                    <div class="col-xs-8 col-sm-9">
+                        <input class="btn btn-primary radius" onclick="temp_save('{$lone?$lone:'/'}')" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        {/block}
+        {block name="script"}
+        {/block}
+{/block}
+{block name="script"}
+<script type="text/javascript">
+var flags = false;
+function temp_save(id) {
+    if(!flags){
+        flags = true;
+        $.ajax({
+            type: "post",
+            url: "{:url('message/index')}",
+            data: {
+                id: id,
+                AT0210: $('#AT0210').val(),
+                AT0891: $('#AT0891').val(),
+                AT0048: $('#AT0048').val(),
+                AT1186: $('#AT1186').val()
+            },
+            success: function (data) {
+                if (data['code'] > 0) {
+                    layer.msg('保存成功!', {icon: 1, time: 1000}, function () {
+                        parent_flash();
+                    });
+                }
+                else {
+                    flags = false;
+                    layer.msg('保存失败', {icon: 5, time: 1000});
+                }
+            }
+        });
+    }
+}
+</script>
+{/block}

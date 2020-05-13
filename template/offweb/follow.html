@@ -1,0 +1,91 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+             <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+                    <div class="tabBar clearfix">
+                        <span onclick="load_page('__CONF_SITE__admin/offweb/language')">话术列表</span>
+                        <span class="current">跟进用语</span>
+                        <span onclick="load_page('__CONF_SITE__admin/offweb/language&up=3')">话术分类</span>
+                    </div>
+             </div>
+        <div>
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-bg table-hover table-sort">
+                    <thead>
+                    <tr class="text-c">
+                        <th></th>
+                        <th>常用语</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    {volist name="list" id="r"}
+                    <tr class="text-c va-m">
+                        <td></td>
+                        <td>
+                            <input type="text" value="{$r['text']}" onchange="set_share_title('{$r.id}',this.value)" class="input-common" style="text-align: center;width:400px;">
+                        </td>
+                        <td></td>
+                    </tr>
+                    {/volist}
+                    <tr class="text-c va-m">
+                        <td><span>新增</span></td>
+                        <td><input type="text" value="" onchange="set_share_title('',this.value)" class="input-common" style="text-align: center;width:400px;"></td>
+                        <td></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="n_page_no">
+                    {$page}
+                </div>
+            </div>
+        </div>
+        {/block}
+        {block name="script"}
+        <script type="text/javascript">
+            function pickrsve(wid,cid,vals,clas,type) {
+                $.ajax({
+                    type: "post",
+                    url: "{:url('admin/offweb/language')}",
+                    data: {
+                        wid: wid,
+                        cid: cid,
+                        vals: vals,
+                        type: type,
+                        clas: clas
+                    },
+                    success: function (data) {
+                        if (data['code'] > 0) {
+                            layer.msg('操作成功', {icon: 1, time: 500});
+                            parent_flash('__CONF_SITE__admin/offweb/follow');
+                        } else {
+                            layer.msg('操作失败', {icon: 2, time: 1000});
+                        }
+                    }
+                });
+            }
+            function set_share_title(id,val) {
+                $.ajax({
+                    type : "post",
+                    url : "__CONF_SITE__admin/offweb/follow",
+                    data : {
+                        "id" : id,
+                        'text':val
+                    },
+                    success : function(data) {
+                        if (data['code'] >0) {
+                            layer.msg('成功!',{icon:1,time:1000},function () {
+                                parent_flash("__CONF_SITE__admin/offweb/follow");
+                            });
+                        }
+                        else
+                        {
+                            layer.msg('失败', {icon: 2, time: 1000});
+                        }
+                    }
+                })
+            }
+        </script>
+        {/block}

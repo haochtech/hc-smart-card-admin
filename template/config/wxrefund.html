@@ -1,0 +1,93 @@
+{extend name="base"/}
+{block name="main"}
+<link rel="stylesheet" type="text/css" href="/public/css/defau.css">
+<style> .alert-warning { color: #8a6d3b !important; background-color: #fcf8e3 !important; border-color: #faebcc; } .form-group { margin-bottom: 15px !important; display: block !important; height: 30px !important; } .modal-footer { text-align: center !important; }
+</style>
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+            <div class="tabBar clearfix">
+                <span onclick="load_page('__CONF_SITE__admin/config/WAppPay')">小程序管理</span>
+                <span onclick="load_page('__CONF_SITE__admin/menu/wxapp_page')">小程序页面</span>
+                <span onclick="load_page('__CONF_SITE__admin/Menu/user_center')">会员中心</span>
+                <span class="current">微信退款设置</span>
+            </div>
+        </div>
+        <form action="" method="post" id="form_wechat" enctype="multipart/form-data" onsubmit="return false;">
+            <div class="modal-body">
+                <div class="we7-form">
+                    <div class="alert alert-warning">
+                        证书:<br/>
+                        使用微信退款功能需要上传双向证书。<br/>
+                        证书下载方式:<br>
+                        微信商户平台(pay.weixin.qq.com)-->账户中心-->账户设置-->API安全-->证书下载。<br>
+                        我们仅用到apiclient_cert.pem 和 apiclient_key.pem这两个证书<br>
+                    </div>
+                    <div class="alert alert-warning">
+                        接口:<br/>
+                        支付回调URL: {$root}payment/wechat/refund.php
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="control-label col-sm-3"><span
+                                class="pull-right">微信退款</span></label>
+                        <div class="form-controls col-sm-7 pull-right">
+                            <input type="radio" id="radio-wechat-1" name="switch" value="1" {if $open_or_close==
+                                   true} checked {/if}/>
+                            <label for="radio-wechat-1">开启 </label>
+                            <input type="radio" id="raido-wechat-0" name="switch" value="0" {if $open_or_close==
+                                   false} checked {/if}/>
+                            <label for="raido-wechat-0">关闭 </label>
+                        </div>
+                    </div>
+                    <input type="hidden" name="type" value="wechat_refund">
+                    <input type="hidden" name="do" value="save_setting">
+                    <div class="form-group">
+                        <label for="" class="control-label col-sm-5">apiclient_cert.pem 证书</label>
+                        <span class="text-success  col-sm-4">{if $has_cert==true}已上传{/if}</span>
+                        <div class="form-controls col-sm-3 pull-right">
+                            <input type="file" id="cert" name="cert">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="control-label col-sm-5">apiclient_key.pem 证书</label>
+                        <span class="text-success  col-sm-4">{if $has_key==true}已上传{/if}</span>
+                        <div class="form-controls col-sm-3 pull-right">
+                            <input type="file" id="key" name="key">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="wadaxiwa" type="button" class="btn btn-primary">确定</button>
+            </div>
+        </form>
+    </article>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    $("#wadaxiwa").click(function () {
+        $.ajax({
+            url: "{:url('config/wxrefund')}",
+            type: 'POST',
+            cache: false,
+            data: new FormData($('#form_wechat')[0]),
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            success: function (res) {
+                console.log(res);
+                res = JSON.parse(res);
+                if (res["code"] > 0) {
+                    layer.msg('提交成功!', {icon: 1, time: 1000}, function () {
+                        parent_flash("{:url('config/wxrefund')}");
+                    });
+                } else {
+                    layer.msg(res['message'], {icon: 5, time: 1000});
+                }
+            }
+        });
+    });
+</script>
+{/block}

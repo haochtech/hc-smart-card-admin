@@ -1,0 +1,95 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+            <div class="tabBar clearfix">
+                <span onclick="load_page('__CONF_SITE__admin/offweb/language')">话术列表</span>
+                <span onclick="load_page('__CONF_SITE__admin/offweb/follow')">跟进用语</span>
+                <span class="current">话术分类</span>
+                <div onclick="layer_open('新增类型','__CONF_SITE__admin/offweb/language&up=4','600px','300px')"
+                     class="n_tab_add"><i class="Hui-iconfont">&#xe600;</i>添加类型
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-bg table-hover table-sort">
+                    <thead>
+                    <tr class="text-c">
+                        <th>分类名称</th>
+                        <th>创建时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {foreach name="class_list" item="v1"}
+                    <tr class="pid_0" style="height: 30px;">
+                        <td style="text-align: center; padding:22px 0;">{$v1['name']}</td>
+                        <td style="text-align: center; padding:22px 0;"> {:date("Y/m/d H:i:s",$v1.create_time)}</td>
+                        <td style="text-align: center; padding:22px 0;">
+                            <a style="text-decoration:none;margin-right: 15px;" title="编辑"
+                               onclick="layer_open('类型编辑','__CONF_SITE__admin/offweb/language&up=3&id={$v1.id}','600px','300px')"
+                               href="javascript:;" class="show_layer">
+                                编辑
+                            </a>
+                            <a style="text-decoration:none;" title="删除" href="javascript:void(0);"
+                               onclick="class_del({$v1['id']})"  class="caozuo">
+                                删除
+                            </a>
+                        </td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+                <div class="n_page_no">
+                </div>
+            </div>
+        </div>
+        {/block}
+        {block name="script"}
+        <script type="text/javascript">
+            function class_del(id) {
+                layer.confirm('删除后该分类下话术将为自定义', function (index) {
+                    $.ajax({
+                        type: "post",
+                        url: "{:url('admin/offweb/del_lang')}",
+                        data: {
+                            "class_id": id
+                        },
+                        success: function (data) {
+                            if (data['code'] > 0) {
+                                layer.msg('删除成功', {icon: 1, time: 1000}, function () {
+                                    parent_flash("__CONF_SITE__admin/offweb/language&up=3");
+                                });
+                            } else {
+                                layer.msg('删除失败', {icon: 2, time: 1000});
+                            }
+                        }
+                    })
+                });
+            }
+            function pickrsve(wid, cid, vals, clas, type) {
+                $.ajax({
+                    type: "post",
+                    url: "{:url('admin/offweb/language')}",
+                    data: {
+                        wid: wid,
+                        cid: cid,
+                        vals: vals,
+                        type: type,
+                        clas: clas
+                    },
+                    success: function (data) {
+                        if (data['code'] > 0) {
+                            layer.msg('操作成功', {icon: 1, time: 500});
+                            parent_flash("__CONF_SITE__admin/offweb/language&up=3");
+                        } else {
+                            layer.msg('操作失败', {icon: 2, time: 1000});
+                        }
+                    }
+                });
+            }
+        </script>
+        {/block}

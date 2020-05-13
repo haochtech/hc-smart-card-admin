@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>{if $site_name != '' || !empty($site_name)}{$site_name}{else}请在版权设置里配置您的站点名称{/if}</title>
+    <script src="/public/js/jquery-2.1.1.js"></script>
+    <script type="text/javascript" src="/public/js/vue.js"></script>
+    <link href="./favicon.ico?v=1.2" rel="shortcut icon" type="image/x-icon"/>
+    <link rel="stylesheet" href="/public/css/linecons.css">
+    <link rel="stylesheet" href="/public/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/public/static/bast/bootstrap.css">
+    <link rel="stylesheet" href="/public/static/bast/xenon-core.css?v=1.0">
+    <link rel="stylesheet" href="/public/static/bast/font-awesome.min.css">
+    <link rel="stylesheet" href="/public/static/h-ui-{$skin}/css/H-ui.min.css"/>
+    <link rel="stylesheet" href="/public/static/h-ui-{$skin}/css/style.css"/>
+    <link rel="stylesheet" href="/public/static/Hui-iconfont/1.0.8/iconfont.css"/>
+    <link rel="stylesheet" type="text/css" href="/public/css/dashboard.css">
+    <link rel="stylesheet" type="text/css" href="/public/css/{$skin}/yb_index.css?v=1.0"/>
+    <link rel="stylesheet" href="/public/css/{$skin}/new_index.css">
+    <link rel="stylesheet" type="text/css" href="/public/css/defau.css">
+    <script src="/public/static/layer/2.4/layer.js"></script>
+</head>
+<div id="newks2"></div>
+<!--<script src="/public/menu/js/jquery.artdialog.js"></script>-->
+<!--<script src="/public/menu/js/iframetools.js"></script>-->
+<script src="/public/js/public_js.js"></script>
+<script src="/public/js/all.js"></script>
+<link rel="stylesheet" type="text/css" href="/public/css/defau.css">
+<style>
+    .row {height: 32px !important; line-height: 32px !important;}
+</style>
+
+<body>
+<article class="cl pd-20">
+    <form action="" method="post" class="form form-horizontal" id="my_card">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>姓名：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" v-model="user_name" value="" placeholder="请输入姓名" class="input-text" name="user_name" id="user_name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>部门：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <select name="did" id="did" style="height: 30px;border-radius: 3px;">
+                    <option value="">--请选择部门--</option>
+                    {foreach name="de" item="s"}
+                    <option value="{$s.id}">{$s.name}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>职位：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" v-model="position" value="" placeholder="请输入职位" class="input-text" name="position" id="position">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>性别：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="radio" autocomplete="off" value="1" name="gender" id="radioo1" checked><label for="radioo1">&emsp;&emsp;男</label>
+                <input type="radio" autocomplete="off" value="2" name="gender" id="radioo2"><label for="radioo2">&emsp;&emsp;女</label>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>微信绑定手机：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" v-model="tel" value="" placeholder="请输入手机" class="input-text" name="tel" id="tel">
+            </div>
+        </div>
+        <!--<div class="row cl">-->
+            <!--<label class="form-label col-xs-4 col-sm-3">固话：</label>-->
+            <!--<div class="formControls col-xs-8 col-sm-9">-->
+                <!--<input type="text" autocomplete="off" v-model="phone" value="" placeholder="请输入固话" class="input-text" name="phone" id="phone">-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="row cl">-->
+            <!--<label class="form-label col-xs-4 col-sm-3">微信号：</label>-->
+            <!--<div class="formControls col-xs-8 col-sm-9">-->
+                <!--<input type="text" autocomplete="off" v-model="wechat_number " value="" placeholder="请输入微信号" class="input-text" name="wechat_number" id="wechat_number ">-->
+            <!--</div>-->
+        <!--</div>-->
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>邮箱：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" v-model="email " value="" placeholder="请输入邮箱" class="input-text" name="email" id="email ">
+            </div>
+        </div>
+        <!--<div class="row cl">-->
+            <!--<label class="form-label col-xs-4 col-sm-3">印象标签：</label>-->
+            <!--<div class="formControls col-xs-8 col-sm-9">-->
+                <!--<div style="position: absolute;top:5px;left:200px;color: #ccc;">多个已,隔开</div>-->
+                <!--<input type="text" autocomplete="off" v-model="effect_tag " value="" placeholder="请输入印象标签" class="input-text" name="effect_tag" id="effect_tag ">-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="row cl">-->
+            <!--<label class="form-label col-xs-4 col-sm-3">头像：</label>-->
+            <!--<div class="formControls col-xs-8 col-sm-9">-->
+                <!--<div style="position: absolute;top:5px;left:200px;color: #ccc;">建议图标尺寸：600*300px</div>-->
+                <!--<img width="120"  v-if="head_photo!=''"  :src="head_photo" class="thumbnail">-->
+                <!--<input onclick="select_img('1','head_photo');" class="btn btn-default" type="button" value="选择图片">-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="row cl">-->
+            <!--<label class="form-label col-xs-4 col-sm-3">照片墙：</label>-->
+            <!--<div class="formControls col-xs-8 col-sm-9">-->
+                <!--<div style="position: absolute;top:5px;left:200px;color: #ccc;">建议图标尺寸：200*200px</div>-->
+                <!--<img v-for="item in wall_photo" width="120"  :src="item" class="thumbnail">-->
+                <!--<input onclick="select_img('5','wall_photo');" class="btn btn-default" type="button" value="选择图片">-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="row cl">-->
+            <!--<label class="form-label col-xs-4 col-sm-3">个人简介：</label>-->
+            <!--<div class="formControls col-xs-8 col-sm-9">-->
+                <!--<div id="editor" type="text/plain" style="width: 50%; height: 300px;"></div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" onclick="addCardAjax()" type="button" value="提交">
+            </div>
+        </div>
+    </form>
+</article>
+<!--<script src="/public/menu/js/jquery.artdialog.js"></script>-->
+<!--<script src="/public/menu/js/iframetools.js"></script>-->
+<script type="text/javascript">
+    (function($){
+        $.fn.serializeJson=function(){
+            var serializeObj={};
+            var array=this.serializeArray();
+            var str=this.serialize();
+            $(array).each(function(){
+                if(serializeObj[this.name]){
+                    if($.isArray(serializeObj[this.name])){
+                        serializeObj[this.name].push(this.value);
+                    }else{
+                        serializeObj[this.name]=[serializeObj[this.name],this.value];
+                    }
+                }else{
+                    serializeObj[this.name]=this.value;
+                }
+            });
+            return serializeObj;
+        };
+    })(jQuery);
+    var bannerVM = new Vue({
+        el: '#my_card',
+        data: {
+            user_name:'',
+            position:'',
+            tel:'',
+            phone:'',
+            wechat_number:'',
+            effect_tag:'',
+            email:'',
+            head_photo:'',//图片链接
+            wall_photo:[],
+        }
+    });
+//    $(function () {
+//        var ue =UM.getEditor('editor',{
+//            imageUrl:"__CONF_SITE__app/Umupload/uploadFile", //处理图片上传的接口
+//            imageFieldName:"upfile", //上传图片的表单的name
+//            imagePath: ""
+//        });
+//    })
+//    function wall_photo(id_array,path_array) {
+//        //var arr=[];
+//        id_array=id_array.split(",");
+//        path_array=path_array.split(",");
+//        /*for (var i=0;i<id_array.length;i++){
+//            var item={};
+//            item['id']=id_array[i];
+//            item['url']=path_array[i];
+//            arr.push(item);
+//        }*/
+//        bannerVM.wall_photo=path_array;
+//    }
+    function head_photo(id,path) {
+        bannerVM.head_photo=path;
+    }
+    //模块输入信息验证
+    function verify(parmes) {
+        if (parmes["user_name"]==''){
+            layer.msg('请输入姓名',{icon:5,time:1000});
+            return false;
+        }
+        if (parmes["did"]==''){
+            layer.msg('请选择部门',{icon:5,time:1000});
+            return false;
+        }
+        if (parmes["position"]==''){
+            layer.msg('请输入职位',{icon:5,time:1000});
+            return false;
+        }
+        if(!(/^.*@.*\..*$/.test(parmes["email"]))){
+            layer.msg("请填写正确格式的邮箱", {icon: 2, time: 1000});
+            $("#email").focus();
+            return false;
+        }
+        if(!(/^1[356789]\d{9}$/.test(parmes["tel"]))){
+            layer.msg("请填写正确格式的手机号", {icon: 2, time: 1000});
+            $("#tel").focus();
+            return false;
+        }
+        return true;
+    }
+    var flag = false;//防止重复提交
+    //添加用户
+    function addCardAjax() {
+        var parmes = $('#my_card').serializeJson();
+//        var wall_photo= JSON.stringify(bannerVM.wall_photo);
+//        parmes["profile"]= UM.getEditor('editor').getContent();
+//        parmes["wall_photo"]=wall_photo;
+//        parmes["head_photo"]=bannerVM.head_photo;
+        parmes["gender"]=$("input[name=gender]:checked").val();
+        parmes["did"]=$("#did :selected").val();
+        if(verify(parmes) && !flag){
+            flag = true;
+            $.ajax({
+                type : "post",
+                url : "{:url('card/do_card_add')}",
+                data : parmes,
+                success : function(data) {
+                    if(data['code']>0){
+                        layer.msg('添加成功!',{icon:1,time:1000},function () {
+                            layer_close();
+                        });
+                    }
+                    else{
+                        flag = false;
+                        layer.msg(data['message'],{icon:5,time:1000});
+                    }
+                }
+            });
+        }
+    }
+    function select_img(number,type) {
+        layer_open("我的图片001",'__CONF_SITE__admin/images/dialogalbumlist&number=' + number + '&type=' + type,900,620);
+//        art.dialog.open(('__CONF_SITE__admin/images/dialogalbumlist&number=' + number + '&type=' + type), {
+//            lock : true,
+//            title : "我的图片001",
+//            width : 900,
+//            height:620,
+//            drag : false,
+//            background : "#000000",
+//            scrollbar:false,
+//        }, true);
+    }
+</script>
+</body>
+</html>

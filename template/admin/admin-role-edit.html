@@ -1,0 +1,219 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<link rel="Bookmark" href="favicon.ico" >
+<link rel="Shortcut Icon" href="favicon.ico" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="/lib/html5.js"></script>
+<script type="text/javascript" src="/lib/respond.min.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="/static/h-ui-{$skin}/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="/lib/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="/static/h-ui.admin/css/style.css" />
+<!--[if IE 6]>
+<script type="text/javascript" src="/public/js/DD_belatedPNG_0.0.8a-min.js"" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<title>新建网站角色 - 管理员管理</title>
+	<meta name="keywords" content="洛阳易购商城">
+	<meta name="description" content="洛阳易购商城">
+</head>
+<body>
+<article class="cl pd-20">
+	<form action="" method="post" class="form form-horizontal" id="form-admin-role-add">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>角色名称：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="" placeholder="" id="roleName" name="roleName" datatype="*4-16" nullmsg="用户账户不能为空">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">描述：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="" placeholder="" id="info">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">权限：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				{foreach item="vo" name="list"}
+				<dl class="permission-list">
+					<dt>
+						<label>
+							<input type="checkbox" value="{$vo['module_id']}" name="user-Character" id="{$vo['module_id']}">
+							{$vo['module_name']}
+						</label>
+					</dt>
+					<dd>
+						{foreach item="per" name="vo['child']"}
+						<dl class="cl permission-list2">
+							<dt>
+								<label class="">
+									<input type="checkbox" value="{$per['module_id']}" name="user-Character" id="{$per['module_id']}">
+									{$per['module_name']}</label>
+							</dt>
+							<dd>
+								{foreach item="three" name="per['child']"}
+								<label class="">
+									<input type="checkbox" value="{$three['module_id']}" name="user-Character" id="{$three['module_id']}">
+									{$three[module_name]}</label>
+								{/foreach}
+							</dd>
+						</dl>
+						{/foreach}
+					</dd>
+				</dl>
+				{/foreach}
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<button type="button" onclick="btn()" class="btn btn-success radius" id="admin-role-save" name="admin-role-save"><i class="icon-ok"></i> 确定</button>
+			</div>
+		</div>
+		<input type="hidden" name="sendCheckDatas" id="sendCheckDatas">
+		<input type="hidden" id="currentRoleID" name="EditRoleID">
+		<input type="hidden" value="{$param['mod_id_arr']}" id="array">
+		<input type="hidden" value="{$param['rol_id']}" id="rol_id">
+		<input type="hidden" value="{$param['name']}" id="mod_name">
+		<input type="hidden" value="{$param['info']}" id="mod_info">
+	</form>
+</article>
+<script type="text/javascript" src="/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/static/h-ui/js/H-ui.js"></script>
+<script type="text/javascript" src="/static/h-ui.admin/js/H-ui.admin.page.js"></script>
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+$(function(){
+	$(".permission-list dt input:checkbox").click(function(){
+		$(this).closest("dl").find("dd input:checkbox").prop("checked",$(this).prop("checked"));
+	});
+	$(".permission-list2 dd input:checkbox").click(function(){
+		var l =$(this).parent().parent().find("input:checked").length;
+		var l2=$(this).parents(".permission-list").find(".permission-list2 dd").find("input:checked").length;
+		if($(this).prop("checked")){
+			$(this).closest("dl").find("dt input:checkbox").prop("checked",true);
+			$(this).parents(".permission-list").find("dt").first().find("input:checkbox").prop("checked",true);
+		}
+		else{
+			if(l==0){
+				$(this).closest("dl").find("dt input:checkbox").prop("checked",false);
+			}
+			if(l2==0){
+				$(this).parents(".permission-list").find("dt").first().find("input:checkbox").prop("checked",false);
+			}
+		}
+	});
+	
+	$("#form-admin-role-add").validate({
+		rules:{
+			roleName:{
+				required:true,
+			},
+		},
+		onkeyup:false,
+		focusCleanup:true,
+		success:"valid",
+		submitHandler:function(form){
+			$(form).ajaxSubmit();
+			var index = parent.layer.getFrameIndex(window.name);
+			parent.layer.close(index);
+		}
+	});
+	var array=$('#array').val();
+    var rol_id=$('#rol_id').val();
+    var mod_name=$('#mod_name').val();
+    var mod_info=$('#mod_info').val();
+    open_UpdateRoleManage(array,rol_id,mod_name,mod_info);
+});
+function open_UpdateRoleManage(module_id_array, roleId, name,mod_info) {
+    $("#currentRoleID").val(roleId);
+    $("#roleName").val(name);
+    $("#info").val(mod_info);
+    if (roleId == 1) {
+        $("[name = user-Character]").attr("checked", true);
+    } else {
+        $("[name = user-Character]").attr("checked", false);
+        $('input[name = user-Character]').each(function() {
+            if (module_id_array.indexOf($(this).attr('id')) >= 0) {
+                $(this).attr('checked', 'checked');
+            }
+        });
+    }
+}
+//提交按钮
+function btn() {
+    $("#admin-role-save").attr("disabled",true);
+    sendDatas();
+}
+// 点击提交时将选中的数据提交到后台
+function sendDatas() {
+    var SendDatas = "";
+    var checks = document.getElementsByName("user-Character");
+    for(var i=0;i<checks.length;i++){
+      if(checks[i].checked==true){
+          var strCheckID = $(checks[i]).attr("id");
+          if(strCheckID!='Edit01')
+          {
+              SendDatas += strCheckID + ",";
+          }
+	  }
+    }
+    SendDatas=SendDatas.substring(0,SendDatas.length-1);
+    // 并放到隐藏域中
+    $("#sendCheckDatas").val(SendDatas);
+    add_RoleManage();
+};
+//添加
+function add_RoleManage() {
+    var roleName = $("#roleName").val();
+    var array = $("#sendCheckDatas").val();
+    var info=$("#info").val();
+    var rol_id=$('#rol_id').val();
+    if (roleName == '') {
+        layer.msg('请填写用户组名称!',{icon:5,time:1000});
+        $("#admin-role-save").removeAttr("disabled");
+        return;
+    }
+    if (array == '') {
+        layer.msg('请选择权限!',{icon:5,time:1000});
+        $("#admin-role-save").removeAttr("disabled");
+        return;
+    }
+    $.ajax({
+        url : "{:url('admin/addAdminGroup')}",
+        type : "post",
+        data : {
+            "roleId":rol_id,
+            "array" : array,
+            "roleName" : roleName,
+			"info":info
+        },
+        success : function(res) {
+            if(res['code']>0){
+                layer.msg('修改成功!',{icon:1,time:1000},function () {
+                    window.parent.location.reload();
+                    var index=parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(index);
+                });
+            }
+			else{
+                layer.msg(res['message'],{icon:5,time:1000});
+                $("#admin-role-save").removeAttr("disabled");
+			}
+        }
+    })
+}
+</script>
+</body>
+</html>

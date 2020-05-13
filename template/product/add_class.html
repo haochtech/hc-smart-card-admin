@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="/public/static/h-ui-{$skin}/css/H-ui.min.css" />
+
+</head>
+<script src="/public/js/all.js"></script>
+<body>
+<article class="cl pd-20">
+    <form action="" method="post" class="form form-horizontal" id="">
+        <input type="hidden" id="id" value="{$id}">
+        <div class="row cl">
+            <label class="form-label col-xs-2 col-sm-2"><span class="c-red">*</span>分类名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" value="{$name}" placeholder="分类名称" class="input-text" id="name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-2 col-sm-2"><span class="c-red">*</span>封面图片：</label>
+            <div class="formControls col-xs-8 col-sm-8">
+                <p style="height: 165px;width:165px;border: dashed 1px #e5e5e5">
+                    <img src="{$img}" alt="" id="imgarticle_pic" class="thumbnail">
+                </p>
+                <div>
+				<span>
+					<input type="hidden" value="{$img}" id="brand_pic"/>
+				</span>
+                    <input onclick="select_img('1','zhu');" class="btn btn-default" type="button" value="选择图片">
+                </div>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-2 col-sm-2"><span class="c-red">*</span>分类排序：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="number" autocomplete="off" value="{$sort ? $sort : 0}" placeholder="分类排序" class="input-text" id="sort">
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3" style="margin-top: 50px;">
+                <input class="btn btn-primary radius" onclick="addSuppAjax()" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</article>
+<script type="text/javascript" src="/public/js/jquery-2.1.1.js"></script>
+<script type="text/javascript" src="/public/static/layer/2.4/layer.js"></script>
+<script src="/public/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="/public/js/file_upload.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="/public/css/defau.css">
+<!--<script src="/public/menu/js/jquery.artdialog.js"></script>-->
+<!--<script src="/public/menu/js/iframetools.js"></script>-->
+<script type="text/javascript">
+    function on_upload() {
+        $("#uploadImg").trigger("click");
+    }
+    //模块输入信息验证
+    var flag = false;//防止重复提交
+    function addSuppAjax() {
+        var name = $("#name").val();
+        var sort = $("#sort").val();
+        var img=$("#brand_pic").val();
+        var id = $("#id").val();
+        try {
+            sort = parseInt(sort);
+        }
+        catch (e)
+        {
+            sort = 0;
+        }
+        if (name == '') {
+            layer.msg('名称不能为空',{icon:5,time:1000});
+            return false;
+        }
+        if(!flag){
+            flag = true;
+            $.ajax({
+                type : "post",
+                url : "__CONF_SITE__admin/product/add_class",
+                data : {
+                    'name':name,
+                    'sort' : sort,
+                    'img' : img,
+                    'id':id
+                },
+                success : function(data) {
+                    if(data['code']>0){
+                        layer.msg('添加成功!',{icon:1,time:1000},function () {
+                            layer_close('__CONF_SITE__admin/product/class_list');
+                        });
+                    }
+                    else{
+                        flag = false;
+                        layer.msg('添加失败',{icon:5,time:1000});
+                    }
+                }
+            });
+        }
+    }
+    function zhu_images(id,path) {
+        $("#brand_pic").val(path);
+        $("#imgarticle_pic").attr('src',path);
+    }
+    function select_img(number,type) {
+        layer_open("我的图片001",'__CONF_SITE__admin/images/dialogalbumlist&number=' + number + '&type=' + type,900,620);
+//        art.dialog.open(('__CONF_SITE__admin/images/dialogalbumlist&number=' + number + '&type=' + type), {
+//            lock : true,
+//            title : "我的图片",
+//            width : '80%',
+//            height : '80%',
+//            drag : false,
+//            background : "#000000",
+//            scrollbar:false,
+//        }, true);
+    }
+</script>
+</body>
+</html>

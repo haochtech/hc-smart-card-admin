@@ -1,0 +1,266 @@
+{extend name="base"/}
+{block name="main"}
+<style>
+    .btn:hover {color:#ffffff !important;}
+</style>
+<link rel="stylesheet" href="/public/static/bast/xenon-forms.css">
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+             <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+                        <div class="tabBar clearfix">
+                            <span class="current">部门员工列表</span>
+                            <span onclick="load_page('__CONF_SITE__admin/offweb/depart_list')">部门管理</span>
+                            <!--<div class="n_tab_add" onclick="layer_open('添加部门','__CONF_SITE__admin/offweb/add_depart&ss={$now_did}','600px','300px')" ><i class="Hui-iconfont">&#xe600;</i>添加部门</div>-->
+                            <div class="n_tab_add" onclick="layer_open('添加员工','__CONF_SITE__admin/card/card_add',1000,700)" ><i class="Hui-iconfont">&#xe600;</i>添加员工</div>
+                        </div>
+                    </div>
+        <div>
+            <div class="mt-20">
+                <div id="sele">
+                    <!--<button class="btn btn-search radius"  onclick="layer_open('添加员工','__CONF_SITE__admin/card/card_add',1000,700)"><i class="Hui-iconfont">&#xe600;</i>添加员工</button>-->
+                    <!--<button class="btn btn-search radius"  onclick="add_depart('批量导入','__CONF_SITE__admin/offweb/imp_exl','600px','400px')"><i class="Hui-iconfont">&#xe600;</i>批量添加</button>-->
+                    <button class="btn btn-search radius"  onclick="batch_syn()">同步</button>
+                    <!--<button class="btn btn-search radius" onclick="all_pass()" >删除</button>-->
+                    <!--<button class="btn btn-search radius" onclick="new_get_info()" >重新获取</button>-->
+                    <select name="depart" id="depart" onchange="show_depart()" style="height: 40px; line-height: 40px;padding:0 15px;border-radius: 3px;margin-left:5px;">
+                        {if $now_did==0}
+                        <option value="0" selected>全部员工</option>
+                        {else}
+                        <option value="0" title="共有{$counts}名成员">全部员工</option>
+                        {/if}
+                        {foreach name='depart' item='d'}
+                        {if $d.id==$now_did}
+                        <option value="{$d.id}" selected>{$d.name}</option>
+                        {else}
+                        <option value="{$d.id}" {if $d.showgemao==3} title="此部门无成员"{else} title="部门有{$d.showgemao}名成员" {/if}>{$d.name}</option>
+                        {/if}
+                        {/foreach}
+                    </select>
+                    <input type="text" class="input-text" value="{$sear_name}"  onblur="select_user(this)" style="width:250px" placeholder="输入姓名" id="sear" name="search_text">
+                </div>
+                <table class="table table-border table-bordered table-bg table-hover table-sort">
+                    <thead>
+                    <tr class="text-c">
+                        <!--<th><input id="all_select" name="" type="checkbox" value=""></th>-->
+                        <th>头像</th>
+                        <th>姓名</th>
+                        <th>职务</th>
+                        <th>部门</th>
+                        <th>手机</th>
+                        <th>AI雷达与名片</th>
+                        <th>BOSS雷达</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    {foreach name="structure" item="s"}
+                    <tr class="text-c va-m">
+                        <!--<td><input name="sub" type="checkbox" value="{$s.id}"></td>-->
+                        <td><img src="{$s.head_photo}" alt="用户头像" width="50px" height="50px" class="round"></td>
+                        <td>{$s.user_name}</td>
+                        <td>{$s.position}</td>
+                        <td>{$s.name}</td>
+                        <td>{$s.tel}</td>
+                        <td>
+                            <input type="checkbox" class="iswitch iswitch-secondary" onclick="radar(this,'{$s.id}','{$s.radar}')" name="radar" id="radar" {if $s.radar==1}checked{/if}>
+                        </td>
+                        <td>
+                            <input type="checkbox" class="iswitch iswitch-secondary"  onclick="boss_radar(this,'{$s.id}','{$s.boss_radar}')" name="boss_radar" id="boss_radar" {if $s.boss_radar==1}checked{/if}>
+                        </td>
+                        <td>
+                            <!--<a onclick="layer_open('编辑&#45;&#45;{$s.user_name}','__CONF_SITE__admin/card/card_edit&id={$s.id}&off=1',1000,800)" title="点击进行修改" style="text-decoration:none;margin-right:15px;" >编辑</a>-->
+                            <a onclick="del('{$s.id}')" style="text-decoration:none;margin-right:15px;"  class="caozuo">删除</a>
+                            <a onclick="layer_open('{$s.user_name}的二维码','__CONF_SITE__admin/offweb/wx_code&id={$s.id}','500px','500px')"   class="caozuo">二维码</a>
+                        </td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+            </div>
+            <div class="n_page_no" id="new_page">
+                {$page}
+            </div>
+        </div>
+        {/block}
+        {block name="script"}
+        <script type="text/javascript">
+            var pa=$(".n_page_button.current").text();
+            var this_del_id='';
+            $(function () {
+                $("#all_select").click(function () {
+                    $("#tbody input[name=sub]").each(function () {
+                        var jj = $(this).prop('checked');
+                        if (jj) {
+                            $(this).prop('checked', false);
+                        } else {
+                            $(this).prop('checked', true);
+                        }
+                    })
+                })
+            });
+            function all_pass() {
+                var id = '';
+                $('#tbody input[type=checkbox]:checked').each(function () {
+                    if (!isNaN($(this).val())) {
+                        id = $(this).val() + ',' + id;
+                    }
+                });
+                if (id == '') {
+                    layer.msg('请选择员工', {icon: 5, time: 1000});
+                    return false;
+                } else {
+                    id = id.substring(0, id.length - 1);
+                }
+                del(id);
+            }
+            function show_depart() {
+                var did=$("#depart :selected").val();
+                load_page("__CONF_SITE__admin/offweb/structure&did="+did);
+            }
+            function select_user(obj) {
+                var did=$("#sear").val();
+                load_page("__CONF_SITE__admin/offweb/structure&sear_name="+did);
+            }
+            function pickrsve(depart,now,child,add_id) {
+                $.ajax({
+                    type: "post",
+                    url: "{:url('admin/offweb/add_depart')}",
+                    data: {
+                        depart: depart,
+                        now: now,
+                        child: child,
+                        add_ids: add_id
+                    },
+                    success: function (data) {
+                        if (data['code'] > 0) {
+                            layer.msg('操作成功', {icon: 1, time: 500});
+                            parent_flash();
+                        } else {
+                            layer.msg('操作失败', {icon: 2, time: 1000});
+                        }
+                    }
+                });
+            }
+            var ad='';
+            function del(id) {
+                layer.confirm("将同步至企业号,确认删除吗",function (index) {
+                    this_del_id=id;
+                    check_users(do_del);
+                })
+            }
+            function new_get_info() {
+                layer.confirm("请在成员大量变更后进行此操作;此操作将清除当前公司架构等信息并重新获取;请确保企业设置正确填写",function (index) {
+                    check_users(reget);
+                })
+            }
+            var reget=function(){
+                $.ajax({
+                    type: "post",
+                    url: "{:url('admin/offweb/new_reback')}",
+                    success: function (data) {
+                        if (data['code'] > 0) {
+                            layer.msg('操作成功', {icon: 1, time: 3000},function () {
+                                parent_flash();
+                            });
+
+                        } else {
+                            layer.msg(data["message"], {icon: 2, time: 3000});
+                        }
+                    }
+                });
+            }
+            var sendsyn=function(){
+                $.ajax({
+                    type: "post",
+                    url: "{:url('admin/offweb/structure')}",
+                    data: {
+                        batch_syn:1
+                    },
+                    beforeSend: function () {
+                        ad=layer.msg("同步中，请勿进行其他操作",{icon:16,shade:0.3})
+                    },
+                    success: function (data) {
+                        layer.close(ad);
+                        if (data['code'] > 0) {
+                            layer.msg(data["message"],{icon:1,time:4000},function () {
+                                parent_flash();
+                            });
+                        } else {
+                            layer.msg(data['message'], {icon: 2, time: 2000});
+                        }
+                    }
+                });
+            }
+            var do_del=function () {
+                $.ajax({
+                    type: "post",
+                    url: "{:url('admin/offweb/on_del')}",
+                    data: {
+                        id: this_del_id,
+                        type: "user"
+                    },
+                    beforeSend:function(XMLHttpRequest){
+                        layer.msg('正在执行,请稍后！', {
+                            icon: 16
+                            ,shade: 0.05
+                            ,time:900000
+                        });
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        if (data['code'] > 0) {
+                            layer.msg('操作成功', {icon: 1, time: 1000},function () {
+                                parent_flash();
+                            });
+                        } else {
+                            layer.msg(data['message'], {icon: 2, time: 1000});
+                        }
+                    }
+                });
+            }
+            function batch_syn() {
+                layer.confirm("会将企业微信部门及人员数据同步至本平台",function (index) {
+                    check_users(sendsyn);
+                })
+            }
+            function radar(obj,id,data) {
+                $.ajax({
+                    data:{
+                        "id":id,
+                        "radar":data
+                    },
+                    type:"post",
+                    url:"{:url('admin/offweb/radar')}",
+                    success:function (res) {
+                        if (res['code']>0){
+                            layer.msg('操作成功', {icon: 1, time:1000});
+                            parent_flash("__CONF_SITE__admin/offweb/structure&page="+pa);
+                        }else {
+                            layer.msg(res["message"], {icon: 2, time:1000});
+                            parent_flash("__CONF_SITE__admin/offweb/structure&page="+pa);
+                        }
+                    }
+                })
+            }
+            function boss_radar(obj,id,data) {
+                $.ajax({
+                    data:{
+                        "id":id,
+                        "boss_radar":data
+                    },
+                    type:"post",
+                    url:"{:url('admin/offweb/radar')}",
+                    success:function (res) {
+                        if (res['code']>0){
+                            layer.msg('操作成功', {icon: 1, time: 500});
+                            parent_flash("__CONF_SITE__admin/offweb/structure&page="+pa);
+                        }else {
+                            layer.msg(res["message"], {icon: 2, time:1000});
+                            parent_flash("__CONF_SITE__admin/offweb/structure&page="+pa);
+                        }
+                    }
+                })
+            }
+        </script>
+        {/block}

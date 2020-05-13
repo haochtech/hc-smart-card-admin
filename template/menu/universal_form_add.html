@@ -1,0 +1,1189 @@
+{extend name="base"/}
+{block name="main"}
+<link media="all" href="/public/menu/css/index_mod.css?v=1.1" type="text/css" rel="stylesheet">
+<link media="all" href="/public/menu/css/index_module.css?v=1.1" type="text/css" rel="stylesheet">
+<link rel="stylesheet" href="/public/static/h-ui-{$skin}/css/style.css?v=1.1"/>
+<link media="all" href="/public/menu/css/formconfig_index.css?v=1.3" type="text/css" rel="stylesheet">
+<script type="text/javascript" src="/public/js/jquery-2.1.1.js"></script>
+<style> .imgbox img {
+    margin: 0 auto;
+}
+
+.cubeNavigationArea .cubeLink .cubeLink_a .cubeLink_text {
+    bottom: -10px !important;
+}
+
+#get_lng_lat {
+    float: none !important;
+    margin: 0 auto;
+    color: #fff;
+    border: 1px solid #00c1de;
+    display: block;
+}
+
+input[type=range] {
+    outline: none;
+    -webkit-appearance: none; /*清除系统默认样式*/
+    background: -webkit-linear-gradient(#61bd12, #61bd12) no-repeat, #ddd;
+    height: 3px; /*横条的高度*/
+}
+
+/*拖动块的样式*/
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; /*清除系统默认样式*/
+    height: 16px; /*拖动块高度*/
+    width: 16px; /*拖动块宽度*/
+    background: #fff; /*拖动块背景*/
+    border-radius: 50%; /*外观设置为圆形*/
+    border: solid 1px #ddd; /*设置边框*/
+}
+
+.pureText {
+    cursor: pointer;
+}
+
+.activeMod {
+    background: #f2f2f2;
+}
+
+.ui-draggable {
+    background: #fff;
+}
+
+.ui-draggable .title {
+    background: #f2f2f2;
+    font-size: 14px;
+    height: 32px;
+    padding-left: 5px;
+}
+
+.yb_radio {
+    height: 36px;
+    line-height: 36px;
+}
+
+/*.activeMod ul li.ui-draggable .title {height: 32px; line-height: 22px; font-size: 14px; padding-left: 10px;background: #f2f2f2;float:none;}*/
+.activeMod ul li.ui-draggable .yb_input input {
+    height: 36px;
+    width: 100%;
+}
+
+.activeMod ul li.ui-draggable .yb_textarea textarea {
+    width: 100%;
+}
+
+.activeMod ul li.ui-draggable .yb_checkbox {
+    background: #fff;
+    line-height: 36px;
+    padding: 0 10px;
+    width: 33%;
+}
+
+.yb_checkbox input[type="checkbox"], .yb_radio input[type="radio"] {
+    display: inline-block !important;
+    margin-right: 5px !important;
+}
+
+.yb_checkbox, .yb_radio {
+    font-size: 14px;
+}
+
+.activeMod ul li.ui-draggable .yb_checkbox, .activeMod ul li.ui-draggable .yb_radio {
+    width: 33%;
+    float: left;
+}
+.activeMod ul li.ui-draggable .yb_checkbox-1 {
+    width: 33%;
+    float: left;
+}
+.activeMod ul li.ui-draggable .yb_checkbox-2 {
+    width: 100%;
+}
+.activeMod ul li.ui-draggable .yb_radio-1 {
+    width: 33%;
+    float: left;
+}
+.activeMod ul li.ui-draggable .yb_radio-2 {
+    width: 100%;
+}
+.ui-draggable button {
+    width: 80%;
+    margin: 15px auto;
+    height: 46px;
+    line-height: 46px;
+    border-radius: 5px;
+}
+
+#get_button_len {
+    justify-content: center;
+    display: flex;
+}
+
+.activeMod ul li.ui-draggable .yb_region, .activeMod ul li.ui-draggable .yb_time_two, .activeMod ul li.ui-draggable .yb_time_one {
+    text-align: center;
+    padding: 10px 0;
+}
+
+.activeMod ul li.ui-draggable .yb_select {
+    text-align: center;
+    padding: 0;
+}
+
+.activeMod ul li.ui-draggable .yb_select select {
+    height: 36px;
+    width: 100%;
+}
+
+.activeMod ul li.ui-draggable .yb_region input {
+    height: 36px;
+    width: 30%;
+    text-align: center;
+}
+
+.activeMod ul li.ui-draggable .yb_time_two input {
+    height: 36px;
+    width: 40%;
+    text-align: center
+}
+
+.activeMod ul li.ui-draggable .yb_time_one input {
+    height: 36px;
+    width: 100%;
+    text-align: center
+}
+
+.form_button {
+    width: 100%;
+    text-align: center;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="/public/menu/css/defau.css">
+<script type="text/javascript" src="/public/js/vue.js"></script>
+<script type="text/javascript" src="/public/js/vue-dragging.es5.js"></script>
+<script src="/public/js/html2canvas.js"></script>
+<body>
+<input type="hidden" id="bus_select_up_id" value="0">
+<input type="hidden" id="bus_select_up_name" value="">
+<style>
+    /*.left_tool_box {float:left;width:252px;display: table-cell; height:100%;background: #fff;}*/
+    .left_tool_box {
+        position: fixed;
+        width: 252px;
+        display: table-cell;
+        height: 100%;
+        background: #fff;
+        top: 70px;
+        left: 210px;
+    }
+
+    .tool_class_name {
+        height: 30px;
+        line-height: 30px;
+        background: #f7f7f7;
+        color: #666666;
+        border-bottom: 1px solid #efefef;
+        padding-left: 10px;
+        border-right: 1px solid #efefef;
+    }
+
+    .clear {
+        clear: both;
+    }
+
+    .tool_box a {
+        width: 33.3333%;
+        border-bottom: 1px solid #efefef;
+        border-right: 1px solid #efefef;
+        height: 84px;
+        display: block;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box; /* Firefox */
+        -webkit-box-sizing: border-box; /* Safari */
+        text-align: center;
+        float: left;
+    }
+
+    .tool_box a span {
+        display: block;
+        height: 22px;
+        line-height: 22px;
+    }
+
+    .tool_box a:hover {
+        background: #f7f7f7;
+    }
+
+    .tool_box a img {
+        margin-top: 20px;
+    }
+
+    .container {
+        width: 410px !important;
+        overflow: hidden;
+        float: left;
+    }
+
+    .main-content {
+        padding: 0 !important;
+        height: 100% !important;
+        background: #f7f8fc !important;
+    }
+
+    .footer {
+        width: 100%;
+    }
+
+    .container .inner, .tableContent .content {
+        background: none !important;
+    }
+
+    .wq_top_btn_box {
+        height: 60px;
+        line-height: 60px;
+        width: 100%;
+        background: #fff;
+        border-bottom: 1px solid #efefef;
+        position: fixed;
+        top: 0;
+        left: 200px;
+    }
+
+    #b_menu {
+        margin-top: 0px;
+    }
+
+    .main-content {
+        border: 0 !important;
+    }
+</style>
+<input type="hidden" id="form_title" value="">
+<input type="hidden" id="form_id" value="">
+<script>
+    Vue.use(VueDragging);
+    if ('{$id}' != 0 && '{$id}' != '') {
+        $(document).ready(function () {
+            $.ajax({
+                type: "post",
+                data: {'id': "{$id}"},
+                url: "{:url('menu/universal_form_edit')}",
+                success: function (data) {
+                    $("#form_id").val(data['id']);
+                    $("#form_title").val(data['title']);
+                    if (data['type'] == 1) {
+                        $('#this_form_type1').prop("checked", "checked");
+                    } else {
+                        $('#this_form_type2').prop("checked", "checked");
+                    }
+                    var obj = eval('(' + data['value'] + ')');
+                    var list = Object.keys(obj);
+                    for (var i = 0; i < list.length; i++) {
+                        var new_item = {};
+                        if (obj[i]['type'] == 'form_text') {
+                            new_item['type'] = obj[i]['type'];
+                            new_item['module'] = obj[i]['module'];
+                            new_item['title'] = obj[i]['title'];
+                            new_item['name'] = obj[i]['name'];
+                            new_item['value'] = obj[i]['value'];
+                            new_item['empty'] = obj[i]['empty'];
+                            new_item['form_type'] = obj[i]['form_type'];
+                            new_item['password'] = obj[i]['password'];
+                            new_item['placeholder'] = obj[i]['placeholder'];
+                            new_item['time_key'] = obj[i]['time_key'];
+                            bannerVM.all_data.push(new_item);
+                        }
+                        if (obj[i]['type'] == 'form_textarea') {
+                            new_item['type'] = obj[i]['type'];
+                            new_item['module'] = obj[i]['module'];
+                            new_item['title'] = obj[i]['title'];
+                            new_item['name'] = obj[i]['name'];
+                            new_item['value'] = obj[i]['value'];
+                            new_item['empty'] = obj[i]['empty'];
+                            new_item['maxlength'] = obj[i]['maxlength'];
+                            new_item['placeholder'] = obj[i]['placeholder'];
+                            new_item['time_key'] = obj[i]['time_key'];
+                            bannerVM.all_data.push(new_item);
+                        }
+                        if (obj[i]['type'] == 'form_checkbox') {
+                            new_item['type'] = obj[i]['type'];
+                            new_item['module'] = obj[i]['module'];
+                            new_item['title'] = obj[i]['title'];
+                            new_item['name'] = obj[i]['name'];
+                            new_item['value'] = obj[i]['value'];
+                            new_item['empty'] = obj[i]['empty'];
+                            new_item['list'] = obj[i]['list'];
+                            new_item['layout'] = obj[i]['layout'];
+                            new_item['time_key'] = obj[i]['time_key'];
+                            bannerVM.all_data.push(new_item);
+                        }
+                        if (obj[i]['type'] == 'form_radio') {
+                            new_item['type'] = obj[i]['type'];
+                            new_item['module'] = obj[i]['module'];
+                            new_item['title'] = obj[i]['title'];
+                            new_item['name'] = obj[i]['name'];
+                            new_item['value'] = obj[i]['value'];
+                            new_item['empty'] = obj[i]['empty'];
+                            new_item['layout'] = obj[i]['layout'];
+                            new_item['list'] = obj[i]['list'];
+                            new_item['time_key'] = obj[i]['time_key'];
+                            bannerVM.all_data.push(new_item);
+                        }
+                        if (obj[i]['type'] == 'form_picker') {
+                            new_item['type'] = obj[i]['type'];
+                            new_item['module'] = obj[i]['module'];
+                            new_item['title'] = obj[i]['title'];
+                            new_item['name'] = obj[i]['name'];
+                            new_item['list'] = obj[i]['list'];
+                            new_item['time_key'] = obj[i]['time_key'];
+                            bannerVM.all_data.push(new_item);
+                        }
+                        if (obj[i]['type'] == 'form_time_one') {
+                            new_item['type'] = obj[i]['type'];
+                            new_item['module'] = obj[i]['module'];
+                            new_item['title'] = obj[i]['title'];
+                            new_item['name'] = obj[i]['name'];
+                            new_item['default'] = obj[i]['default'];
+                            new_item['empty'] = obj[i]['empty'];
+                            new_item['start'] = obj[i]['start'];
+                            new_item['end'] = obj[i]['end'];
+                            new_item['time_key'] = obj[i]['time_key'];
+                            bannerVM.all_data.push(new_item);
+                        }
+                        if (obj[i]['type'] == 'form_time_two') {
+                            new_item['type'] = obj[i]['type'];
+                            new_item['module'] = obj[i]['module'];
+                            new_item['title'] = obj[i]['title'];
+                            new_item['name'] = obj[i]['name'];
+                            new_item['default1'] = obj[i]['default1'];
+                            new_item['default2'] = obj[i]['default2'];
+                            new_item['empty'] = obj[i]['empty'];
+                            new_item['start'] = obj[i]['start'];
+                            new_item['end'] = obj[i]['end'];
+                            new_item['time_key'] = obj[i]['time_key'];
+                            bannerVM.all_data.push(new_item);
+                        }
+                        if (obj[i]['type'] == 'form_region') {
+                            new_item['type'] = obj[i]['type'];
+                            new_item['module'] = obj[i]['module'];
+                            new_item['title'] = obj[i]['title'];
+                            new_item['name'] = obj[i]['name'];
+                            new_item['default'] = obj[i]['default'];
+                            new_item['empty'] = obj[i]['empty'];
+                            new_item['time_key'] = obj[i]['time_key'];
+                            bannerVM.all_data.push(new_item);
+                        }
+                        if (obj[i]['type'] == 'form_pic') {
+                            new_item['type'] = obj[i]['type'];
+                            new_item['module'] = obj[i]['module'];
+                            new_item['title'] = obj[i]['title'];
+                            new_item['name'] = obj[i]['name'];
+                            new_item['empty'] = obj[i]['empty'];
+                            new_item['time_key'] = obj[i]['time_key'];
+                            bannerVM.all_data.push(new_item);
+                        }
+                        if (obj[i]['type'] == 'form_pic_arr') {
+                            new_item['type'] = obj[i]['type'];
+                            new_item['module'] = obj[i]['module'];
+                            new_item['title'] = obj[i]['title'];
+                            new_item['name'] = obj[i]['name'];
+                            new_item['empty'] = obj[i]['empty'];
+                            new_item['time_key'] = obj[i]['time_key'];
+                            bannerVM.all_data.push(new_item);
+                        }
+                        if (obj[i]['type'] == 'form_button') {
+                            new_item['type'] = obj[i]['type'];
+                            new_item['module'] = obj[i]['module'];
+                            new_item['title'] = obj[i]['title'];
+                            new_item['color'] = obj[i]['color'];
+                            new_item['text_color'] = obj[i]['text_color'];
+                            new_item['time_key'] = obj[i]['time_key'];
+                            bannerVM.all_data.push(new_item);
+                        }
+                    }
+                }
+            })
+        })
+    }
+</script>
+<div class="diypage" id="page">
+    <div class="diypage-header">
+        <div class="header-left"></div>
+        <div class="header-control" id="header-control">
+            {if $id=='0'}
+            <div class="form-item " style="border-bottom:0;">
+                <div class="item-inner"><span class="labeltext" style="width: 66px !important;">表单类型</span>
+                    <div class="radio-inline" style="width: 90px !important;"><input checked type="radio"
+                                                                                     class="magic-radio"
+                                                                                     name="this_form_type" value="1"
+                                                                                     id="this_form_type1"><label
+                            for="this_form_type1">普通表单</label></div>
+                    <div class="radio-inline" style="width: 90px !important;"><input type="radio" class="magic-radio"
+                                                                                     name="this_form_type" value="2"
+                                                                                     id="this_form_type2"><label
+                            for="this_form_type2">预约表单</label></div>
+                </div>
+                {/if}
+            </div>
+        </div>
+        <div class="header-right" style="width: 370px;"></div>
+    </div>
+    <div class="diypage-container" id="b_menu">
+        <!--	<div class="diy_nav" id="leftTab">4</div>-->
+        <div class="page-structure nav_inner subnav">
+            <div class="tool_box_li">
+                <div class="tool_class_name">基本组件</div>
+                <div class="tool_box">
+                    <a href="javascript:;" class="j-diy-addModule icon_1" data-type="1" title="单行文本框">
+                        <span class="icon_pic02"></span><span>单行文本框</span>
+                    </a>
+                    <a href="javascript:;" class="j-diy-addModule icon_2" data-type="2" title="多行文本框">
+                        <span class="icon_pic02"></span> <span>多行文本框</span>
+                    </a>
+                    <a href="javascript:;" class="j-diy-addModule icon_3" data-type="3" title="多项选择器">
+                        <span class="icon_pic02"></span> <span>多项选择器</span>
+                    </a>
+                    <a href="javascript:;" class="j-diy-addModule icon_4" data-type="4" title="单项选择器">
+                        <span class="icon_pic02"></span><span>单项选择器</span>
+                    </a>
+                    <a href="javascript:;" class="j-diy-addModule icon_5" data-type="5" title="下拉选择器">
+                        <span class="icon_pic02"></span> <span>下拉选择器</span>
+                    </a>
+                    <a href="javascript:;" class="j-diy-addModule icon_6" data-type="6" title="日期">
+                        <span class="icon_pic02"></span> <span>日期</span>
+                    </a>
+                    <a href="javascript:;" class="j-diy-addModule icon_7" data-type="7" title="日期范围">
+                        <span class="icon_pic02"></span><span>日期范围</span>
+                    </a>
+                    <a href="javascript:;" class="j-diy-addModule icon_8" data-type="8" title="省市县选择">
+                        <span class="icon_pic02"></span><span>省市县选择</span>
+                    </a>
+                    <a href="javascript:;" class="j-diy-addModule icon_9" data-type="9" title="单图上传">
+                        <span class="icon_pic02"></span><span>单图上传</span>
+                    </a>
+                    <a href="javascript:;" class="j-diy-addModule icon_10" data-type="10" title="多图上传">
+                        <span class="icon_pic02"></span><span>多图上传</span>
+                    </a>
+                    <a href="javascript:;" class="j-diy-addModule icon_11" data-type="11" title="提交按钮">
+                        <span class="icon_pic02"></span><span>提交按钮</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </div>
+        <div class="diypage-content">
+            <div class="container"
+                 style="min-height: 700px;left:calc(50% - 205px);top:80px;width:410px;margin-left:50px;">
+                <!--   <div class="container" style="min-height: 700px;padding-left: 300px;padding-top:0;">-->
+                <div class="inner clearfix" style="border:0;">
+                    <div class="content-right fl" style="padding-top:0;">
+                        <div class="msgWrap form">
+                            <form action="" method="post" class="layui-form" id="custom_form">
+                                <div class="tableContent">
+                                    <div class="content" style="padding-top:0;">
+                                        <div class="DL-Main" id="content" crossOrigin="Anonymous">
+                                            <div class="mainPanel clearfix">
+                                                <div class="leftPhonewrap" id="leftPhonewrap">
+                                                    <div class="holderPhone">
+                                                        <div class="wxHd">
+                                                            <div id="actName" class="phoneTitle"
+                                                                 style="bottom: 15px;width: 100%;left: 0;padding: 0 65px;">
+                                                                <h2><span id="bus_select_up_name_but">万能表单</span></h2>
+                                                            </div>
+                                                        </div>
+                                                        <div id="anythingContent"
+                                                             style=" background: #fff;height:570px;">
+                                                            <div class="mianMod mCustomScrollbar _mCS_1 mCS-autoHide mCS_no_scrollbar"
+                                                                 data-mcs-theme="minimal-dark"
+                                                                 style="visibility: visible; overflow: visible;height:570px;">
+                                                                <div id="mCSB_1"
+                                                                     class="mCustomScrollBox mCS-minimal-dark mCSB_vertical mCSB_outside"
+                                                                     style="max-height: none;" tabindex="0">
+                                                                    <div id="mCSB_1_container"
+                                                                         class="mCSB_container mCS_y_hidden mCS_no_scrollbar_y"
+                                                                         style="position: relative; top: 0px; left: 0px;"
+                                                                         dir="ltr">
+                                                                        <div class="activeMod" style="height:570px;">
+                                                                            <ul id="get_img"
+                                                                                class="form_component style_1 clearfix ui-sortable">
+                                                                                <li class="ui-draggable"
+                                                                                    v-for="(item,index) in all_data"
+                                                                                    :name="item.type"
+                                                                                    v-dragging="{ list: all_data, item: item, group: 'index' }"
+                                                                                    :key="item.time_key">
+                                                                                    <form_text
+                                                                                            v-if="item.type=='form_text'"
+                                                                                            :index="index"
+                                                                                            :title="item.title"
+                                                                                            :value="item.value"
+                                                                                            :placeholder="item.placeholder"
+                                                                                    >
+                                                                                    </form_text>
+                                                                                    <form_textarea
+                                                                                            v-if="item.type=='form_textarea'"
+                                                                                            :index="index"
+                                                                                            :title="item.title"
+                                                                                            :value="item.value"
+                                                                                            :placeholder="item.placeholder"
+                                                                                    >
+                                                                                    </form_textarea>
+                                                                                    <form_checkbox
+                                                                                            v-if="item.type=='form_checkbox'"
+                                                                                            :index="index"
+                                                                                            :title="item.title"
+                                                                                            :value="item.value"
+                                                                                            :layout="item.layout"
+                                                                                            :list="item.list"
+                                                                                    >
+                                                                                    </form_checkbox>
+                                                                                    <form_radio
+                                                                                            v-if="item.type=='form_radio'"
+                                                                                            :index="index"
+                                                                                            :title="item.title"
+                                                                                            :value="item.value"
+                                                                                            :layout="item.layout"
+                                                                                            :list="item.list"
+                                                                                            :time_key="item.time_key"
+                                                                                    >
+                                                                                    </form_radio>
+                                                                                    <form_picker
+                                                                                            v-if="item.type=='form_picker'"
+                                                                                            :index="index"
+                                                                                            :title="item.title"
+                                                                                            :value="item.value"
+                                                                                            :list="item.list"
+                                                                                            :time_key="item.time_key"
+                                                                                    >
+                                                                                    </form_picker>
+                                                                                    <form_time_one
+                                                                                            v-if="item.type=='form_time_one'"
+                                                                                            :index="index"
+                                                                                            :title="item.title"
+                                                                                            :time_key="item.time_key"
+                                                                                            :default_time="item.default"
+                                                                                    >
+                                                                                    </form_time_one>
+                                                                                    <form_time_two
+                                                                                            v-if="item.type=='form_time_two'"
+                                                                                            :index="index"
+                                                                                            :title="item.title"
+                                                                                            :time_key="item.time_key"
+                                                                                            :default_time1="item.default1"
+                                                                                            :default_time2="item.default2"
+                                                                                    >
+                                                                                    </form_time_two>
+                                                                                    <form_region
+                                                                                            v-if="item.type=='form_region'"
+                                                                                            :index="index"
+                                                                                            :title="item.title"
+                                                                                            :time_key="item.time_key"
+                                                                                    >
+                                                                                    </form_region>
+                                                                                    <form_pic
+                                                                                            v-if="item.type=='form_pic'"
+                                                                                            :index="index"
+                                                                                            :title="item.title"
+                                                                                            :time_key="item.time_key"
+                                                                                    >
+                                                                                    </form_pic>
+                                                                                    <form_pic_arr
+                                                                                            v-if="item.type=='form_pic_arr'"
+                                                                                            :index="index"
+                                                                                            :title="item.title"
+                                                                                            :time_key="item.time_key"
+                                                                                    >
+                                                                                    </form_pic_arr>
+                                                                                    <form_button
+                                                                                            v-if="item.type=='form_button'"
+                                                                                            :index="index"
+                                                                                            :title="item.title"
+                                                                                            :size="item.size"
+                                                                                            :color="item.color"
+                                                                                            :text_color="item.text_color"
+                                                                                            :time_key="item.time_key"
+                                                                                    >
+                                                                                    </form_button>
+                                                                                </li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div id="mCSB_1_scrollbar_vertical"
+                                                                     class="mCSB_scrollTools mCSB_1_scrollbar mCS-minimal-dark mCSB_scrollTools_vertical"
+                                                                     style="display: none;">
+                                                                    <div class="mCSB_draggerContainer">
+                                                                        <div id="mCSB_1_dragger_vertical"
+                                                                             class="mCSB_dragger"
+                                                                             style="position: absolute; min-height: 50px; height: 0px; top: 0px;"
+                                                                             oncontextmenu="return false;">
+                                                                            <div class="mCSB_dragger_bar"
+                                                                                 style="line-height: 50px;"></div>
+                                                                        </div>
+                                                                        <div class="mCSB_draggerRail"></div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="rightEditwrap"
+                                                     style="position: fixed;right: 0;top: 120px;width:445px;">
+                                                    <div class="formEditHd">
+                                                        <ul class="clearfix">
+                                                            <li style="" class="on"><a href="javascript:;">页面组件</a></li>
+                                                            <li style=""><a href="javascript:;">编辑组件</a></li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="formEditBd">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input class="" name="modelname" value="" type="hidden">
+                                    <input name="id" value="" type="hidden">
+                                    <input id="previewpage" name="previewpage" value="index" type="hidden">
+                                    <input id="componentJsonStr" name="componentJsonStr" value="" type="hidden">
+                                    <div class="saveBottomBar">
+                                        <div class="buttonBox diy-actions-submit">
+                                            <div id="saveButon" onclick="add_submit();"
+                                                 class="bottomButon saveButon style_btn05" style="">保存
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="updown" id="toolbar">
+                <span class="tool_up" onclick="tool_up_vue()">
+                     <p>上移组件</p>
+                </span>
+            <span class="tool_down" onclick="tool_down_vue()">
+                    <p>下移组件</p>
+                </span>
+        </div>
+        <div class="diypage-right">
+            <!-- 单行 -->
+            <div class="form_edit" data-type="1" id="form_edit_text" style="display: none;">
+                <div class="form-item item_tit">
+                    <span>单行文本</span>
+                </div>
+                <div>
+                    <div class="form-item noborder" style="display: block;background:#f7f9fd;border-radius:6px;">
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">标题</span>
+                                <input type="text" oninput="this_input_title(this.value)" class="es-input data-bind"
+                                       id="id_this_input_title"
+                                       style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;"
+                                       placeholder="请输入标题" value="">
+                            </div>
+                        </div>
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">初始值</span>
+                                <input type="text" oninput="this_input_value(this.value)" class="es-input data-bind"
+                                       id="id_this_input_value"
+                                       style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;"
+                                       placeholder="请输入初始内容" value="">
+                            </div>
+                        </div>
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">提示语</span>
+                                <input type="text" oninput="this_input_placeholder(this.value)"
+                                       class="es-input data-bind" id="id_this_input_placeholder"
+                                       style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;"
+                                       placeholder="请输入提示语" value="">
+                            </div>
+                        </div>
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">密码</span>
+                                <div class="radio-inline"><input checked type="radio" class="magic-radio"
+                                                                 name="this_input_text_password" value="false"
+                                                                 id="this_input_text_password1"><label
+                                        for="this_input_text_password1">否</label></div>
+                                <div class="radio-inline"><input type="radio" class="magic-radio"
+                                                                 name="this_input_text_password" value="true"
+                                                                 id="this_input_text_password2"><label
+                                        for="this_input_text_password2">是</label></div>
+                            </div>
+                        </div>
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">必填</span>
+                                <div class="radio-inline"><input checked type="radio" class="magic-radio"
+                                                                 name="this_input_text_empty" value="false"
+                                                                 id="this_input_text_empty1"><label
+                                        for="this_input_text_empty1">否</label></div>
+                                <div class="radio-inline"><input type="radio" class="magic-radio"
+                                                                 name="this_input_text_empty" value="true"
+                                                                 id="this_input_text_empty2"><label
+                                        for="this_input_text_empty2">是</label></div>
+                            </div>
+                        </div>
+                        <div class="form-label">选择类型</div>
+                        <div class="form-item ">
+                            <div class="item-inner">
+                                <div class="radio-inline"><input checked type="radio" class="magic-radio"
+                                                                 name="this_input_text_type" value="text"
+                                                                 id="this_input_text_type1"><label
+                                        for="this_input_text_type1">文本</label></div>
+                                <div class="radio-inline"><input type="radio" class="magic-radio"
+                                                                 name="this_input_text_type" value="number"
+                                                                 id="this_input_text_type2"><label
+                                        for="this_input_text_type2">数字</label></div>
+                                <div class="radio-inline"><input type="radio" class="magic-radio"
+                                                                 name="this_input_text_type" value="idcard"
+                                                                 id="this_input_text_type3"><label
+                                        for="this_input_text_type3">身份证</label></div>
+                                <div class="radio-inline"><input type="radio" class="magic-radio"
+                                                                 name="this_input_text_type" value="digit"
+                                                                 id="this_input_text_type4"><label
+                                        for="this_input_text_type4">小数点</label></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 多行 -->
+            <div class="form_edit" data-type="2" id="form_edit_textarea" style="display: none;">
+                <div class="form-item item_tit">
+                    <span>多行文本</span>
+                </div>
+                <div>
+                    <div class="form-item noborder" style="display: block;background:#f7f9fd;border-radius:6px;">
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">标题</span>
+                                <input type="text" oninput="this_textarea_title(this.value)" class="es-input data-bind"
+                                       id="id_this_textarea_title"
+                                       style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;"
+                                       placeholder="请输入标题" value="">
+                            </div>
+                        </div>
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">初始值</span>
+                                <input type="text" oninput="this_textarea_value(this.value)" class="es-input data-bind"
+                                       id="id_this_textarea_value"
+                                       style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;"
+                                       placeholder="请输入初始内容" value="">
+                            </div>
+                        </div>
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">提示语</span>
+                                <input type="text" oninput="this_textarea_placeholder(this.value)"
+                                       class="es-input data-bind" id="id_this_textarea_placeholder"
+                                       style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;"
+                                       placeholder="请输入提示语" value="">
+                            </div>
+                        </div>
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">长度</span>
+                                <input type="text" oninput="this_textarea_maxlength(this.value)"
+                                       class="es-input data-bind" id="id_this_textarea_maxlength"
+                                       style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;"
+                                       placeholder="最大长度" value="140">
+                            </div>
+                        </div>
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">必填</span>
+                                <div class="radio-inline"><input checked type="radio" class="magic-radio"
+                                                                 name="this_input_textarea_empty" value="false"
+                                                                 id="this_input_textarea_empty1"><label
+                                        for="this_input_textarea_empty1">否</label></div>
+                                <div class="radio-inline"><input type="radio" class="magic-radio"
+                                                                 name="this_input_textarea_empty" value="true"
+                                                                 id="this_input_textarea_empty2"><label
+                                        for="this_input_textarea_empty2">是</label></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 多项选择器 -->
+            <div class="form_edit" data-type="3" id="form_edit_checkbox" style="display: none;">
+                <div class="form-item item_tit">
+                    <span>多项选择器</span>
+                </div>
+                <div>
+                    <div class="form-item noborder" style="display: block;background:#f7f9fd;border-radius:6px;">
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">标题</span>
+                                <input type="text" oninput="this_checkbox_title(this.value)" class="es-input data-bind"
+                                       id="id_this_checkbox_title"
+                                       style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;"
+                                       placeholder="请输入标题" value="爱好">
+                            </div>
+                        </div>
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">排版</span>
+                                <div class="radio-inline">
+                                    <input checked type="radio" onclick="this_checkbox_layout(this.value)" class="magic-radio"
+                                                                 name="this_input_checkbox_layout" value="1"
+                                                                 id="this_input_checkbox_layout1"><label
+                                        for="this_input_checkbox_layout1">横排</label></div>
+                                <div class="radio-inline"><input type="radio" onclick="this_checkbox_layout(this.value)" class="magic-radio"
+                                                                 name="this_input_checkbox_layout" value="2"
+                                                                 id="this_input_checkbox_layout2"><label
+                                        for="this_input_checkbox_layout2">竖排</label></div>
+                            </div>
+                        </div>
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">必选</span>
+                                <div class="radio-inline"><input checked type="radio" class="magic-radio"
+                                                                 name="this_input_checkbox_empty" value="false"
+                                                                 id="this_input_checkbox_empty1"><label
+                                        for="this_input_checkbox_empty1">否</label></div>
+                                <div class="radio-inline"><input type="radio" class="magic-radio"
+                                                                 name="this_input_checkbox_empty" value="true"
+                                                                 id="this_input_checkbox_empty2"><label
+                                        for="this_input_checkbox_empty2">是</label></div>
+                            </div>
+                        </div>
+                        <div class="form-label">多选框设置</div>
+                        <div v-for="(item,index) in checkbox_list">
+                            <div class="item-inner mt10">
+                                <span class="labeltext">名称</span> <input style="cursor: text" type="text"
+                                                                         v-model="item.value" class="es-input"
+                                                                         :data-index="index"
+                                                                         onblur="this_input_checkbox_value(this,this.value)"><img
+                                    width="20" onclick="del_checkbox(this)" :data-index="index"
+                                    style="cursor: pointer;margin-top:5px;"
+                                    src="__CONF_URL__public/menu/images/del_icon.png">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="addChild " onclick="checkbox_add_menu()">添加一个</div>
+                </div>
+            </div>
+            <!-- 单项选择器 -->
+            <div class="form_edit" data-type="4" id="form_edit_radio" style="display: none;">
+                <div class="form-item item_tit">
+                    <span>单项选择器</span>
+                </div>
+                <div>
+                    <div class="form-item noborder" style="display: block;background:#f7f9fd;border-radius:6px;">
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">标题</span>
+                                <input type="text" oninput="this_radio_title(this.value)" class="es-input data-bind"
+                                       id="id_this_radio_title"
+                                       style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;"
+                                       placeholder="请输入标题" value="性别">
+                            </div>
+                        </div>
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">排版</span>
+                                <div class="radio-inline">
+                                    <input checked type="radio" onclick="this_radio_layout(this.value)" class="magic-radio"
+                                           name="this_input_radio_layout" value="1"
+                                           id="this_input_radio_layout1"><label
+                                        for="this_input_radio_layout1">横排</label></div>
+                                <div class="radio-inline"><input type="radio" onclick="this_radio_layout(this.value)" class="magic-radio"
+                                                                 name="this_input_radio_layout" value="2"
+                                                                 id="this_input_radio_layout2"><label
+                                        for="this_input_radio_layout2">竖排</label></div>
+                            </div>
+                        </div>
+                        <div class="form-label">单选框设置</div>
+                        <div v-for="(item,index) in radio_list">
+                            <div class="item-inner">
+                                <span class="labeltext">名称</span> <input style="cursor: text" type="text"
+                                                                         v-model="item.value" class="es-input data-bind"
+                                                                         :data-index="index"
+                                                                         onblur="this_input_checkbox_value(this,this.value)"><img
+                                    width="20" onclick="del_checkbox(this)" :data-index="index" style="cursor: pointer"
+                                    src="__CONF_URL__public/menu/images/del.png">
+                            </div>
+                            <div class="item-inner"><span class="labeltext">默认</span>
+                                <div class="radio-inline"><input type="radio" onclick="set_radio_def(this,this.value)"
+                                                                 class="magic-radio" :data-index="index"
+                                                                 name="this_radio_default" value="true"
+                                                                 :id="'id_this_radio_default_'+index"><label
+                                        :for="'id_this_radio_default_'+index">是</label></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="addChild " onclick="radio_add_menu()">添加一个</div>
+                </div>
+            </div>
+            <!-- 下拉选择器 -->
+            <div class="form_edit" data-type="5" id="form_edit_picker" style="display: none;">
+                <div class="form-item item_tit">
+                    <span>下拉选择器</span>
+                </div>
+                <div>
+                    <div class="form-item noborder" style="display: block;background:#f7f9fd;border-radius:6px;">
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">标题</span>
+                                <input type="text" oninput="this_picker_title(this.value)" class="es-input data-bind"
+                                       id="id_this_picker_title"
+                                       style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;"
+                                       placeholder="请输入标题" value="性别">
+                            </div>
+                        </div>
+                        <div class="form-label">单选框设置</div>
+                        <div v-for="(item,index) in picker_list">
+                            <div class="item-inner">
+                                <span class="labeltext">名称</span> <input style="cursor: text" type="text"
+                                                                         v-model="item.range" class="es-input data-bind"
+                                                                         :data-index="index"
+                                                                         onblur="this_input_checkbox_value(this,this.value)"><img
+                                    width="20" onclick="del_checkbox(this)" :data-index="index" style="cursor: pointer"
+                                    src="__CONF_URL__public/menu/images/del.png">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="addChild " onclick="picker_add_menu()">添加一个</div>
+                </div>
+            </div>
+            <!-- 日期 -->
+            <div class="form_edit" data-type="6" id="form_edit_time_one" style="display: none;">
+                <div class="form-item item_tit">
+                    <span>日期</span>
+                </div>
+                <div>
+                    <div class="form-item noborder" style="display: block;background:#f7f9fd;border-radius:6px;">
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">标题</span>
+                                <input type="text" oninput="this_time_one_title(this.value)" class="es-input data-bind"
+                                       id="id_this_time_one_title"
+                                       style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;"
+                                       placeholder="请输入标题" value="日期">
+                            </div>
+                        </div>
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">必填</span>
+                                <div class="radio-inline"><input checked type="radio" class="magic-radio"
+                                                                 name="this_time_one_empty" value="false"
+                                                                 id="this_time_one_empty1"><label
+                                        for="this_time_one_empty1">否</label></div>
+                                <div class="radio-inline"><input type="radio" class="magic-radio"
+                                                                 name="this_time_one_empty" value="true"
+                                                                 id="this_time_one_empty2"><label
+                                        for="this_time_one_empty2">是</label></div>
+                            </div>
+                        </div>
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">默认</span>
+                                <input type="text"
+                                       onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',onpicking:this_time_one_def})"
+                                       class="es-input data-bind" id="id_this_time_one_def"
+                                       style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;"
+                                       value="">
+                            </div>
+                        </div>
+                        <div class="form-label">区间设置</div>
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">开始</span>
+                                <input type="text"
+                                       onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',onpicking:this_time_one_star})"
+                                       class="es-input data-bind" id="id_this_time_one_star"
+                                       style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;"
+                                       value="">
+                            </div>
+                            <div class="item-inner"><span class="labeltext">结束</span>
+                                <input type="text"
+                                       onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',onpicking:this_time_one_end})"
+                                       class="es-input data-bind" id="id_this_time_one_end"
+                                       style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;"
+                                       value="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 日期范围 -->
+            <div class="form_edit" data-type="7" id="form_edit_time_two" style="display: none;">
+                <div class="form-item item_tit">
+                    <span>日期范围</span>
+                </div>
+                <div>
+                    <div class="form-item noborder" style="display: block;background:#f7f9fd;border-radius:6px;">
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">标题</span>
+                                <input type="text" oninput="this_time_two_title(this.value)" class="es-input data-bind"
+                                       id="id_this_time_two_title"
+                                       style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;"
+                                       placeholder="请输入标题" value="日期范围">
+                            </div>
+                        </div>
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">必填</span>
+                                <div class="radio-inline"><input checked type="radio" class="magic-radio"
+                                                                 name="this_time_tow_empty" value="false"
+                                                                 id="this_time_tow_empty1"><label
+                                        for="this_time_tow_empty1">否</label></div>
+                                <div class="radio-inline"><input type="radio" class="magic-radio"
+                                                                 name="this_time_tow_empty" value="true"
+                                                                 id="this_time_tow_empty2"><label
+                                        for="this_time_tow_empty2">是</label></div>
+                            </div>
+                        </div>
+                        <div class="form-label">默认区间</div>
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">开始</span>
+                                <input type="text"
+                                       onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',onpicking:this_time_tow_def1})"
+                                       class="es-input data-bind" id="id_this_time_tow_def1"
+                                       style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;"
+                                       value="">
+                            </div>
+                            <div class="item-inner"><span class="labeltext">结束</span>
+                                <input type="text"
+                                       onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',onpicking:this_time_tow_def2})"
+                                       class="es-input data-bind" id="id_this_time_tow_def2"
+                                       style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;"
+                                       value="">
+                            </div>
+                        </div>
+                        <div class="form-label">规定区间</div>
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">开始</span>
+                                <input type="text"
+                                       onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',onpicking:this_time_tow_star})"
+                                       class="es-input data-bind" id="id_this_time_tow_star"
+                                       style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;"
+                                       value="">
+                            </div>
+                            <div class="item-inner"><span class="labeltext">结束</span>
+                                <input type="text"
+                                       onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',onpicking:this_time_tow_end})"
+                                       class="es-input data-bind" id="id_this_time_tow_end"
+                                       style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;"
+                                       value="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 城市选择 -->
+            <div class="form_edit" data-type="8" id="form_edit_region" style="display: none;">
+                <div class="form-item item_tit">
+                    <span>省市县选择</span>
+                </div>
+                <div>
+                    <div class="form-item noborder" style="display: block;background:#f7f9fd;border-radius:6px;">
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">标题</span>
+                                <input type="text" oninput="this_region_title(this.value)" class="es-input data-bind"
+                                       id="id_this_region_title"
+                                       style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;"
+                                       placeholder="请输入标题" value="地区">
+                            </div>
+                        </div>
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">必填</span>
+                                <div class="radio-inline"><input checked type="radio" class="magic-radio"
+                                                                 name="this_region_empty" value="false"
+                                                                 id="this_region_empty1"><label
+                                        for="this_region_empty1">否</label></div>
+                                <div class="radio-inline"><input type="radio" class="magic-radio"
+                                                                 name="this_region_empty" value="true"
+                                                                 id="this_region_empty2"><label
+                                        for="this_region_empty2">是</label></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 单图上传 -->
+            <div class="form_edit" data-type="9" id="form_edit_pic" style="display: none;">
+                <div class="form-item item_tit">
+                    <span>单图上传</span>
+                </div>
+                <div>
+                    <div class="form-item noborder" style="display: block;background:#f7f9fd;border-radius:6px;">
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">标题</span>
+                                <input type="text" oninput="this_pic_title(this.value)" class="es-input data-bind"
+                                       id="id_this_pic_title"
+                                       style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;"
+                                       placeholder="请输入标题" value="Logo">
+                            </div>
+                        </div>
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">必填</span>
+                                <div class="radio-inline"><input checked type="radio" class="magic-radio"
+                                                                 name="this_pic_empty" value="false"
+                                                                 id="this_pic_empty1"><label
+                                        for="this_pic_empty1">否</label></div>
+                                <div class="radio-inline"><input type="radio" class="magic-radio" name="this_pic_empty"
+                                                                 value="true" id="this_pic_empty2"><label
+                                        for="this_pic_empty2">是</label></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 多图上传 -->
+            <div class="form_edit" data-type="10" id="form_edit_pic_arr" style="display: none;">
+                <div class="form-item item_tit">
+                    <span>多图上传</span>
+                </div>
+                <div>
+                    <div class="form-item noborder" style="display: block;background:#f7f9fd;border-radius:6px;">
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">标题</span>
+                                <input type="text" oninput="this_pic_arr_title(this.value)" class="es-input data-bind"
+                                       id="id_this_pic_arr_title"
+                                       style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;"
+                                       placeholder="请输入标题" value="商品图片">
+                            </div>
+                        </div>
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">必填</span>
+                                <div class="radio-inline"><input checked type="radio" class="magic-radio"
+                                                                 name="this_pic_arr_empty" value="false"
+                                                                 id="this_pic_arr_empty1"><label
+                                        for="this_pic_arr_empty1">否</label></div>
+                                <div class="radio-inline"><input type="radio" class="magic-radio"
+                                                                 name="this_pic_arr_empty" value="true"
+                                                                 id="this_pic_arr_empty2"><label
+                                        for="this_pic_arr_empty2">是</label></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 按钮 -->
+            <div class="form_edit" data-type="11" id="form_button" style="display: none;">
+                <div class="form-item item_tit">
+                    <span>按钮设置</span>
+                </div>
+                <div>
+                    <div class="form-item noborder" style="display: block;background:#f7f9fd;border-radius:6px;">
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">文字</span>
+                                <input type="text" oninput="this_button_title(this.value)" class="es-input data-bind"
+                                       id="id_this_button_title"
+                                       style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;"
+                                       placeholder="请输入文字" value="提交">
+                            </div>
+                        </div>
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">背景</span>
+                                <input type="color" oninput="this_button_bg(this.value)" value="#dedede"
+                                       class="es-input data-bind" id="id_this_button_bg"
+                                       style="cursor: pointer;text-align: left;">
+                            </div>
+                        </div>
+                        <div class="form-item ">
+                            <div class="item-inner"><span class="labeltext">文字颜色</span>
+                                <input type="color" oninput="this_button_color(this.value)" value="#646464"
+                                       class="es-input data-bind" id="id_this_button_color"
+                                       style="cursor: pointer; text-align: left;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="goods_select_id" value="">
+<script src="/public/menu/js/jquery.artdialog.js"></script>
+<script src="/public/menu/js/iframetools.js"></script>
+<script src="/public/menu/js/index_component_my.js"></script>
+<script src="/public/menu/js/index_my_form.js"></script>
+<script src="/public/menu/js/jquery.gridly.js" type="text/javascript"></script>
+<div style="display: none; position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; cursor: move; opacity: 0; background: rgb(255, 255, 255) none repeat scroll 0% 0%;"></div>
+</body>
+{/block}

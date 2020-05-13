@@ -1,0 +1,120 @@
+{extend name="base"/}
+{block name="main"}
+<article class="cl pd-20">
+	<h3 id="dont_touch_this"></h3>
+	<div class="n_tab_line">
+		<a href="{:url('goods/goods_label')}" class="n_tab_list02">标签列表</a>
+		<a href="{:url('goods/goods_label_add')}" class="n_tab_add02">添加标签</a>
+		<a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a>
+		<div class="cl"></div>
+	</div>
+	<form action="" method="post" class="form form-horizontal" id="">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>标签名称：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="" placeholder="标签名称" class="input-text" id="label_name" name="label_name">
+				<p class="error">请输入标签名称</p>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">标签排序：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="0" placeholder="标签名称" class="input-text" id="sort" name="sort">
+				<p class="error">请输入标签名称</p>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">标签图片：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+					<p style="height: 165px;width:165px;border: dashed 1px #e5e5e5">
+						<img src="" alt="" id="imglabel_pic" class="thumbnail">
+					</p>
+				<div class="upload-btn">
+				<span>
+					<input name="file_upload" style="display: none" id="uploadImg" type="file" onchange="imgUpload(this);">
+					<input type="hidden" value="" id="label_pic" />
+				</span>
+					<input class="btn radius btn-secondary" onclick="on_upload()" type="button" value="上传图片">
+				</div>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<input class="btn btn-primary radius" onclick="addSuppAjax()" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+			</div>
+		</div>
+	</form>
+</article>
+{/block}
+{block name="script"}
+<script src="/static/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="/static/js/file_upload.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function(){
+	$('.skin-minimal input').iCheck({
+		checkboxClass: 'icheckbox-blue',
+		radioClass: 'iradio-blue',
+		increaseArea: '20%'
+	});
+});
+function on_upload() {
+	$("#uploadImg").click();
+}
+//模块输入信息验证
+function verify() {
+    var label_name = $("#label_name").val();
+    if (label_name == '') {
+        $("#label_name").next().show();
+        return false;
+    } else {
+        $(".error").hide();
+    }
+    return true;
+}
+var flag = false;//防止重复提交
+//添加用户
+function addSuppAjax() {
+    var label_name = $("#label_name").val();
+    var sort = $("#sort").val();
+    var label_pic=$("#label_pic").val();
+    if(verify() && !flag){
+        flag = true;
+        $.ajax({
+            type : "post",
+            url : "{:url('goods/goods_label_add')}",
+            data : {
+                'label_name' : label_name,
+                'sort' : sort,
+                'label_pic' : label_pic,
+            },
+            success : function(data) {
+                if(data['code']>0){
+                    layer.msg('添加成功!',{icon:1,time:1000},function () {
+                        window.location.href="{:url('goods/goods_label')}";
+                    });
+                }
+                else{
+                    flag = false;
+                    layer.msg(data['message'],{icon:5,time:1000});
+                }
+            }
+        });
+    }
+}
+//供货商图片上传
+function imgUpload(event) {
+    var fileid = $(event).attr("id");
+    var str = $(event).next().attr("id");
+    var data = { 'file_path' : "upload/label/" };
+    uploadFile(fileid,data,function(res){
+        if(res.code){
+            $("#img"+str).attr("src",res.data);
+            $("#"+str).val(res.data);
+            layer.msg(res.message,{icon:1,time:1000});
+        }else{
+            layer.msg(res.message,{icon:1,time:1000});
+        }
+    });
+}
+</script>
+{/block}

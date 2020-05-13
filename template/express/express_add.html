@@ -1,0 +1,181 @@
+{include file="demo"}
+<link rel="stylesheet" type="text/css" href="/public/css/defau.css">
+<style>
+	input[type="checkbox"] + label::before {
+		content: "\a0";  /*不换行空格*/
+		display: inline-block;
+		vertical-align: .2em;
+		height: 18px;
+		width: 18px;
+		font-size: 22px;
+		margin-right: .2em;
+		border-radius: .2em;
+		background-color: white;
+		border: 1px solid #93a1a1;
+		text-indent: .15em;
+		line-height: .65;  /*行高不加单位，子元素将继承数字乘以自身字体尺寸而非父元素行高*/
+	}
+	input[type="checkbox"]:checked + label::before {
+		content: "\2714";
+		background-color:#00a0e9;
+		color: white;
+		height: 18px;
+		width: 18px;
+		font-size: 22px;
+	}
+	input[type="checkbox"] {
+		position: absolute;
+		clip: rect(0, 0, 0, 0);
+		cursor:pointer;
+	}
+</style>
+<article class="cl pd-20">
+	<form action="" method="post" class="form form-horizontal" id="">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>物流公司名称：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="" placeholder="物流公司名称" class="input-text" id="company_name" name="company_name">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">物流公司简称：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="" placeholder="物流公司简称" class="input-text" id="code" name="code"><br>
+				<i><span>若需查询物流状态则必填,同时要在商家信息设置AppCode,对应简称请查看：</span><a href="https://market.aliyun.com/products/56928004/cmapi021863.html?spm=5176.10695662.1996646101.searchclickresult.7609b8efxC86yh#sku=yuncode1586300000" target="_blank">简称</a></i>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>物流公司编号：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="" placeholder="物流公司编号" class="input-text" id="express_no" name="express_no">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">联系人电话：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="" class="input-text" placeholder="联系人电话" id="phone">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">快递公司图片：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+					<p style="height: 165px;width:165px;border: dashed 1px #e5e5e5">
+						<img src="" alt="" id="imgexpress_pic" class="thumbnail">
+					</p>
+				<div class="upload-btn">
+				<span>
+					<input type="hidden" value="" id="express_pic" />
+				</span>
+					<input onclick="select_img('1','zhu');" class="btn btn-default" type="button" value="选择图片">
+				</div>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">是否启用：</label>
+			<div class="formControls col-xs-8 col-sm-3">
+					<input type="checkbox" id="is_enabled" checked="checked">
+					<label for="is_enabled">&nbsp;</label>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">是否默认：</label>
+			<div class="formControls col-xs-8 col-sm-3">
+					<input type="checkbox" id="is_default">
+					<label for="is_default">&nbsp;</label>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<input class="btn btn-primary radius" onclick="addSuppAjax()" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+			</div>
+		</div>
+	</form>
+</article>
+<script src="/public/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="/public/js/file_upload.js" type="text/javascript"></script>
+<!--<script src="/public/menu/js/jquery.artdialog.js"></script>-->
+<!--<script src="/public/menu/js/iframetools.js"></script>-->
+<script type="text/javascript">
+//模块输入信息验证
+function verify() {
+    var company_name = $("#company_name").val();
+    var express_no = $("#express_no").val();
+    if (company_name == '') {
+        layer.msg('名称不能为空',{icon:5,time:1000});
+        return false;
+    }
+    if (express_no == '') {
+        layer.msg('编号不能为空',{icon:5,time:1000});
+        return false;
+    }
+    return true;
+}
+var flag = false;//防止重复提交
+//添加用户
+function addSuppAjax() {
+    var company_name = $("#company_name").val();
+    var express_no = $("#express_no").val();
+    var express_pic = $("#express_pic").val();
+    var phone = $("#phone").val();
+    var code = $("#code").val();
+    var is_default = 0;
+    if($("#is_enabled").prop("checked")){
+        var is_enabled = 1;
+    }else{
+        var is_enabled = 0;
+    }
+    if($("#is_default").prop("checked")){
+        is_default = 1;
+    }
+    if(verify() && !flag){
+        flag = true;
+        $.ajax({
+            type : "post",
+            url : "{:url('express/express_add')}",
+            data : {
+                'company_name' : company_name,
+                'express_no' : express_no,
+                'express_logo' : express_pic,
+                'phone' : phone,
+                'code' : code,
+                'is_enabled' : is_enabled,
+                'is_default':is_default
+            },
+            success : function(data) {
+                if(data['code']>0){
+                    layer.msg('添加成功!',{icon:1,time:1000},function () {
+                        layer.confirm('要设置运费模版吗？',
+						function(index){
+                            layer_close("__CONF_SITE__admin/express/freighttemplatelist&co_id="+data['code']);
+                        },
+						function (index) {
+                            layer_close("__CONF_SITE__admin/express/express_list");
+                        });
+                    });
+                }
+                else{
+                    flag = false;
+                    layer.msg(data['message'],{icon:5,time:1000});
+                }
+            }
+        });
+    }
+}
+function zhu_images(id,path) {
+    $("#express_pic").val(path);
+    $("#imgexpress_pic").attr('src',path);
+}
+function select_img(number,type) {
+    layer_open("我的图片001",'__CONF_SITE__admin/images/dialogalbumlist&number=' + number + '&type=' + type,900,620);
+//    art.dialog.open(('__CONF_SITE__admin/images/dialogalbumlist&number=' + number + '&type=' + type), {
+//        lock : true,
+//        title : "我的图片",
+//        width : 900,
+//        height:620,
+//        drag : false,
+//        background : "#000000",
+//        scrollbar:false,
+//    }, true);
+}
+</script>
+</html>

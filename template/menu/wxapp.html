@@ -1,0 +1,61 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+            <div class="tabBar clearfix">
+                <span onclick="load_page('__CONF_SITE__admin/config/WAppPay')">小程序管理</span>
+                <span class="current">小程序页面</span>
+                <span onclick="load_page('__CONF_SITE__admin/Menu/user_center')">会员中心</span>
+                <span onclick="load_page('__CONF_SITE__admin/config/wxrefund')">微信退款设置</span>
+            </div>
+        </div>
+        <div>
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-bg table-hover table-sort">
+                    <thead>
+                    <tr class="text-c">
+                        <th>名称</th>
+                        <th>页面路径</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    {volist name="data" id="r" key="k"}
+                    <tr class="text-c va-m">
+                        <td>
+                           {$r['title']}
+                        </td>
+                        <td>{$r['path']}</td>
+                        <td>
+                            <a style="text-decoration:none;" title="复制" href="javascript:void(0);" onclick="copy_now('wxpath{$k}')" id="wxpath{$k}" data-clipboard-text="{$r['path']}">复制链接</a>
+                        </td>
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        </article>
+    </div>
+        {/block}
+        {block name="script"}
+<script>
+    function copy_now(id) {
+        id='#'+id;
+        var check=$(id).attr('data-clipboard-text');
+        if(check.length<=0){
+            layer.msg("链接信息有误", {icon: 2, time: 1000});
+            return false;
+        }
+        var clipboard=new Clipboard(id);
+        clipboard.on('success',function(e){
+            layer.msg("链接复制成功", {icon: 1, time: 500});
+        });
+        clipboard.on('error', function(e) {
+            layer.msg("链接信息有误", {icon: 2, time: 1000});
+        });
+    }
+</script>
+        {/block}

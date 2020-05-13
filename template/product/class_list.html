@@ -1,0 +1,125 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+            <div class="tabBar clearfix">
+                <span onclick="load_page('__CONF_SITE__admin/product/index')">产品列表</span>
+                <span class="current">产品分类</span>
+                <div onclick="layer_open('添加产品分类','__CONF_SITE__admin/product/add_class','1000px','800px')"  class="n_tab_add"><i class="Hui-iconfont">&#xe600;</i>添加产品分类</div>
+            </div>
+        </div>
+        <div>
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-bg table-hover table-sort">
+                    <thead>
+                    <tr class="text-c">
+                        <th>排序</th>
+                        <th>分类名称</th>
+                        <th>分类图标</th>
+                        <th>创建时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {foreach name="$list" item="v1"}
+                    <tr class="pid_0" style="height: 30px;">
+                        <td style="text-align: center;">
+                            <input style="width: 60px;" type="number" class="sort input-common" data-id="{$v1['id']}" name="sort" value="{$v1['sort']}" size="1" >
+                        </td>
+                        <td style="text-align: center;">{$v1['name']}</td>
+                        <td style="text-align: center;">
+                            <img src="{$v1['img']}" onerror="this.src='/public/goods/img/default_goods_image_240.gif'" width="50px;">
+                        </td>
+                        <td style="text-align: center;"> {:date('Y-m-d H:i:s',$v1['create_time'])} </td>
+                        <td style="text-align: center;">
+                            <a style="text-decoration:none;" class="show_layer" title="编辑" onclick="goods_cate_edit('分类编辑','__CONF_SITE__admin/product/add_class&id={$v1.id}','1000','800')" href="javascript:;">
+                                编辑
+                            </a>
+                            <a style="text-decoration:none;" title="删除"  class="caozuo" href="javascript:void(0);" onclick="class_del({$v1['id']})">
+                                删除
+                            </a>
+                        </td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+                <div class="n_page_no">
+                </div>
+            </div>
+        </div>
+        {/block}
+        {block name="script"}
+        <script type="text/javascript">
+            function tab_switch(module_id){
+                if($(".pid_"+module_id).css('display') != 'none'){
+                    $(".tab_jian_"+module_id).hide();
+                    $(".tab_jia_"+module_id).show();
+                    $(".pid_"+module_id).hide(300);
+                }else{
+                    $(".tab_jian_"+module_id).show();
+                    $(".tab_jia_"+module_id).hide();
+                    $(".pid_"+module_id).show(500);
+                }
+            }
+            /*分类-添加*/
+            function article_class_add(title,url,w,h){
+                layer.open({
+                    type: 2,
+                    area: [w, h],
+                    fix: false, //不固定
+                    maxmin: true,
+                    shade:0.4,
+                    title: title,
+                    content: url,
+                    scrollbar:false
+                });
+            }
+            /*分类-编辑*/
+            /*分类-编辑*/
+            function goods_cate_edit(title,url,w,h){
+                layer_show(title,url,w,h);
+            }
+            /*分类-删除*/
+            function class_del(id){
+                layer.confirm('确认要删除吗？',function(index){
+                    $.ajax({
+                        type : "post",
+                        url : "{:url('admin/product/del_class')}",
+                        data : {
+                            "id" : id,
+                        },
+                        success : function(data) {
+                            if(data['code'] > 0){
+                                layer.msg('删除成功', {icon: 1, time: 1000},function () {
+                                    window.location.reload();
+                                });
+                            }else {
+                                layer.msg(data.message, {icon: 2, time: 1000});
+                            }
+                        }
+                    })
+                });
+            }
+            $("input[name=sort]").change(function(){
+                var id = $(this).data("id");
+                var sort = $(this).val().trim();
+                $.ajax({
+                    type:"post",
+                    url:"{:url('product/class_sort')}",
+                    data:{'id':id,'sort':sort},
+                    dataType:"json",
+                    success: function (data) {
+                        if(data.code>0){
+                            layer.msg('操作成功', {icon: 1, time: 1000},function () {
+                                window.location.reload();
+                            });
+                        }else{
+                            layer.msg('操作失败', {icon: 2, time: 1000});
+                        }
+                    }
+                });
+            });
+        </script>
+        {/block}

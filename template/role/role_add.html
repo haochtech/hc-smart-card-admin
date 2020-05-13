@@ -1,0 +1,191 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="/public/static/h-ui-{$skin}/css/H-ui.min.css" />
+    <link rel="stylesheet" href="/public/static/h-ui-{$skin}/css/H-ui.admin.css"/>
+    <style>
+        .permission-list>dd>dl>dd {
+            margin-left: 80px;
+            display: flex;
+            flex-direction: column;
+            width: 200px;
+            line-height: 27px;
+        }
+    </style>
+    <script src="/public/js/all.js"></script>
+
+</head>
+<body>
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <form action="" method="post" class="form form-horizontal" id="form-admin-role-add">
+            <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>用户组名称：</label>
+                <div class="formControls col-xs-8 col-sm-9">
+                    <input type="text" class="input-text" value="" placeholder="" id="role_name" >
+                </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-3">描述：</label>
+                <div class="formControls col-xs-8 col-sm-9">
+                    <input type="text" class="input-text" value="" placeholder="" id="info">
+                </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-3">权限：</label>
+                <div class="formControls col-xs-8 col-sm-9">
+                    {foreach item="vo" name="list"}
+                    <dl class="permission-list">
+                        <dt>
+                            <label>
+                                <input type="checkbox" onclick="step_cut('{$vo.module_id}');" value="{$vo['module_id']}" name="user-Character" data-id="{$vo.module_id}">
+                                {$vo['module_name']}
+                            </label>
+                        </dt>
+                        <dd>
+                            {foreach item="per" name="vo['child']"}
+                            <dl class="cl permission-list2">
+                                <dt>
+                                    <label class="">
+                                        <input onclick="stub_cut('{$vo.module_id}','{$per.module_id}');" type="checkbox" value="{$per['module_id']}" name="user-Character" data-topid="{$vo.module_id}" data-id="{$per.module_id}">
+                                        {$per['module_name']}</label>
+                                </dt>
+                                <dd>
+                                    {foreach item="three" name="per['child']"}
+                                    <label class="">
+                                        <input onclick="three_cut('{$vo.module_id}','{$per.module_id}','{$three.module_id}');" data-topid="{$vo.module_id}" data-subid="{$per.module_id}" data-id="{$three.module_id}" type="checkbox" value="{$three['module_id']}" name="user-Character">
+                                        {$three['module_name']}</label>
+                                    {/foreach}
+                                </dd>
+                            </dl>
+                            {/foreach}
+                        </dd>
+                    </dl>
+                    {/foreach}
+                </div>
+            </div>
+            <div class="row cl">
+                <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                    <button type="button" onclick="add_RoleManage()" class="btn btn-success radius" id="admin-role-save" name="admin-role-save"><i class="icon-ok"></i> 确定</button>
+                </div>
+            </div>
+        </form>
+    </article>
+</div>
+<script src="/public/js/jquery-2.1.1.js"></script>
+<script src="/public/static/layer/2.4/layer.js"></script>
+<script type="text/javascript">
+    function step_cut(id) {
+        var topid = "input[data-id=" + id + "]";
+        var subid = "input[data-topid=" + id + "]";
+        if($(topid).prop('checked')){
+            $(subid).prop('checked',true);
+        }else{
+            $(subid).prop('checked',false);
+        }
+    }
+    function stub_cut(id,selfid) {
+        var topid = "input[data-id=" + id + "]";
+        var subid = "input[data-subid=" + selfid + "]";
+        var self = "input[data-id=" + selfid + "]";
+        if($(self).prop('checked')){
+            $(topid).prop('checked',true);
+            $(subid).prop('checked',true);
+        }else{
+            $(subid).prop('checked',false);
+            var tid = "input[data-topid=" + id + "]";
+            var i = 0;
+            $(tid).each(function () {
+                if($(this).prop('checked')){
+                    i++;
+                }
+            });
+            if(i>0){
+                $(topid).prop('checked',true);
+            }else{
+                $(topid).prop('checked',false);
+            }
+        }
+    }
+    function three_cut(top,sub,three) {
+        var topid = "input[data-topid=" + top + "]";
+        var subid = "input[data-subid=" + sub + "]";
+        var self = "input[data-id=" + three + "]";
+        var i = 0;
+        $(subid).each(function () {
+            if($(this).prop('checked')){
+                i++;
+            }
+        });
+        var subck = "input[data-id=" + sub + "]";
+        if(i > 0)
+        {
+            $(subck).prop('checked',true);
+        }
+        else
+        {
+            $(subck).prop('checked',false);
+        }
+        i = 0;
+        $(topid).each(function () {
+            if($(this).prop('checked')){
+                i++;
+            }
+        });
+        var topck = "input[data-id=" + top + "]";
+        if(i>0){
+            $(topck).prop('checked',true);
+        }else{
+            $(topck).prop('checked',false);
+        }
+    }
+    var lock = false;
+    //添加
+    function add_RoleManage() {
+        var di=[];
+        $("[name='user-Character']:checked").each(function(index,el){   //获取选中的值
+            di.push($(el).val());
+        });
+        var role_name=$("#role_name").val();
+        var info=$("#info").val();
+        if (role_name==''){
+            layer.msg('请输入用户组名称！',{icon:5,time:1000});
+            return false;
+        }
+          if (di.length==0){
+              layer.msg('请选择权限！',{icon:5,time:1000});
+              return false;
+          }
+          var str='';
+          for(var i=0;i<di.length;i++){
+              str+=di[i]+",";
+          }
+          str= str.substr(0, str.length - 1);
+        if(!lock){
+            lock = true;
+            $.ajax({
+                url : "{:url('role/role_add_do')}",
+                type : "post",
+                data : {
+                    "role_name" : role_name,
+                    "info" : info,
+                    "str":str
+                },
+                success : function(res) {
+                    if(res['code']>0){
+                        layer.msg('添加成功!',{icon:1,time:1000},function () {
+                            layer_close("__CONF_SITE__admin/Role/index");
+                        });
+                    }
+                    else{
+                        layer.msg('添加失败！',{icon:5,time:1000});
+                        lock = false;
+                    }
+                }
+            })
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <div class="n_tab_line">
+            <a href="" class="n_tab_list">分类管理</a>
+            <div class="l n_tab_add" style="width: auto">
+                <button type="button" class="btn btn-search radius" onclick="assort_add()"><i class="Hui-iconfont">&#xe600;</i>
+                    添加分类
+                </button>
+            </div>
+        </div>
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+            <form class="Huiform" method="post" action="__CONF_SITE__admin/reserve/assort" style=" padding: 15px;">
+                <div class="text-c">
+                    <input type="text" class="input-text" value="{$soname}" style="width:250px" placeholder="输入分类"
+                           name="soname">
+                    <button type="submit" class="btn btn-search radius" name=""><i class="Hui-iconfont">&#xe665;</i>
+                        搜索分类
+                    </button>
+                </div>
+            </form>
+        </div>
+        <table class="table table-border table-bordered table-bg">
+            <thead>
+            <tr class="text-c">
+                <th>分类名称</th>
+                <th>Logo</th>
+                <th>更新时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="vo"}
+            <tr class="text-c">
+                <td>{$vo.name}</td>
+                <td>
+                    <img src="{$vo.logo}" style="width: 50px;height: 50px;">
+                </td>
+                <td>
+                    {$vo.time|date='Y-m-d H:i:s',###}
+                </td>
+                <td>
+                    <a title="编辑" href="javascript:;" onclick="assort_edit('{$vo.id}')" class="ml-5"
+                       style="text-decoration:none">编辑</a>
+                    <a title="删除" href="javascript:;" onclick="assort_del('{$vo.id}')" class="ml-5"
+                       style="text-decoration:none">删除</a>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </article>
+    <div class="n_page_no">
+        {$list->render()}
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript" src="/public/js/jquery-2.1.1.js"></script>
+<script type="text/javascript">
+    function assort_add() {
+        layer.open({
+            type: 2,
+            area: ['900px', '600px'],
+            fix: false, //不固定
+            maxmin: true,
+            shade: 0.4,
+            title: '添加分类',
+            content: '__CONF_SITE__admin/reserve/assort_add',
+            scrollbar: false,
+            shadeClose: true,
+        });
+    }
+    function assort_edit(id) {
+        layer.open({
+            type: 2,
+            area: ['900px', '700px'],
+            fix: false, //不固定
+            maxmin: true,
+            shade: 0.4,
+            title: '编辑分类',
+            content: '__CONF_SITE__admin/reserve/assort_edit&id=' + id,
+            scrollbar: false,
+            shadeClose: true,
+        });
+    }
+    var lock = false;
+    function assort_del(id) {
+        if (!lock) {
+            layer.confirm('确认要删除吗？', function (index) {
+                lock = true;
+                $.ajax({
+                    type: "post",
+                    url: "__CONF_SITE__admin/reserve/assort_del",
+                    data: {'id': id},
+                    success: function (data) {
+                        if (data['code'] > 0) {
+                            layer.msg('删除成功', {icon: 1, time: 1000}, function () {
+                                location.reload();
+                            });
+                        } else {
+                            layer.msg('删除失败', {icon: 5, time: 1000});
+                            lock = false;
+                        }
+                    }
+                });
+            });
+        }
+    }
+</script>
+{/block}

@@ -1,0 +1,177 @@
+{include file="demo"}
+<style type="text/css">
+	.error {padding-left: 5px !important;}
+	.table{width:100%;display:table;border-left: 1px dotted #e5e5e5;border-right: 1px dotted #e5e5e5;border-bottom: 1px dotted #e5e5e5;background: rgba(204, 204, 204, 0.09);}
+	.table-body{min-height:50px;max-height:410px;overflow-y:auto;overflow-x:hidden;}
+	.inline-block{display:inline-block;}
+	.w5{width:5%;}
+	.w75{width:15%;}
+	.w19{width:10%;text-align:center;}
+	.w100{width:100% !important;height: 40px;line-height: 40px;border-bottom: 1px dotted #e5e5e5;}
+	input{vertical-align: initial;}
+	.table input[type="text"], input[type="password"], input.text, input.password {font: 12px/20px Arial;color: #777;background-color: #FFF;vertical-align: baseline;margin-bottom:0px;}
+	.set-style dl dt {text-align:left;width: 7%;}
+	.attr-choose-wrap label, .relate-norm label {cursor: pointer;float: left;margin: 0 15px 10px 0;padding: 0 10px;color: #636363;line-height: 28px;}
+	.attr-choose-wrap label.current, .relate-norm label.current {color: #636363;background: url(../images/icon_choose.gif) no-repeat right bottom;}
+	.w140{width:140px;white-space:nowrap; overflow:hidden; text-overflow:ellipsis;padding:0;height:23px;line-height:26px;}
+	input[type="checkbox"] + label::before {
+		content: "\a0";  /*不换行空格*/
+		display: inline-block;
+		vertical-align: .2em;
+		height: 18px;
+		width: 18px;
+		font-size: 22px;
+		margin-right: .2em;
+		border-radius: .2em;
+		background-color: white;
+		border: 1px solid #93a1a1;
+		text-indent: .15em;
+		line-height: .65;  /*行高不加单位，子元素将继承数字乘以自身字体尺寸而非父元素行高*/
+	}
+	input[type="checkbox"]:checked + label::before {
+		content: "\2714";
+		background-color:#00a0e9;
+		color: white;
+		height: 18px;
+		width: 18px;
+		font-size: 22px;
+	}
+	input[type="checkbox"] {
+		position: absolute;
+		clip: rect(0, 0, 0, 0);
+		cursor:pointer;
+	}
+</style>
+<body>
+<article class="cl pd-20">
+	<form action="" method="post" class="form form-horizontal" id="">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>属性名称：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="" placeholder="属性名称" class="input-text" id="attr_name">
+				<p class="error">请输入属性名称</p>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>属性排序：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="0" placeholder="类型排序" class="input-text" id="sort">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">是否启用：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+					<input type="checkbox" id="is_visible" checked="checked">
+					<label for="is_visible">&nbsp;</label>
+			</div>
+		</div>
+		<div style="width: auto;height: auto" id="att">
+			<div class="row cl">
+				<div class="w100" style="border-bottom: 0px;">
+					<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>属性值：</label>
+					<div class="formControls col-xs-8 col-sm-9 spec_data">
+						<input style="width: 300px;" type="text" autocomplete="off" value="" placeholder="" class="input-text" name="attr_value" id="attr_value">
+						<div class="inline-block w19"><a style="color: #00a2d4" href="javascript:;" onclick="delSpecValue(this)">删除</a></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"></label>
+			<div class="formControls col-xs-8 col-sm-3">
+				<a href="javascript:;" onclick="addSpecValue(this)"><i class="Hui-iconfont">&#xe600;</i>添加一个属性值</a>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<input class="btn btn-primary radius" onclick="addGoodsAttribute()" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+			</div>
+		</div>
+	</form>
+</article>
+<input type="hidden" value="" id="aaaaa">
+<script type="text/javascript">
+$(function(){
+	$('.skin-minimal input').iCheck({
+		checkboxClass: 'icheckbox-blue',
+		radioClass: 'iradio-blue',
+		increaseArea: '20%'
+	});
+});
+//添加一个属性
+function addSpecValue(e){
+    var html= '<div class="row cl">';
+    html+= '<div class="w100" style="border-bottom: 0px;">';
+    html+='	<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>属性值：</label>';
+    html+='<div class="formControls col-xs-8 col-sm-9 spec_data">';
+    html+='<input  style="width: 300px;" type="text" autocomplete="off" value="" placeholder="" class="input-text" name="attr_value" id="attr_value">';
+    html+='<div class="inline-block w19"><a style="color: #00a2d4" href="javascript:;" onclick="delSpecValue(this)">删除</a></div>';
+    html+='</div>';
+    html+='</div>';
+    html+='</div>';
+    $("#att").append(html);
+}
+//删除一条
+function delSpecValue(e){
+	$(e).parents('.w100').remove();
+}
+var flag = false;//防止重复提交
+function addGoodsAttribute() {
+    var attr_name = $("#attr_name").val();
+    var cate_id = $("#cate_id").val();
+    if(attr_name == ''){
+        $("#attr_name").focus();
+        layer.msg('属性名称不能为空', {icon: 2, time: 1000});
+        return false;
+    }
+//    if(cate_id == '-1'){
+//        layer.msg('请选择商品分类', {icon: 2, time: 1000});
+//        return false;
+//    }
+    var sort = $("#sort").val();
+    if ($("#is_visible").prop("checked")) {
+        var is_visible = 1;
+    } else {
+        var is_visible = 0;
+    }
+    var attr_value_obj = $("input[name='attr_value']");
+    var attr_value_str = '';
+    attr_value_obj.each(function(i){
+        if(attr_value_obj.eq(i).val() != ''){
+            attr_value_str += ',' + attr_value_obj.eq(i).val();
+        }
+    });
+    attr_value_str = attr_value_str.substr(1);
+    if(attr_value_str == ''){
+        layer.msg('属性值不能为空', {icon: 2, time: 1000});
+        return false;
+    }
+    if(flag){
+        return;
+    }
+    flag = true;
+    $.ajax({
+        type : "post",
+        url : "{:url('goods/attribute_add')}",
+        data : {
+            'attr_name' : attr_name,
+            'sort' : sort,
+            'is_visible' : is_visible,
+            'attr_value_str' : attr_value_str,
+			'cate_id':cate_id
+        },
+        success : function(data) {
+            if (data["code"] > 0) {
+                layer.msg('添加成功!',{icon:1,time:1000},function () {
+                    layer_close("{:url('goods/attributelist')}");
+                });
+            } else {
+                layer.msg(data['message'],{icon:5,time:1000});
+                flag = false;
+            }
+        }
+    });
+}
+</script>
+</body>
+</html>

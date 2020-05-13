@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="/public/static/h-ui-{$skin}/css/style.css?v=1.4" />
+    <link media="all" href="/public/menu/css/article.css?v=1.0" type="text/css" rel="stylesheet">
+    <style>
+        td a:hover {background-color: rgb(26, 173, 23);color:#fff;border:1px solid rgb(26, 173, 23);}
+    </style>
+
+</head>
+<body style="background-color: rgb(255, 255, 255);">
+<div class="jbox-container" style="float: left; padding: 0px;padding-bottom: 100px;">
+    <ul class="gagp-goodslist" style="padding: 10px; width: 880px;">
+        <table class="wxtables">
+            <!--<colgroup>-->
+                <!--<col width="5%"><col width="30%"><col width="35%"><col width="15%"><col width="10%">-->
+            <!--</colgroup>-->
+            <thead>
+            <tr style="background-color: rgb(13, 163, 249);">
+                <td>ID</td>
+                <td>页面名称</td>
+                <td>页面类型</td>
+                <td>创建时间</td>
+                <td style="text-align: center;">操作</td>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="vo" key='k'}
+            <tr>
+                <td><p>{$k}</p></td>
+                <td>{$vo.name}</td>
+                <td>
+                    {if $vo.page_type==1}
+                    小程序
+                    {elseif $vo.page_type==2}
+                    H5页面
+                    {else}
+                    默认
+                    {/if}
+                </td>
+                <td>
+                    {:date("Y-m-d H:i:s",$vo["create_time"])}
+                </td>
+                <td style="text-align: center;">
+                    {if $k==$now}
+                    <a style="border-radius: 2px;" class="btn selectedb" data-a="{$vo.id}" data-b="{$vo.name}">已选择</a>
+                    {else}
+                    <a style="border-radius: 2px;" class="btn selecta" data-a="{$vo.id}" data-b="{$vo.name}">选择</a>
+                    {/if}
+                </td>
+            </tr>
+            {/volist}
+            <input type="hidden" id="old_id" value="{$value}">
+            <input type="hidden" id="old_name" value="{$name}">
+            <input type="hidden" id="key" value="{$ids}">
+            </tbody>
+        </table>
+    </ul>
+</div>
+<div style="height: 80px;">&emsp;</div>
+<div class="sel_fun_opt" style="position: fixed; bottom: 0px;background: #fff;height: 60px;width:100%;border-top:1px solid #eeeeee;padding-top:20px;">
+    <div class="sure" onclick="">确定</div>
+    <div class="cancel" onclick="">返回</div>
+</div>
+<script type="text/javascript" src="/public/js/jquery-2.1.1.js"></script>
+<script type="text/javascript" src="/public/static/layer/2.4/layer.js"></script>
+<script type="text/javascript">
+    var old_id=$("#old_id").val();
+    var nid='';
+    var key=$("#key").val();
+    var na=$("#old_name").val();
+    $(".btn").click(function(){
+        $(".btn").removeClass('selectedb');
+        $(".btn").html('选择');
+        $(this).addClass('selectedb');
+        $(this).html('已选择');
+        nid=$(this).attr("data-a");
+        na=$(this).attr("data-b");
+    });
+    $(".sure").click(function(){
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.pickrsve2(old_id,nid,na);
+        parent.layer.close(index);
+    })
+    $(".cancel").click(function(){
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);
+    });
+</script>
+</body>
+</html>

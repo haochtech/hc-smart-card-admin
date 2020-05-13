@@ -1,0 +1,201 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="/public/static/h-ui-{$skin}/css/H-ui.min.css" />
+    <script src="/public/js/jquery-2.1.1.js"></script>
+    <script src="/public/js/all.js"></script>
+</head>
+
+<body>
+<article class="cl pd-20">
+    <form action="" method="post" class="form form-horizontal" id="">
+        <input type="hidden" value="{$attr_mod_info['attr_id']}" id="attr_mod_id">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>分类名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" value="{$attr_mod_info['attr_name']}" placeholder="分类名称" class="input-text" id="attr_name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>排序：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" value="{$attr_mod_info['sort']}" placeholder="排序" class="input-text" id="sort">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">是否启用：</label>
+            <div class="formControls col-xs-8 col-sm-9 skin-minimal">
+                <div class="check-box">
+                    <input type="checkbox" {if condition="$attr_mod_info.is_use==1"} checked {/if} id="is_use">
+                    <label for="is_use">&nbsp;</label>
+                </div>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>关联规格：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                {volist name="spec_list" id="s"}
+                <dl class="permission-list">
+                    <dt>
+                        <?php $num=0; ?>
+                        {foreach name="attr_mod_info['spec_id_array']" item="mod"}
+                        {if $mod==$s.spec_id}
+                            <label>
+                                <input type="checkbox" {if condition="$mod==$s.spec_id"} checked {/if} value="{$s['spec_id']}"  name="spec_id">
+                              {$s['spec_name']}
+                            </label>
+                        <?php $num++; ?>
+                        {/if}
+                        {/foreach}
+                        {if $num==0}
+                        <label>
+                            <input type="checkbox" value="{$s['spec_id']}"  name="spec_id">
+                            {$s['spec_name']}
+                        </label>
+                        {/if}
+                    </dt>
+                    {volist name="s['spec_value_list']" id="v"}
+                    <dd>
+                        <dl class="cl permission-list2">
+                            <dt>
+                                <label class="">
+                                    {$v['spec_value_name']}
+                                   </label>
+                            </dt>
+                        </dl>
+                    </dd>
+                    {/volist}
+                </dl>
+                {/volist}
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>关联属性：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                {volist name="attr_value" id="atv"}
+                <dl class="permission-list">
+                    <dt>
+                        <?php $num2=0; ?>
+                        {foreach name="attr_mod_info['attr_values']" item="val"}
+                        {if $val['attr_value_id']==$atv['attr_value_id']}
+                        <label>
+                            <input type="checkbox" {if condition="$val.attr_value_id=$atv.attr_value_id"} checked {/if} value="{$atv['attr_value_id']}" name="attr_value_id">
+                            {$atv['attr_value_name']}
+                        </label>
+                        <?php $num2++; ?>
+                        {/if}
+                        {/foreach}
+                        {if $num2==0}
+                        <label>
+                            <input type="checkbox" value="{$atv['attr_value_id']}"  name="attr_value_id">
+                            {$atv['attr_value_name']}
+                        </label>
+                        {/if}
+                    </dt>
+                    <dd>
+                        <dl class="cl permission-list2">
+                            <dt>
+                                <label class="">
+                                    {$atv['value']}
+                                </label>
+                            </dt>
+                        </dl>
+                    </dd>
+                </dl>
+                {/volist}
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" onclick="addSuppAjax()" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</article>
+<script type="text/javascript" src="/public/static/layer/2.4/layer.js"></script>
+<script type="text/javascript">
+    $(function(){
+        $('.skin-minimal input').iCheck({
+            checkboxClass: 'icheckbox-blue',
+            radioClass: 'iradio-blue',
+            increaseArea: '20%'
+        });
+    });
+    //模块输入信息验证
+    function verify(attr_name,sort) {
+        if (attr_name == '') {
+            layer.msg('请填写分类名称', {icon: 5, time: 1000});
+            return false;
+        }
+        if (sort == '') {
+            layer.msg('请填写排序', {icon: 5, time: 1000});
+            return false;
+        }
+        return true;
+    }
+    var flag = false;//防止重复提交
+    //提交
+    function addSuppAjax() {
+        var attr_mod_id = $("#attr_mod_id").val();
+        var attr_name = $("#attr_name").val();
+        var sort = $("#sort").val();
+        if($("#is_use").prop("checked")){
+            var is_use = 1;
+        }else{
+            var is_use = 0;
+        }
+        var spec_id = '';
+        $('input[name=spec_id]:checked').each(function() {
+            if (!isNaN($(this).val())) {
+                spec_id = $(this).val() + "," + spec_id;
+            }
+        });
+        if (spec_id == '') {
+            layer.msg('请选择关联规格', {icon: 5, time: 1000});
+            return false;
+        } else {
+            spec_id = spec_id.substring(0, spec_id.length - 1);
+        }
+        var attr_value_id = '';
+        $('input[name=attr_value_id]:checked').each(function() {
+            if (!isNaN($(this).val())) {
+                attr_value_id = $(this).val() + "," + attr_value_id;
+            }
+        });
+        if (attr_value_id == '') {
+            layer.msg('请选择关联属性', {icon: 5, time: 1000});
+            return false;
+        } else {
+            attr_value_id = attr_value_id.substring(0, attr_value_id.length - 1);
+        }
+        if(verify(attr_name,sort) && !flag){
+            flag = true;
+            $.ajax({
+                type : "post",
+                url : "{:url('goods/add_attr_mod')}",
+                data : {
+                    'attr_mod_id':attr_mod_id,
+                    'attr_name':attr_name,
+                    'sort':sort,
+                    'spec_id':spec_id,
+                    'attr_value_id':attr_value_id,
+                    'is_use':is_use
+                },
+                success : function(data) {
+                    if(data['code']>0){
+                        layer.msg('添加成功!',{icon:1,time:1000},function () {
+                            layer_close('__CONF_SITE__admin/goods/goods_attr_mod');
+                        });
+                    }
+                    else{
+                        flag = false;
+                        layer.msg(data['message'],{icon:5,time:1000});
+                    }
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>

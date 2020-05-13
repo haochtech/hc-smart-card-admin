@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="/public/static/h-ui-{$skin}/css/H-ui.min.css" />
+
+</head>
+<script src="/public/js/all.js"></script>
+<body>
+<div class="modal-body">
+   <textarea class="textarea radius" id="memo" placeholder="请填写备注信息">{$res}</textarea>
+    <div style="clear:both;"></div>
+</div>
+<div class="modal-footer">
+    <input type="hidden" id="order_id" value="{$order_id}">
+    <button class="btn btn-primary" onclick="addMemoAjax()">提交更改</button>
+    <button class="btn" onclick="shut_down()">关闭</button>
+</div>
+<script type="text/javascript" src="/public/js/jquery-2.1.1.js"></script>
+<script type="text/javascript" src="/public/static/layer/2.4/layer.js"></script>
+<script>
+    //关闭
+    function shut_down() {
+        parent.layer.closeAll();
+    }
+    //修改备注
+    function addMemoAjax(){
+        var order_id = $("#order_id").val();
+        var memo = $("#memo").val();
+        var re='{$re}';
+        $.ajax({
+            url: "{:url('order/addmemo')}",
+            data: { "order_id": order_id,"memo":memo },
+            type : "post",
+            success: function(data) {
+                if (data.code > 0) {
+                    layer.msg("添加成功", {icon: 1, time: 1000},function () {
+                        if(re=='o') {
+                            layer_close('__CONF_SITE__admin/Order/OrderList');
+                        }else {
+                            layer_close('__CONF_SITE__admin/Order/OrderList2');
+                        }
+                    });
+                }else{
+                    layer.msg("添加失败", {icon: 2, time: 1000});
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

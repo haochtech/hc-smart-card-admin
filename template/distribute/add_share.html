@@ -1,0 +1,147 @@
+{include file="demo"}
+<link rel="stylesheet" type="text/css" href="/public/css/defau.css">
+<style> input[type="checkbox"] + label::before { content: "\a0"; /*不换行空格*/ display: inline-block; vertical-align: .2em; height: 18px; width: 18px; font-size: 22px; margin-right: .2em; border-radius: .2em; background-color: white; border: 1px solid #93a1a1; text-indent: .15em; line-height: .65; /*行高不加单位，子元素将继承数字乘以自身字体尺寸而非父元素行高*/ } input[type="checkbox"]:checked + label::before { content: "\2714"; background-color: #00a0e9; color: white; height: 18px; width: 18px; font-size: 22px; } input[type="checkbox"] { position: absolute; clip: rect(0, 0, 0, 0); cursor: pointer; }
+</style>
+<article class="cl pd-20">
+    <div class="mt-20">
+        {if $share.level eq '0'}
+        <h4>当前未开启分销,如要使用,请从分销->基础设置中开启</h4>
+        {else/}
+        <div class="row cl" id="goods_chiose"
+             style="border-bottom: 1px solid #eee;padding-bottom: 15px;margin-left:0;margin-right:0;">
+            <label class="form-label col-xs-4 col-sm-3" style="width:20%;">
+                <div style="text-align: right;padding-right:60px;">选择商品</div>
+            </label>
+            <input type="hidden" id="goods_id" value="{$id}">
+            {if $id==0}
+            <div class="formControls col-xs-8 col-sm-9" style="width:80%;">
+                <input onclick="layer_open('选择商品','__CONF_SITE__admin/Bargain/returnGoodsList','800','600')"
+                       class="btn btn-default" type="button" value="选择商品">
+                <div id="goods_show" style="display: none">
+                    <div id="goods_name" style="line-height: 25px;padding-top: 10px;"></div>
+                    <div id="price" style="line-height: 25px;padding-bottom: 10px;"></div>
+                    <img src="" style="height: 200px;width: 200px;" id="goods_pic">
+                </div>
+            </div>
+            {else/}
+            <div class="formControls col-xs-8 col-sm-9">
+                <div>
+                    <div style="line-height: 25px;padding-top: 10px;">{$share['goods_name']}</div>
+                    <div style="line-height: 25px;padding-bottom: 10px;">{$share['price']}</div>
+                    <img src="{$share['img_cover']}" style="height: 200px;width: 200px;">
+                </div>
+            </div>
+            {/if}
+        </div>
+        <table class="table table-border table-bordered table-bg table-hover table-sort">
+            <tbody id="tbody">
+            <tr class="text-c">
+                <td style="text-align: right;width:15%;">佣金类型</td>
+                <td style="width:5%;"></td>
+                <td style="width:80%; text-align: left;">
+                    <input type="radio" value="0" name="type"
+                           id="radio0" <?php if($share['price_type']=='0') echo("checked");?>><label for="radio0">百分比&nbsp;&nbsp;&nbsp;</label>
+                    <input type="radio" value="1" name="type"
+                           id="radio1" <?php if($share['price_type']=='1') echo("checked");?>><label
+                        for="radio1">固定金额</label>
+                </td>
+            </tr>
+
+            <tr class="text-c">
+                <td style="text-align: right;width:15%;">一级佣金</td>
+                <td style="width:5%;">　</td>
+                <td style="width:80%; text-align: left;">
+                    <input type="text" value="{$share['first']|default='0.00'}" class="input-text" id="fprice">
+                    <span class="span_type">{$share['icon']}</span>
+                </td>
+            </tr>
+            {if $share['second'] != '-1'}
+            <tr class="text-c">
+                <td style="text-align: right;width:15%;">二级佣金</td>
+                <td style="width:5%;">　</td>
+                <td style="width:80%; text-align: left;">
+                    <input type="text" value="{$share['second']|default='0.00'}" class="input-text" id="sprice">
+                    <span class="span_type">{$share['icon']}</span>
+                </td>
+            </tr>
+            {/if}
+            {if $share['third'] != '-1'}
+            <tr class="text-c">
+                <td style="text-align: right;width:15%;">三级佣金</td>
+                <td style="width:5%;">　</td>
+                <td style="width:80%; text-align: left;">
+                    <input type="text" value="{$share['third']|default='0.00'}" class="input-text" id="tprice">
+                    <span class="span_type">{$share['icon']}</span>
+                </td>
+            </tr>
+            {/if}
+            </tbody>
+        </table>
+        <div class="row cl">
+            <div class="col-xs-5 col-sm-5"></div>
+            <div class="col-xs-7 col-sm-7">
+                <!--<input class="btn btn-primary radius" onclick="save_pay()" type="button"
+                       value="&nbsp;&nbsp;提交&nbsp;&nbsp;" style="padding:6px 12px;">-->
+                       <input class="btn btn-primary radius" onclick="save_pay()" type="button"
+                       value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+        {/if}
+    </div>
+</article>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('input[type=radio]').change(function () {
+            var s = $('input[type=radio]:checked').val();
+            if (s == '0') {
+                $(".span_type").html('%');
+            } else if (s == '1') {
+                $(".span_type").html('元');
+            }
+        });
+    });
+    function save_pay() {
+        var s = $('input[type=radio]:checked').val();
+        var id = $('#goods_id').val();
+        if (id && id > 0) {
+            $.ajax({
+                type: "post",
+                url: "{:url('distribute/share_pay')}",
+                data: {
+                    'price_type': s,
+                    'first': $('#fprice').val(),
+                    'second': $('#sprice').val(),
+                    'third': $('#tprice').val(),
+                    'goods_id': $('#goods_id').val(),
+                },
+                success: function (data) {
+                    if (data == 0) {
+                        layer.msg('保存成功!', {icon: 1, time: 1000}, function () {
+                            layer_close("__CONF_SITE__admin/distribute/index");
+                        });
+                    } else {
+                        flags = false;
+                        layer.msg('保存失败', {icon: 5, time: 1000});
+                    }
+                }
+            });
+        } else {
+            layer.msg('未选择商品', {icon: 5, time: 1000});
+        }
+
+    }
+    function select_normal_goods(goods_id) {
+        $.post("{:url('bargain/returnGoodsList')}", {goods_id: goods_id},
+            function (data) {
+                console.log(data)
+                if (data.message == '操作成功') {
+                    $("#goods_show").css({"display":"block"});
+                    $("#goods_id").val(data.code.goods_id);
+                    $("#goods_name").html(data.code.goods_name);
+                    $("#goods_pic").attr("src",data.code.img_cover);
+                    $("#price").html('单价：￥'+data.code.price);
+                }
+
+            }, "json");
+    }
+</script>

@@ -1,0 +1,1229 @@
+<div class="diypage-right" >
+    <!-- 会员中心cell -->
+    <div style="display: block;" v-if="now_type=='ucenter_cell'" class="form_edit">
+        <div class="form-item item_tit">
+            <span v-text="now_right_data.title"></span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="item">
+                <div class="item-inner">
+                    <div style="clear:both"></div>
+                    <div>
+                        <div style="width:200px;font-weight:bold;">名称</div>
+                        <div class="Fzkb_height mt10">
+                            <div class="minCell rangeCell-pureTextSize dib mt10" style="width:225px;">
+                                <input type="text" v-model="now_right_data.name" id="title" placeholder="请输入名称" class="es-input data-bind" style="cursor: text; border: 1px solid rgb(239, 239, 239); background: rgb(255, 255, 255); text-align: left;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 轮播图 -->
+    <div style="display: block;" v-if="now_type=='banner'" class="form_edit" data-type="banner">
+        <div class="form-item item_tit">
+            <span>轮播图</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="form-label">选择颜色</div>
+            <div class="form-item ">
+                <color name="焦点" flag="jiaodian_color"></color>
+                <color name="背景" flag="bg_color"></color>
+            </div>
+            <div class="form-label">显示焦点</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="radio-inline"><input type="radio" class="magic-radio"  name="componentLayouton" value="block" v-model="now_right_data.jiaodian_dots" id="banner_editlayout_1"><label for="banner_editlayout_1">显示</label></div>
+                    <div class="radio-inline"><input type="radio" class="magic-radio"  name="componentLayouton" value="none" v-model="now_right_data.jiaodian_dots" id="banner_editlayout_2"><label for="banner_editlayout_2">不显示</label></div>
+                </div>
+            </div>
+            <div class="form-label" style="padding-top:5px;">轮播图高度</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="Fzkb_height mt10">
+                        <div class="minCell rangeCell-pureTextSize dib" style="width:255px;">
+                            <input type="range" max="20" min="1" step="0.1" v-model="now_right_data.ly_height"  style="width:100%;">
+                            <div style="position:absolute;right:-35px;top:-8px;">
+                                <span v-text="now_right_data.ly_height * 10"></span>
+                                <span>%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="data-list ui-sortable  mt10" v-for="(item,index) in now_right_data.list">
+                <div class="item drag ui-sortable-handle" style="overflow: hidden; position: relative; opacity: 1; z-index: 0;" data-id="C01">
+                    <div class="item-prompt"> 建议尺寸750x360 <span class="deletechild icon-del"><img v-on:click="remove_img(index)" src="/public/menu/icon/del_icon.png" alt="删除"></span></div>
+                    <div class="es-uploader data-bind-image" data-bind="thumb" data-bind-child="C01" data-show-element="#picture-show-C01">
+                        <div class="imgbox es-selector noval"  v-on:click="select_img(index,item.this_type)">
+                            <img :src="item.imgurl" style="display:block;"/> </div>
+                    </div> <div class="item-inner"> <span class="labeltext">链接</span>
+                    <input  v-model="item.alias" v-on:click="select_menu(index,item.this_type)" type="text" class="es-input linkurl data-bind-url " placeholder="请选择链接或地址" readonly >
+                </div>
+                </div>
+            </div>
+            <div  onclick="list_add_item('banner')" class="addChild">+添加</div>
+        </div>
+    </div>
+    <!-- 秒杀 -->
+    <div style="display: block;" v-if="now_type=='miaosha'" class="form_edit">
+        <div class="form-item item_tit">
+            <span>秒杀</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="form-label">选择颜色</div>
+            <div class="form-item ">
+                <color name="字体" flag="text_color" ></color>
+                <color name="背景" flag="bg_color" ></color>
+            </div>
+            <div v-for="(item,index) in now_right_data.list" class="item drag ui-sortable-handle" data-id="C01" style="margin-top: 10px !important;">
+                <div class="item-prompt"> 建议尺寸200x160 <span class="deletechild icon-del"><span     v-on:click="remove_img(index,item.this_type)"    class="deletechild icon-del"><img src="/public/menu/icon/del_icon.png" alt="删除"></span></span></div>
+                <div class="item-inner"> <span class="labeltext">标题</span> <input type="text" class="es-input data-bind"      v-model="item.name" onfocus="if (value =='标题'){value =''}"   onblur="if (value ==''){value='标题'}" > </div> <div class="item-inner maxlength" style="margin-left: 36px;"></div>
+                <div class="item-inner item-image"> <span class="labeltext pull-left">图片</span> <div class="es-uploader data-bind-image"> <div class="es-selector iconbox noval"   v-on:click="select_img(index,item.this_type)"> <img style="display:block;" :src="item.imgurl"> <p>替换</p>
+                </div>
+                </div>
+                </div>
+                <div class="item-inner"> <span class="labeltext">链接</span> <input type="text"  v-on:click="select_menu(index,item.this_type)" class="es-input linkurl data-bind-url " placeholder="请选择链接或地址123123" readonly value="" v-model="item.alias">
+                </div>
+            </div>
+        </div>
+        <div class="addChild " onclick="list_add_item('miaosha')">添加一个</div>
+    </div>
+    <!-- 广告位-->
+    <div style="display: block;" v-if="now_type=='advert'" class="form_edit" data-type="advert">
+        <div class="form-item item_tit">
+            <span>广告位</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="form-label mt10">选择颜色</div>
+            <div class="form-item ">
+                <color name="背景" flag="bg_color"></color>
+            </div>
+            <div class="form-label" style="padding-top:5px;">广告位高度</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="Fzkb_height mt10">
+                        <div class="minCell rangeCell-pureTextSize dib" style="width:255px;">
+                            <input type="range" max="20" min="1" step="0.1" v-model="now_right_data.ly_height"  style="width:100%;">
+                            <div style="position:absolute;right:-35px;top:-8px;">
+                                <span v-text="now_right_data.ly_height * 10"></span>
+                                <span>%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="data-list ui-sortable"  v-for="(item,index) in now_right_data.list">
+                <div class="item drag ui-sortable-handle" style="overflow: hidden; position: relative; opacity: 1; z-index: 0;" data-id="C01">
+                    <div class="item-prompt"> 建议尺寸750x360 <span class="deletechild icon-del"><img v-on:click="remove_img(index)" src="/public/menu/icon/del_icon.png" alt="删除"></span></div>
+                    <div class="es-uploader data-bind-image" data-bind="thumb" data-bind-child="C01" data-show-element="#picture-show-C01">
+                        <div class="imgbox es-selector noval"  v-on:click="select_img(index,item.this_type)">
+                            <img :src="item.imgurl" style="display:block;"/> <p>替换</p> </div>
+                    </div> <div class="item-inner"> <span class="labeltext">宽度%</span>
+                    <input v-model="item.width" placeholder="填写高度比例"   :data-index="index"  oninput="this_advert_height(this,this.value)" type="text" class="es-input linkurl data-bind-url "></div>
+                    <div class="item-inner mt10"> <span class="labeltext">链接</span>
+                        <input  v-model="item.alias"    v-on:click="select_menu(index,item.this_type)" type="text" class="es-input linkurl data-bind-url " placeholder="请选择链接或地址" readonly >
+                    </div>
+                </div>
+            </div>
+            <div  onclick="list_add_item('advert')" class="addChild">+添加</div>
+        </div>
+    </div>
+    <!--宫格导航设置-->
+    <div style="display: block;" v-if="now_type=='navigation'" class="form_edit" data-type="navigation">
+        <div class="form-item item_tit">
+            <span>宫格导航</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="form-label">分列排版</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="radio-inline"><input type="radio" class="magic-radio"  name="componentLayoutRadio" value="2" v-model="now_right_data.style_type" id="editlayout_2"><label for="editlayout_2">两列</label></div>
+                    <div class="radio-inline"><input type="radio" class="magic-radio"  name="componentLayoutRadio" value="3" v-model="now_right_data.style_type" id="editlayout_3"><label for="editlayout_3">三列</label></div>
+                    <div class="radio-inline"><input type="radio" class="magic-radio"  name="componentLayoutRadio" value="4" v-model="now_right_data.style_type" id="editlayout_4"><label for="editlayout_4">四列</label></div>
+                    <div class="radio-inline"><input type="radio" class="magic-radio"  name="componentLayoutRadio" value="5" v-model="now_right_data.style_type" id="editlayout_5"><label for="editlayout_5">五列</label></div>
+                </div>
+            </div>
+            <div class="form-label mt10">字体大小</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="radio-inline"><input type="radio" class="magic-radio"  name="fontsize_zt" value="12" v-model="now_right_data.font_size" id="Ggdh_fontsize_s"><label for="Ggdh_fontsize_s">小号</label></div>
+                    <div class="radio-inline"><input type="radio" class="magic-radio"  name="fontsize_zt" value="14" v-model="now_right_data.font_size" id="Ggdh_fontsize_m"><label for="Ggdh_fontsize_m">中号</label></div>
+                    <div class="radio-inline"><input type="radio" class="magic-radio"  name="fontsize_zt" value="16" v-model="now_right_data.font_size" id="Ggdh_fontsize_l"><label for="Ggdh_fontsize_l">大号</label></div>
+                </div>
+            </div>
+            <div class="form-label mt10">选择颜色</div>
+            <div class="form-item ">
+                <color name="字体" flag="text_color" ></color>
+                <color name="背景" flag="bg_color" ></color>
+            </div>
+            <div class="form-label mt10">圆角弧度</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="form-item" style="display: block">
+                        <div style="clear:both"></div>
+                        <div>
+                            <div class="Fzkb_height mt10"><div class="minCell rangeCell-pureTextSize dib mt10" style="width:255px;">
+                                <input v-model="now_right_data.radian" type="range" max="50" min="0" style="width:100%;">
+                                <div style="position:absolute;right:-30px;top:-8px;">
+                                    <span v-text="now_right_data.radian"></span>
+                                    <span>%</span></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div v-for="(item,index) in now_right_data.list" class="item drag ui-sortable-handle" data-id="C01">
+                <div class="item-prompt"> 建议尺寸100x100
+                    <span class="deletechild icon-del"><span v-on:click="remove_img(index)" class="deletechild icon-del"><img src="/public/menu/icon/del_icon.png" alt="删除"></span></span>
+                </div>
+                <div class="item-inner">
+                    <span class="labeltext">名称</span> <input v-model="item.name"  type="text" class="es-input data-bind"  :data-index="index"  onblur="this_catenav_name(this,this.value)">
+                </div>
+                <div class="item-inner item-image">
+                    <span class="labeltext pull-left">图片</span>
+                    <div class="es-uploader data-bind-image">
+                        <div class="es-selector iconbox noval" v-on:click="select_img(index,item.this_type)">
+                            <img style="display:block;" :src="item.imgurl"> <p>替换</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="item-inner">
+                    <span class="labeltext">链接</span>
+                    <input  v-model="item.alias"  type="text"  v-on:click="select_menu(index,item.this_type)" class="es-input linkurl" placeholder="请选择链接或地址" readonly>
+                </div>
+            </div>
+        </div>
+        <div class="addChild " onclick="list_add_item('navigation')">添加一个</div>
+    </div>
+    <!-- 标题文字 设置 -->
+    <div style="display: block;" v-if="now_type=='headline'" class="form_edit" data-type="headline">
+        <div class="form-item item_tit">
+            <span>标题文字</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="form-label">标题设置</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <input type="text" v-model="now_right_data.name" placeholder="请输入标题" class="es-input linkurl data-bind-url " style="height: 36px;">
+                </div>
+            </div>
+            <div class="form-label">样式设置</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="radio-inline">
+                        <input type="radio" class="magic-radio" v-model="now_right_data.style_type" value="1" name="pureTitles" id="pureTitle1">
+                        <label for="pureTitle1">样式一</label>
+                    </div>
+                    <div class="radio-inline">
+                        <input type="radio" class="magic-radio" v-model="now_right_data.style_type" value="2" name="pureTitles" id="pureTitle2">
+                        <label for="pureTitle2">样式二</label>
+                    </div>
+                    <div class="radio-inline">
+                        <input type="radio" class="magic-radio" v-model="now_right_data.style_type" value="3" name="pureTitles" id="pureTitle3">
+                        <label for="pureTitle3">样式三</label>
+                    </div>
+                    <div class="radio-inline">
+                        <input type="radio" class="magic-radio" v-model="now_right_data.style_type" value="4" name="pureTitles" id="pureTitle4">
+                        <label for="pureTitle4">样式四</label>
+                    </div>
+                    <div class="radio-inline">
+                        <input type="radio" class="magic-radio" v-model="now_right_data.style_type" value="5" name="pureTitles" id="pureTitle5">
+                        <label for="pureTitle5">样式五</label>
+                    </div>
+                    <div class="radio-inline">
+                        <input type="radio" class="magic-radio" v-model="now_right_data.style_type" value="6" name="pureTitles" id="pureTitle6">
+                        <label for="pureTitle6">样式六</label>
+                    </div>
+                    <div class="radio-inline">
+                        <input type="radio" class="magic-radio" v-model="now_right_data.style_type" value="7" name="pureTitles" id="pureTitle7">
+                        <label for="pureTitle7">样式七</label>
+                    </div>
+                    <div class="radio-inline">
+                        <input type="radio" class="magic-radio" v-model="now_right_data.style_type" value="8" name="pureTitles" id="pureTitle8">
+                        <label for="pureTitle8">样式八</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-label">选择颜色</div>
+            <div class="form-item ">
+                <color name="字体" flag="text_color" ></color>
+                <color name="背景" flag="bg_color" ></color>
+            </div>
+            <div class="form-label">字体大小</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="radio-inline"><input type="radio" class="magic-radio"  name="fontsize_zt" value="14" v-model="now_right_data.font_size" id="headline_fontsize_s"><label for="headline_fontsize_s">小号</label></div>
+                    <div class="radio-inline"><input type="radio" class="magic-radio"  name="fontsize_zt" value="18" v-model="now_right_data.font_size" id="headline_fontsize_m"><label for="headline_fontsize_m">中号</label></div>
+                    <div class="radio-inline"><input type="radio" class="magic-radio"  name="fontsize_zt" value="22" v-model="now_right_data.font_size" id="headline_fontsize_l"><label for="headline_fontsize_l">大号</label></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--图片列表设置-->
+    <div style="display: block;" v-if="now_type=='edit_piclist'" class="form_edit">
+        <div class="form-item item_tit">
+            <span>图片列表</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="form-label mt10">选择颜色</div>
+            <div class="form-item ">
+                <color name="字体" flag="text_color" ></color>
+                <color name="背景" flag="bg_color" ></color>
+            </div>
+            <div class="form-label">排版样式</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="radio-inline"><input v-model="now_right_data.style_type" type="radio" class="magic-radio"  name="pureTitlesImg" value="1" id="purePiclist1"><label for="purePiclist1">样式一</label></div>
+                    <div class="radio-inline"><input v-model="now_right_data.style_type" type="radio" class="magic-radio"  name="pureTitlesImg" value="2" id="purePiclist2"><label for="purePiclist2">样式二</label></div>
+                    <div class="radio-inline"><input v-model="now_right_data.style_type" type="radio" class="magic-radio"  name="pureTitlesImg" value="3" id="purePiclist3"><label for="purePiclist3">样式三</label></div>
+                </div>
+            </div>
+            <div class="form-label">图片排版</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="radio-inline"><input v-model="now_right_data.column_num" type="radio" class="magic-radio"  name="Tplb_piclistpb" value="1" id="editpiclayout_1"><label for="editpiclayout_1">一列</label></div>
+                    <div class="radio-inline"><input v-model="now_right_data.column_num" type="radio" class="magic-radio"  name="Tplb_piclistpb" value="2" id="editpiclayout_2"><label for="editpiclayout_2">二列</label></div>
+                    <div class="radio-inline"><input v-model="now_right_data.column_num" type="radio" class="magic-radio"  name="Tplb_piclistpb" value="3" id="editpiclayout_3"><label for="editpiclayout_3">三列</label></div>
+                    <div class="radio-inline"><input v-model="now_right_data.column_num" type="radio" class="magic-radio"  name="Tplb_piclistpb" value="4" id="editpiclayout_4"><label for="editpiclayout_4">四列</label></div>
+                </div>
+            </div>
+            <div class="form-label mt10">圆角弧度</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="form-item" style="display: block">
+                        <div style="clear:both"></div>
+                        <div>
+                            <div class="Fzkb_height mt10"><div class="minCell rangeCell-pureTextSize dib mt10" style="width:255px;">
+                                <input v-model="now_right_data.radian" type="range" max="50" min="0" style="width:100%;">
+                                <div style="position:absolute;right:-30px;top:-8px;">
+                                    <span v-text="now_right_data.radian"></span>
+                                    <span>%</span></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div v-for="(item,index) in now_right_data.list" class="item drag ui-sortable-handle" style="margin-top: 10px !important">
+                <div class="item-prompt"> 建议尺寸300x300 <span class="deletechild icon-del"><span     v-on:click="remove_img(index,item.this_type)"  class="deletechild icon-del"><img src="/public/menu/icon/del_icon.png" alt="删除"></span></span></div>
+                <div class="item-inner"> <span class="labeltext">标题</span> <input  v-model="item.name" type="text"  :data-index="index" class="es-input data-bind" oninput="this_pic_name(this,this.value)"> </div> <div class="item-inner maxlength" style="margin-left: 36px;"></div>
+                <div class="item-inner item-image"> <span class="labeltext pull-left">图片</span> <div class="es-uploader data-bind-image"> <div class="es-selector iconbox noval"   v-on:click="select_img(index,item.this_type)"> <img style="display:block;" :src="item.imgurl"> <p>替换</p>
+                </div>
+                </div>
+                </div>
+                <div class="item-inner"> <span class="labeltext">链接</span> <input v-model="item.alias" type="text" v-on:click="select_menu(index,item.this_type)" class="es-input linkurl data-bind-url " placeholder="请选择链接或地址" readonly>
+                </div>
+            </div>
+        </div>
+        <div class="addChild " onclick="list_add_item('edit_piclist')">添加一个</div>
+    </div>
+    <!-- 三方 -->
+    <div style="display: block;" v-if="now_type=='tripartite'" class="form_edit">
+        <div class="form-item item_tit">
+            <span>三方图</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="data-list ui-sortable"   v-for="(item,index) in now_right_data.list">
+                <div class="item drag ui-sortable-handle" style="overflow: hidden; position: relative; opacity: 1; z-index: 0;">
+                    <div class="es-uploader data-bind-image" data-bind="thumb">
+                        <div class="imgbox es-selector noval"  v-on:click="select_img(index,'tripartite')">
+                            <img :src="item.imgurl" style="display:block;"/> <p>替换</p> </div>
+                    </div> <div class="item-inner"> <span class="labeltext">链接</span>
+                    <input  v-model="item.alias" v-on:click="select_menu(index,'tripartite')" type="text" class="es-input linkurl data-bind-url " placeholder="请选择链接或地址" readonly >
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 四方 -->
+    <div style="display: block;" v-if="now_type=='quartet'" class="form_edit">
+        <div class="form-item item_tit">
+            <span>四方图</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="data-list ui-sortable"   v-for="(item,index) in now_right_data.list">
+                <div class="item drag ui-sortable-handle" style="overflow: hidden; position: relative; opacity: 1; z-index: 0;">
+                    <div class="es-uploader data-bind-image" data-bind="thumb">
+                        <div class="imgbox es-selector noval"  v-on:click="select_img(index,'quartet')">
+                            <img :src="item.imgurl" style="display:block;"/> <p>替换</p> </div>
+                    </div> <div class="item-inner"> <span class="labeltext">链接</span>
+                    <input  v-model="item.alias" v-on:click="select_menu(index,'quartet')" type="text" class="es-input linkurl data-bind-url " placeholder="请选择链接或地址" readonly >
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 视频设置 -->
+    <div style="display: block;" v-if="now_type=='edit_video'" class="form_edit">
+        <div class="form-item item_tit">
+            <span>视频设置</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="form-label">视频高度</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div>
+                        <div class="Fzkb_height"><div class="minCell rangeCell-pureTextSize dib mt10" style="width:225px;">
+                            <input v-model="now_right_data.ly_height" type="range" max="250" min="100" style="width:100%;"> <div style="position:absolute;right:-40px;top:-8px;">
+                            <span v-text="now_right_data.ly_height"></span><span>px</span></div></div></div></div>
+                </div>
+            </div>
+            <div class="form-label mt10">视频封面</div>
+            <div class="data-list ui-sortable">
+                <div class="item drag ui-sortable-handle" style="overflow: hidden; position: relative; opacity: 1; z-index: 0;">
+                    <div class="es-uploader data-bind-image">
+                        <div class="imgbox es-selector noval" v-on:click="select_img('0','imgurl')">
+                            <img :src="now_right_data.imgurl" style="display:block;"/> <p>替换</p> </div>
+                    </div>
+                    <div class="item-inner"> <span class="labeltext">链接</span>
+                        <input type="text" v-model="now_right_data.url" class="es-input data-bind" style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;" placeholder="请输入第三方视频链接">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 音频设置 -->
+    <div style="display: block;" v-if="now_type=='edit_music'" class="form_edit">
+        <div class="form-item item_tit">
+            <span>音频</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="form-label">音频封面</div>
+            <div class="data-list ui-sortable">
+                <div class="item drag ui-sortable-handle" style="overflow: hidden; position: relative; opacity: 1; z-index: 0;">
+                    <div class="es-uploader data-bind-image">
+                        <div class="imgbox es-selector noval" v-on:click="select_img('0','imgurl')">
+                            <img :src="now_right_data.imgurl" style="display:block;"/> <p>替换</p> </div>
+                    </div>
+                    <div class="item-inner"> <span class="labeltext">链接</span>
+                        <input type="text" v-model="now_right_data.url" class="es-input data-bind" style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;" placeholder="请输入链接">
+                    </div>
+                    <div class="item-inner"> <span class="labeltext">名称</span>
+                        <input type="text" v-model="now_right_data.name" class="es-input data-bind" style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;" placeholder="请输入音乐名称">
+                    </div>
+                    <div class="item-inner"> <span class="labeltext">作者</span>
+                        <input type="text" v-model="now_right_data.author" class="es-input data-bind" style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;" placeholder="请输入作者">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 富文本-->
+    <div style="display: block;" v-if="now_type=='rich_text'" class="form_edit">
+        <div class="form-item item_tit">
+            <span>富文本</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="form-label">选择颜色</div>
+            <div class="form-item ">
+                <color name="背景" flag="bg_color" ></color>
+            </div>
+            <div class="form-label">内容</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <textarea id="editor" style="width: 266px; height: 400px;"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 辅助空白-->
+    <div style="display: block;" v-if="now_type=='blank'" class="form_edit" data-type="blank">
+        <div class="form-item item_tit">
+            <span>辅助空白</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="form-label">选择颜色</div>
+            <div class="form-item ">
+                <color name="背景" flag="bg_color" ></color>
+            </div>
+            <div class="form-label mt10">控件高度</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="Fzkb_height">
+                        <div class="minCell rangeCell-pureTextSize dib mt10" style="width:255px;">
+                            <input type="range" max="100" min="20" v-model="now_right_data.ly_height" style="width:100%;">
+                            <div style="position:absolute;right:-35px;top:-8px;">
+                                <span id="blank_height_number" v-text="now_right_data.ly_height"></span>
+                                <span>px</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 分割线 -->
+    <div style="display: block;" v-if="now_type=='blankline'" class="form_edit">
+        <div class="form-item item_tit">
+            <span>分割线</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="form-label">样式选择</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="radio-inline"><input type="radio" class="magic-radio"  name="Fgx_style" v-model="now_right_data.line_type" value="solid" id="Fgx_style_1"><label for="Fgx_style_1">实线</label></div>
+                    <div class="radio-inline"><input type="radio" class="magic-radio"  name="Fgx_style" v-model="now_right_data.line_type" value="dashed" id="Fgx_style_2"><label for="Fgx_style_2">虚线</label></div>
+                    <div class="radio-inline"><input type="radio" class="magic-radio"  name="Fgx_style" v-model="now_right_data.line_type" value="dotted" id="Fgx_style_3"><label for="Fgx_style_3">点线</label></div>
+                </div>
+            </div>
+            <div class="form-label">选择颜色</div>
+            <div class="form-item ">
+                <color name="线条" flag="line_color" ></color>
+                <color name="背景" flag="bg_color" ></color>
+            </div>
+            <div class="form-label mt10">控件高度</div>
+            <div class="form-item "><span class="labeltext">高度</span>
+                <div class="item-inner">
+                    <div class="Fzkb_height mt10">
+                        <div class="minCell rangeCell-pureTextSize dib mt10" style="width:255px;">
+                            <input type="range" min="1" max="30" v-model="now_right_data.ly_height" style="width:100%;">
+                            <div style="position:absolute;right:-35px;top:-8px;">
+                                <span v-text="now_right_data.ly_height">1</span>
+                                <span>px</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item-inner"><span class="labeltext" style="width:66px;">上下边距</span>
+                    <div class="Fzkb_height mt10">
+                        <div class="minCell rangeCell-pureTextSize dib mt10" style="width:255px;">
+                            <input type="range" value="1" min="10" max="60" v-model="now_right_data.margin" style="width:100%;">
+                            <div style="position:absolute;right:-35px;top:-8px;">
+                                <span v-text="now_right_data.margin"></span>
+                                <span>px</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 悬浮图标设置 -->
+    <div style="display: block;" v-if="now_type=='floaticon'" class="form_edit">
+        <div class="form-item item_tit">
+            <span>悬浮图标</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="form-label">控件高度</div>
+            <div class="form-item ">
+                <div class="item-inner"><span class="labeltext">距底部</span>
+                    <div class="Fzkb_height mt10">
+                        <div class="minCell rangeCell-pureTextSize dib mt10" style="width:255px;">
+                            <input type="range" min="1" max="100" v-model="now_right_data.form_bottom" style="width:98%;">
+                            <div style="position:absolute;right:-35px;top:-8px;">
+                                <span v-text="now_right_data.form_bottom"></span>
+                                <span>%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item-inner"><span class="labeltext">右边距</span>
+                    <div class="Fzkb_height mt10">
+                        <div class="minCell rangeCell-pureTextSize dib mt10" style="width:255px;">
+                            <input type="range" min="1" max="90" v-model="now_right_data.form_margin" style="width:98%;">
+                            <div style="position:absolute;right:-35px;top:-8px;">
+                                <span v-text="now_right_data.form_margin"></span>
+                                <span>%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item-inner"><span class="labeltext">透明度</span>
+                    <div class="Fzkb_height mt10">
+                        <div class="minCell rangeCell-pureTextSize dib mt10" style="width:255px;">
+                            <input type="range" min="1" max="100" v-model="now_right_data.form_transparent" style="width:98%;">
+                            <div style="position:absolute;right:-35px;top:-8px;">
+                                <span v-text="now_right_data.form_transparent"></span>
+                                <span>%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-label mt10">图标</div>
+            <div class="data-list ui-sortable"  v-for="(item,index) in now_right_data.list">
+                <div class="item drag ui-sortable-handle" style="overflow: hidden; position: relative; opacity: 1; z-index: 0;">
+                    <div class="es-uploader data-bind-image">
+                        <div class="imgbox es-selector noval"  v-on:click="select_img(index,item.this_type)">
+                            <img :src="item.imgurl" style="display:block;"/> <p>替换</p> </div>
+                    </div>
+                    <div id="this_type_list">
+                        <div id="this_0" class="item-inner"> <span class="labeltext">链接</span>
+                            <input  v-model="item.alias"  v-on:click="select_menu(index,item.this_type)" type="text" class="es-input linkurl data-bind-url " placeholder="请选择链接或地址" readonly >
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 悬浮客服设置 -->
+    <div style="display: block;" v-if="now_type=='customer'" class="form_edit">
+        <div class="form-item item_tit">
+            <span>客服设置</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="form-label">控件高度</div>
+            <div class="form-item ">
+                <div class="item-inner"><span class="labeltext">距底部</span>
+                    <div class="Fzkb_height mt10">
+                        <div class="minCell rangeCell-pureTextSize dib mt10" style="width:255px;">
+                            <input type="range" min="1" max="100" v-model="now_right_data.form_bottom" style="width:98%;">
+                            <div style="position:absolute;right:-35px;top:-8px;">
+                                <span v-text="now_right_data.form_bottom"></span>
+                                <span>%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item-inner"><span class="labeltext">右边距</span>
+                    <div class="Fzkb_height mt10">
+                        <div class="minCell rangeCell-pureTextSize dib mt10" style="width:255px;">
+                            <input type="range" min="1" max="90" v-model="now_right_data.form_margin" style="width:98%;">
+                            <div style="position:absolute;right:-35px;top:-8px;">
+                                <span v-text="now_right_data.form_margin"></span>
+                                <span>%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item-inner"><span class="labeltext">透明度</span>
+                    <div class="Fzkb_height mt10">
+                        <div class="minCell rangeCell-pureTextSize dib mt10" style="width:255px;">
+                            <input type="range" min="1" max="100" v-model="now_right_data.form_transparent" style="width:98%;">
+                            <div style="position:absolute;right:-35px;top:-8px;">
+                                <span v-text="now_right_data.form_transparent"></span>
+                                <span>%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-label mt10">图标</div>
+            <div class="data-list ui-sortable">
+                <div class="item drag ui-sortable-handle" style="overflow: hidden; position: relative; opacity: 1; z-index: 0;">
+                    <div class="es-uploader data-bind-image">
+                        <div class="imgbox es-selector noval"  v-on:click="select_img(-1,'imgurl')">
+                            <img :src="now_right_data.imgurl" style="display:block;"/> <p>替换</p> </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 公告设置 -->
+    <div style="display: block;" v-if="now_type=='announcement'" class="form_edit">
+        <div class="form-item item_tit">
+            <span>公告设置</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="form-label">选择颜色</div>
+            <div class="form-item ">
+                <color name="文字" flag="text_color" ></color>
+                <color name="背景" flag="bg_color" ></color>
+            </div>
+            <div class="form-label">内容</div>
+            <div class="form-item ">
+                         <textarea v-model="now_right_data.content"
+                                   placeholder="请填写公告内容,最多50字符,超出将不显示"
+                                   class="textarea instruct_textarea search_textarea"
+                                   style="margin-left: 10px;font-size:13px;height:60px;width: 250px;">
+                         </textarea>
+            </div>
+            <div class="form-label mt10">图标</div>
+            <div class="data-list ui-sortable">
+                <div class="item drag ui-sortable-handle" style="overflow: hidden; position: relative; opacity: 1; z-index: 0;">
+                    <div class="es-uploader data-bind-image">
+                        <div class="imgbox es-selector noval"  v-on:click="select_img(0,'imgurl')">
+                            <img :src="now_right_data.imgurl" style="display:block;"/> <p>替换</p> </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 流量主设置 -->
+    <div style="display: block;" v-if="now_type=='ad'" class="form_edit">
+        <div class="form-item item_tit">
+            <span>流量主设置</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="form-label">高度</div>
+            <div class="item">
+                <div class="item-inner">
+                    <div style="clear:both"></div>
+                    <div>
+                        <div style="width:200px;font-weight:bold;">高度</div>
+                        <div class="Fzkb_height mt10">
+                            <div class="minCell rangeCell-pureTextSize dib mt10" style="width:225px;">
+                                <input type="range" v-model="now_right_data.ly_height" max="300"  min="1" step="1" style="width:80%;">
+                                <div style="position:absolute;right:-35px;top:-8px;"><span v-text="now_right_data.ly_height"></span>
+                                    <span>px</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-label">流量主</div>
+            <div class="item">
+                <div class="item-inner">
+                    <div style="clear:both"></div>
+                    <div>
+                        <div style="width:200px;font-weight:bold;">流量主ID</div>
+                        <div class="Fzkb_height mt10">
+                            <div class="minCell rangeCell-pureTextSize dib mt10" style="width:225px;">
+                                <input type="text" v-model="now_right_data.ad_id" placeholder="请输入流量主ID" class="es-input data-bind" style="cursor: text; border: 1px solid rgb(239, 239, 239); background: rgb(255, 255, 255); text-align: left;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 按钮 设置 -->
+    <div style="display: block;" v-if="now_type=='edit_button'" class="form_edit">
+        <div class="form-item item_tit">
+            <span>按钮</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="item"> <span class="labeltext">名称</span>
+                <input type="text" v-model="now_right_data.name" class="es-input data-bind" style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;">
+            </div>
+            <div class="form-label">边框</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="radio-inline"><input v-model="now_right_data.show_border" type="radio" class="magic-radio"  name="An_Xs" value="1" id="An_bg_show"><label for="An_bg_show">显示</label></div>
+                    <div class="radio-inline"><input v-model="now_right_data.show_border" type="radio" class="magic-radio"  name="An_Xs" value="0" id="An_bg_hide"><label for="An_bg_hide">隐藏</label></div>
+                </div>
+            </div>
+            <div class="form-label">图标</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="radio-inline"><input v-model="now_right_data.show_icon" type="radio" class="magic-radio"  name="An_pic" value="1" id="An_pic_show"><label for="An_pic_show">显示</label></div>
+                    <div class="radio-inline"><input v-model="now_right_data.show_icon" type="radio" class="magic-radio"  name="An_pic" value="2" id="An_pic_hide"><label for="An_pic_hide">隐藏</label></div>
+                </div>
+            </div>
+            <div class="form-label">圆角弧度</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="Fzkb_height mt10">
+                        <div class="minCell rangeCell-pureTextSize dib mt10" style="width:255px;">
+                            <input type="range" v-model="now_right_data.radius" min="0"  max="50" style="width:100%;">
+                            <div style="position:absolute;right:-35px;top:-8px;">
+                                <span v-text="now_right_data.radius">0</span>
+                                <span>%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-label">选择颜色</div>
+            <div class="form-item ">
+                <color name="标题" flag="text_color" ></color>
+                <color name="背景" flag="bg_color" ></color>
+                <color name="边框" flag="border_color" ></color>
+            </div>
+            <div class="data-list ui-sortable"  v-for="(item,index) in now_right_data.list">
+                <div class="item drag ui-sortable-handle" style="overflow: hidden; position: relative; opacity: 1; z-index: 0;">
+                    <div class="es-uploader data-bind-image">
+                        <div class="imgbox es-selector noval"  v-on:click="select_img(index,item.this_type)">
+                            <img :src="item.imgurl" style="display:block;"/> <p>替换</p> </div>
+                    </div>
+                    <div class="item-inner"> <span class="labeltext">链接</span>
+                        <input  v-model="item.name"  v-on:click="select_menu(index,item.this_type)" type="text" class="es-input linkurl data-bind-url " placeholder="请选择链接或地址" readonly >
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 搜索框-->
+    <div style="display: block;" v-if="now_type=='search'" class="form_edit" data-type="search" id="form_edit_search">
+        <div class="form-item item_tit">
+            <span>搜索框</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="form-label">样式选择</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="radio-inline"><input type="radio" class="magic-radio"  name="search_style" value="0" v-model="now_right_data.style_type" id="search_style_1"><label for="search_style_1">默认</label></div>
+                    <div class="radio-inline"><input type="radio" class="magic-radio"  name="search_style" value="1" v-model="now_right_data.style_type" id="search_style_2"><label for="search_style_2">悬浮</label></div>
+                </div>
+            </div>
+            <div class="form-label">选择颜色</div>
+            <div class="form-item ">
+                <color name="搜索框" flag="bd_color" ></color>
+                <color name="背景" flag="bg_color" ></color>
+                <color name="字体" flag="text_color" ></color>
+            </div>
+            <div class="form-label">热门搜索</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <textarea v-model="now_right_data.hot_word"
+                              placeholder="请填写搜索的热门关键词列并用,隔开列如：关键词1,关键词2,关键词3"
+                              class="textarea instruct_textarea search_textarea"
+                              style="margin-left: 10px;font-size:13px;height:60px;width: 250px;"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 留言板 -->
+    <div style="display: block;" v-if="now_type=='message_board'" class="form_edit">
+        <div class="form-item item_tit">
+            <span>留言板</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="form-label">选择颜色</div>
+            <div class="form-item ">
+                <color name="背景" flag="bg_color" ></color>
+            </div>
+        </div>
+    </div>
+    <!-- 门店 -->
+    <div style="display: block;" v-if="now_type=='store_door'" class="form_edit">
+        <div class="form-item item_tit">
+            <span>门店</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="form-label">选择颜色</div>
+            <div class="form-item ">
+                <color name="字体" flag="text_color" ></color>
+                <color name="背景" flag="bg_color" ></color>
+            </div>
+            <div class="item mt10"> <span class="labeltext" style="width:56px;">门店名称</span>
+                <input type="text" v-model="now_right_data.name" class="es-input data-bind" style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;">
+            </div>
+            <div class="item mt10"> <span class="labeltext" style="width:56px;">营业时间</span>
+                <input type="text" v-model="now_right_data.time" class="es-input data-bind" style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;">
+            </div>
+            <div class="item mt10"> <span class="labeltext" style="width:56px;">客服电话</span>
+                <input type="text" v-model="now_right_data.phone" class="es-input data-bind" style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;">
+            </div>
+            <div class="form-label">门店Logo</div>
+            <div class="data-list ui-sortable">
+                <div class="item drag ui-sortable-handle" style="overflow: hidden; position: relative; opacity: 1; z-index: 0;">
+                    <div class="es-uploader data-bind-image">
+                        <div class="imgbox es-selector noval" v-on:click="select_img('0','imgurl')">
+                            <img :src="now_right_data.imgurl" style="display:block;"/> <p>替换</p> </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 表单 -->
+    <div style="display: block;" v-if="now_type=='edit_form'" class="form_edit">
+        <div class="form-item item_tit">
+            <span>表单</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="data-list ui-sortable">
+                <div class="item drag ui-sortable-handle" style="overflow: hidden; position: relative; opacity: 1; z-index: 0;">
+                    <div class="item-inner"> <span class="labeltext">表单</span>
+                        <input v-on:click="select_form_all()" type="text" v-model="now_right_data.name" class="es-input linkurl data-bind-url " placeholder="请选择表单" readonly >
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 会员信息 -->
+    <div style="display: block;" v-if="now_type=='member'" class="form_edit">
+        <div class="form-item item_tit">
+            <span>会员信息</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="form-label">选择颜色</div>
+            <div class="form-item ">
+                <div class="item-inner"> <span class="labeltext">背景</span>
+                    <div class="chosecolor-container">
+                        <input v-model="now_right_data.bg_color" class="chosecolor data-bind" type="color"> <p v-text="now_right_data.bg_color"></p>
+                    </div>
+                </div>
+                <div class="item-inner"> <span class="labeltext">字体</span>
+                    <div class="chosecolor-container">
+                        <input v-model="now_right_data.text_color" class="chosecolor data-bind" type="color"> <p v-text="now_right_data.text_color"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-label mt10">背景图片</div>
+            <div class="data-list ui-sortable">
+                <div class="item drag ui-sortable-handle" style="overflow: hidden; position: relative; opacity: 1; z-index: 0;">
+                    <div class="es-uploader data-bind-image">
+                        <div class="imgbox es-selector noval"  v-on:click="select_img(0,'bg_img')">
+                            <img :src="now_right_data.bg_img" style="display:block;"/>
+                            <p>替换</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div  v-on:click="now_right_data.bg_img = ''" class="addChild">清除图片</div>
+        </div>
+    </div>
+    <!-- 图文集 -->
+    <div style="display: block;" v-if="now_type=='article_list'" class="form_edit">
+        <div class="form-item item_tit">
+            <span>图文集</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="form-label">排版样式</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="radio-inline"><input v-model="now_right_data.style_type" type="radio" class="magic-radio"  name="cateLists" value="1" id="cateLists1"><label for="cateLists1">样式一</label></div>
+                    <div class="radio-inline"><input v-model="now_right_data.style_type" type="radio" class="magic-radio"  name="cateLists" value="2" id="cateLists2"><label for="cateLists2">样式二</label></div>
+                    <div class="radio-inline"><input v-model="now_right_data.style_type" type="radio" class="magic-radio"  name="cateLists" value="3" id="cateLists3"><label for="cateLists3">样式三</label></div>
+                </div>
+            </div>
+            <div class="form-label">标题大小</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="radio-inline"><input v-model="now_right_data.font_size" type="radio" class="magic-radio"  name="fontsize_Twj" value="15" id="Twj_fontsize_s"><label for="Twj_fontsize_s">小号</label></div>
+                    <div class="radio-inline"><input v-model="now_right_data.font_size" type="radio" class="magic-radio"  name="fontsize_Twj" value="17" id="Twj_fontsize_m"><label for="Twj_fontsize_m">中号</label></div>
+                    <div class="radio-inline"><input v-model="now_right_data.font_size" type="radio" class="magic-radio"  name="fontsize_Twj" value="19" id="Twj_fontsize_l"><label for="Twj_fontsize_l">大号</label></div>
+                </div>
+            </div>
+            <div class="form-label">选择颜色</div>
+            <div class="form-item ">
+                <color name="字体" flag="text_color" ></color>
+                <color name="背景" flag="bg_color" ></color>
+            </div>
+            <div class="form-label">添加类型</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="radio-inline"><input v-model="now_right_data.add_type" type="radio" class="magic-radio"  name="img_add_type" value="1" id="img_type_anually"><label for="img_type_anually">手动</label></div>
+                    <div class="radio-inline"><input v-model="now_right_data.add_type" type="radio" class="magic-radio"  name="img_add_type" value="2" id="img_type_automatic"><label for="img_type_automatic">自动</label></div>
+                </div>
+            </div>
+            <div class="form-item" id="img_add_type_zid" style="display: block" v-if="now_right_data.add_type == 2">
+                <div class="item-inner"><span class="labeltext">条数</span>
+                    <input v-model="now_right_data.add_num" value="1" type="text" class="es-input linkurl data-bind-url " style="width:100px;">
+                </div>
+                <div class="item-inner mt10"><span class="labeltext">分类</span>
+                    <select v-model="now_right_data.add_cate" class="imgedittext imgedittext_text" style="margin-top: 0px;display:inline-block;">
+                        <option value="0">全部</option>
+                        {volist name="article_class" id="a"}
+                        <option value="{$a.class_id}">
+                            {if $a.level==1}
+                            {$a.name}
+                            {/if}
+                            {if $a.level==2}
+                            &nbsp; &nbsp; &nbsp; &nbsp;{$a.name}
+                            {/if}
+                        </option>
+                        {/volist}
+                    </select>
+                </div>
+                <div class="item-inner mt10"><span class="labeltext">排序</span>
+                    <div class="radio-inline" style="width: 26%;"><input v-model="now_right_data.add_sort" type="radio" class="magic-radio"  name="img_sort_type" value="time" id="img_type_time"><label for="img_type_time">时间</label></div>
+                    <div class="radio-inline" style="width: 26%;"><input v-model="now_right_data.add_sort" type="radio" class="magic-radio"  name="img_sort_type" value="pop" id="img_type_pop"><label for="img_type_pop">人气</label></div>
+                    <div class="radio-inline" style="width: 26%;"><input v-model="now_right_data.add_sort" type="radio" class="magic-radio"  name="img_sort_type" value="sales" id="img_type_sales"><label for="img_type_sales">推荐</label></div>
+                </div>
+            </div>
+            <div v-for="(item,index) in now_right_data.list" class="item drag ui-sortable-handle" data-id="C01" style="margin-top: 10px !important;">
+                <div class="item-prompt"> 建议尺寸200x160 <span class="deletechild icon-del"><span     v-on:click="remove_img(index,item.this_type)"    class="deletechild icon-del"><img src="/public/menu/icon/del_icon.png" alt="删除"></span></span></div>
+                <div class="item-inner"> <span class="labeltext">标题</span> <input type="text" class="es-input data-bind"      v-model="item.name" onfocus="if (value =='标题'){value =''}"   onblur="if (value ==''){value='标题'}" > </div> <div class="item-inner maxlength" style="margin-left: 36px;"></div>
+                <div class="item-inner"> <span class="labeltext">描述</span> <input type="text" class="es-input data-bind"      v-model="item.description"    onfocus="if (value =='内容描述'){value =''}"       onblur="if (value ==''){value='内容描述'}"> </div> <div class="item-inner maxlength" style="margin-left: 36px;"></div>
+                <div class="item-inner item-image"> <span class="labeltext pull-left">图片</span> <div class="es-uploader data-bind-image"> <div class="es-selector iconbox noval"   v-on:click="select_img(index,item.this_type)"> <img style="display:block;" :src="item.imgurl"> <p>替换</p>
+                </div>
+                </div>
+                </div>
+                <div class="item-inner"> <span class="labeltext">链接</span> <input type="text"  v-on:click="select_menu(index,item.this_type)" class="es-input linkurl data-bind-url " placeholder="请选择链接或地址" readonly value="" v-model="item.alias">
+                </div>
+            </div>
+        </div>
+        <div class="addChild " onclick="list_add_item('article_list')">添加一个</div>
+    </div>
+    <!-- 产品集 -->
+    <div style="display: block;" v-if="now_type=='product_list'" class="form_edit">
+        <div class="form-item item_tit">
+            <span>产品集</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="form-label">排版样式</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="radio-inline"><input v-model="now_right_data.style_type" type="radio" class="magic-radio"  name="productLists" value="1" id="productLists1"><label for="productLists1">单列</label></div>
+                    <div class="radio-inline"><input v-model="now_right_data.style_type" type="radio" class="magic-radio"  name="productLists" value="2" id="productLists2"><label for="productLists2">两列</label></div>
+                    <div class="radio-inline"><input v-model="now_right_data.style_type" type="radio" class="magic-radio"  name="productLists" value="3" id="productLists3"><label for="productLists3">横排滑动</label></div>
+                </div>
+            </div>
+            <div class="form-label">标题大小</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="radio-inline"><input v-model="now_right_data.font_size" type="radio" class="magic-radio"  name="fontsize_pd" value="14" id="pd_fontsize_s"><label for="pd_fontsize_s">小号</label></div>
+                    <div class="radio-inline"><input v-model="now_right_data.font_size" type="radio" class="magic-radio"  name="fontsize_pd" value="16" id="pd_fontsize_m"><label for="pd_fontsize_m">中号</label></div>
+                    <div class="radio-inline"><input v-model="now_right_data.font_size" type="radio" class="magic-radio"  name="fontsize_pd" value="18" id="pd_fontsize_l"><label for="pd_fontsize_l">大号</label></div>
+                </div>
+            </div>
+            <div class="form-label">选择颜色</div>
+            <div class="form-item ">
+                <color name="字体" flag="text_color" ></color>
+                <color name="背景" flag="bg_color" ></color>
+            </div>
+            <div class="form-label">添加类型</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="radio-inline"><input v-model="now_right_data.add_type" type="radio" class="magic-radio"  name="pd_add_type" value="1" id="pd_type_anually"><label for="pd_type_anually">手动</label></div>
+                    <div class="radio-inline"><input v-model="now_right_data.add_type" type="radio" class="magic-radio"  name="pd_add_type" value="2" id="pd_type_automatic"><label for="pd_type_automatic">自动</label></div>
+                </div>
+            </div>
+            <div class="form-item" style="display: block" v-if="now_right_data.add_type == 2">
+                <div class="item-inner"><span class="labeltext">条数</span>
+                    <input v-model="now_right_data.add_num" value="1" type="text" class="es-input linkurl data-bind-url " style="width:100px;">
+                </div>
+                <div class="item-inner mt10"><span class="labeltext">分类</span>
+                    <select v-model="now_right_data.add_cate" class="imgedittext imgedittext_text" style="margin-top: 0px;display:inline-block;">
+                        <option value="0">全部</option>
+                        {volist name="product_class" id="a"}
+                        <option value="{$a.id}">
+                            {$a.name}
+                        </option>
+                        {/volist}
+                    </select>
+                </div>
+            </div>
+            <div v-for="(item,index) in now_right_data.list" class="item drag ui-sortable-handle" data-id="C01" style="margin-top: 10px !important;">
+                <div class="item-prompt"> 建议尺寸200x160
+                    <span class="deletechild icon-del">
+                        <span v-on:click="remove_img(index,item.this_type)"  class="deletechild icon-del">
+                            <img src="/public/menu/icon/del_icon.png" alt="删除">
+                        </span>
+                    </span>
+                </div>
+                <div class="item-inner"> <span class="labeltext">标题</span> <input type="text" class="es-input data-bind"      v-model="item.name" onfocus="if (value =='标题'){value =''}"   onblur="if (value ==''){value='标题'}" >
+                </div>
+                <div class="item-inner maxlength" style="margin-left: 36px;">
+                </div>
+                <div class="item-inner item-image">
+                    <span class="labeltext pull-left">图片</span>
+                    <div class="es-uploader data-bind-image">
+                        <div class="es-selector iconbox noval" v-on:click="select_img(index,item.this_type)">
+                            <img style="display:block;" :src="item.imgurl"> <p>替换</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="item-inner"> <span class="labeltext">链接</span> <input type="text"  v-on:click="select_menu(index,item.this_type)" class="es-input linkurl data-bind-url " placeholder="请选择链接或地址" readonly value="" v-model="item.alias">
+                </div>
+            </div>
+        </div>
+        <div class="addChild " onclick="list_add_item('product_list')">添加一个</div>
+    </div>
+    <!--商品集-->
+    <div style="display: block;" v-if="now_type=='goods'" class="form_edit">
+        <div class="form-item item_tit">
+            <span>商品集</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="form-label">分列排版</div>
+            <div class="form-item">
+                <div class="item-inner">
+                    <div class="radio-inline"><input v-model="now_right_data.style_type" type="radio" class="magic-radio"  name="componentLayoutRadio_goods" value="1" id="editgoods_1"><label for="editgoods_1">一列</label></div>
+                    <div class="radio-inline"><input v-model="now_right_data.style_type" type="radio" class="magic-radio"  name="componentLayoutRadio_goods" value="2" id="editgoods_2"><label for="editgoods_2">两列</label></div>
+                    <div class="radio-inline"><input v-model="now_right_data.style_type" type="radio" class="magic-radio"  name="componentLayoutRadio_goods" value="3" id="editgoods_3"><label for="editgoods_3">三列</label></div>
+                    <div class="radio-inline"><input v-model="now_right_data.style_type" type="radio" class="magic-radio"  name="componentLayoutRadio_goods" value="9" id="editgoods_4"><label for="editgoods_4">横排</label></div>
+                </div>
+            </div>
+            <div class="form-label">选择颜色</div>
+            <div class="form-item ">
+                <color name="标题" flag="text_color" ></color>
+                <color name="背景" flag="bg_color" ></color>
+            </div>
+            <div class="form-label">字体大小：</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="radio-inline"><input v-model="now_right_data.font_size" type="radio" class="magic-radio"  name="goodfontsize_zt" value="12" id="Goods_fontsize_s"><label for="Goods_fontsize_s">小号</label></div>
+                    <div class="radio-inline"><input v-model="now_right_data.font_size" type="radio" class="magic-radio"  name="goodfontsize_zt" value="14" id="Goods_fontsize_m"><label for="Goods_fontsize_m">中号</label></div>
+                    <div class="radio-inline"><input v-model="now_right_data.font_size" type="radio" class="magic-radio"  name="goodfontsize_zt" value="16" id="Goods_fontsize_l"><label for="Goods_fontsize_l">大号</label></div>
+                </div>
+            </div>
+            <div class="form-label">添加类型</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="radio-inline"><input v-model="now_right_data.add_type" type="radio" class="magic-radio"  name="goods_add_type" value="1" id="Goods_type_anually"><label for="Goods_type_anually">手动</label></div>
+                    <div class="radio-inline"><input v-model="now_right_data.add_type" type="radio" class="magic-radio"  name="goods_add_type" value="2" id="Goods_type_automatic"><label for="Goods_type_automatic">自动</label></div>
+                </div>
+            </div>
+            <div class="form-item" style="display: block" v-if="now_right_data.add_type == 2">
+                <div class="item-inner"><span class="labeltext">条数</span>
+                    <input v-model="now_right_data.add_num" type="text" class="es-input linkurl data-bind-url " style="width:100px;">
+                </div>
+                <div class="item-inner mt10"><span class="labeltext">分类</span>
+                    <select v-model="now_right_data.add_cate" class="imgedittext imgedittext_text" style="margin-top: 0px;display:inline-block;">
+                        <option value="0">全部</option>
+                        {volist name="goods_cate" id="g"}
+                        <option value="{$g.cate_id}">
+                            {if $g.level==1}
+                            {$g.cate_name}
+                            {/if}
+                            {if $g.level==2}
+                            &nbsp;&nbsp;&nbsp;&nbsp;{$g.cate_name}
+                            {/if}
+                            {if $g.level==3}
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{$g.cate_name}
+                            {/if}
+                        </option>
+                        {/volist}
+                    </select>
+                </div>
+                <div class="item-inner mt10"><span class="labeltext">排序</span>
+                    <div class="radio-inline" style="width:26%;"><input v-model="now_right_data.add_sort" type="radio" class="magic-radio"  name="goods_sort_type" value="time" id="Goods_type_time"><label for="Goods_type_time">时间</label></div>
+                    <div class="radio-inline" style="width:26%;"><input v-model="now_right_data.add_sort" type="radio" class="magic-radio"  name="goods_sort_type" value="pop" id="Goods_type_pop"><label for="Goods_type_pop">人气</label></div>
+                    <div class="radio-inline" style="width:26%;"><input v-model="now_right_data.add_sort" type="radio" class="magic-radio"  name="goods_sort_type" value="sales" id="Goods_type_sales"><label for="Goods_type_sales">推荐</label></div>
+                </div>
+            </div>
+            <div  v-for="(item,index) in now_right_data.list" class="item drag ui-sortable-handle" data-id="C01">
+                <div class="item-prompt"> 建议尺寸800x800 <span class="deletechild icon-del"><span  v-on:click="remove_img(index,item.this_type)"    class="deletechild icon-del"><img src="/public/menu/icon/del_icon.png" alt="删除"></span></span></div>
+                <div class="item-inner"> <span class="labeltext">名称</span> <input type="text" class="es-input data-bind" v-model="item.name"> </div> <div class="item-inner maxlength" style="margin-left: 36px;"></div>
+                <div class="item-inner"> <span class="labeltext">简介</span> <input type="text" class="es-input data-bind" v-model="item.description"> </div> <div class="item-inner maxlength" style="margin-left: 36px;"></div>
+                <div class="item-inner"> <span class="labeltext">金额</span> <input type="text" class="es-input data-bind" v-model="item.price"> </div> <div class="item-inner maxlength" style="margin-left: 36px;"></div>
+                <div class="item-inner item-image"> <span class="labeltext pull-left">商品</span> <div class="es-uploader data-bind-image"> <div class="es-selector iconbox noval"    v-on:click="select_goods(index,item.this_type)"> <img style="display:block;" :src="item.imgurl"> <p>替换</p>
+                </div>
+                </div>
+                </div>
+            </div>
+        </div>
+        <div  onclick="list_add_item('goods')" class="addChild">+添加</div>
+    </div>
+    <!-- 地理位置 -->
+    <div style="display: block;" v-if="now_type=='position'" class="form_edit">
+        <div class="form-item item_tit">
+            <span>地理位置</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="form-label">颜色选择</div>
+            <div class="form-item ">
+                <color name="背景" flag="bg_color" ></color>
+                <color name="文字" flag="text_color" ></color>
+            </div>
+            <div class="item">
+                <div class="item-inner"> <span class="labeltext">地址</span>
+                    <input type="text" v-model="now_right_data.name" class="es-input data-bind" style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;">
+                </div>
+            </div>
+            <div class="form-label">显示方式</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="radio-inline"><input v-model="now_right_data.show_type" type="radio" class="magic-radio"  name="positionLayouton" value="1" id="position_editlayout_1"><label for="position_editlayout_1">文字</label></div>
+                    <div class="radio-inline"><input v-model="now_right_data.show_type" type="radio" class="magic-radio"  name="positionLayouton" value="2" id="position_editlayout_2"><label for="position_editlayout_2">图片</label></div>
+                </div>
+            </div>
+            <div class="form-label mt10">位置坐标</div>
+            <div class="item-inner" style="position: relative;">
+                <div class="item"> <span class="labeltext">经度</span>
+                    <input type="text" readonly v-model="now_right_data.lon" class="es-input data-bind" style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;">
+                </div>
+                <div class="item"> <span class="labeltext">纬度</span>
+                    <input type="text" readonly v-model="now_right_data.lat" class="es-input data-bind" style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;">
+                </div>
+                <div v-on:click="click_position_wz()" class="savetemplate btn btn-primary" style="width: 100% !important;"> 拾取坐标 </div>
+            </div>
+        </div>
+    </div>
+    <!-- 头部和背景 无法修改 -->
+    <div style="display: block;" v-if="now_type=='head'" class="form_edit">
+        <div class="form-item item_tit">
+            <span>头部导航</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="item ">
+                <div class="item-inner"> <span class="labeltext">名称</span>
+                    <input type="text" v-model="now_right_data.name" class="es-input data-bind" style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;">
+                </div>
+            </div>
+            <div class="form-label">选择颜色</div>
+            <div class="form-item ">
+                <color name="头部背景" flag="nv_color" ></color>
+                <color name="窗口背景" flag="bg_color" ></color>
+            </div>
+            <div class="form-label mt10">头部文字颜色</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="item-inner">
+                        <div class="radio-inline"><input type="radio" class="magic-radio"  name="BtBorderColor" v-model="now_right_data.text_color" value="#000000" id="nvtxtcolor0"><label for="nvtxtcolor0">黑色</label></div>
+                        <div class="radio-inline"><input type="radio" class="magic-radio"  name="BtBorderColor" v-model="now_right_data.text_color" value="#ffffff" id="nvtxtcolor1"><label for="nvtxtcolor1">白色</label></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-label mt10">是否显示底部导航</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="item-inner">
+                        <div class="radio-inline"><input type="radio" class="magic-radio"  name="IsDiDisplay" v-model="now_right_data.show_tabbar" value="true" id="showtarbar0"><label for="showtarbar0">显示</label></div>
+                        <div class="radio-inline"><input type="radio" class="magic-radio"  name="IsDiDisplay" v-model="now_right_data.show_tabbar" value="false" id="showtarbar1"><label for="showtarbar1">不显示</label></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-label mt10">背景图片</div>
+            <div class="data-list ui-sortable">
+                <div class="item drag ui-sortable-handle" style="overflow: hidden; position: relative; opacity: 1; z-index: 0;">
+                    <div class="es-uploader data-bind-image">
+                        <div class="imgbox es-selector noval"  v-on:click="select_img(0,'bg_img')">
+                            <img :src="now_right_data.bg_img" style="display:block;"/> <p>替换</p> </div>
+                    </div>
+                </div>
+            </div>
+            <div v-on:click="now_right_data.bg_img = ''" class="addChild">清除图片</div>
+            <div class="form-label mt10">开屏广告</div>
+            <div class="data-list ui-sortable">
+                <div class="item drag ui-sortable-handle" style="overflow: hidden; position: relative; opacity: 1; z-index: 0;">
+                    <div class="es-uploader data-bind-image">
+                        <div class="imgbox es-selector noval"  v-on:click="select_img(0,'open_img')">
+                            <img :src="now_right_data.open_img.imgurl" style="display:block;"/> <p>替换</p> </div>
+                    </div>
+                </div>
+                <div class="item-inner" v-if="now_right_data.open_img.imgurl && now_right_data.open_img.imgurl.length > 0"> <span class="labeltext">链接</span>
+                    <input  v-model="now_right_data.open_img.name"  v-on:click="select_menu(0,'open_img')" type="text" class="es-input linkurl data-bind-url " placeholder="请选择链接或地址" readonly >
+                </div>
+            </div>
+            <div v-on:click="now_right_data.open_img.imgurl = ''" class="addChild">清除图片</div>
+        </div>
+    </div>
+    <!-- 招聘 -->
+    <div style="display: block;" v-if="now_type=='join_us'" class="form_edit" data-type="99">
+        <div class="form-item item_tit">
+            <span>招聘</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="form-label">选择样式</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="radio-inline"><input checked type="radio" class="magic-radio"  name="board_style" value="1" id="offweb_join_style"><label for="offweb_join_style">样式一</label></div>
+                </div>
+            </div>
+            <div  v-for="(item,index) in joinlist" class="item drag ui-sortable-handle" data-id="C01">
+                <div><span class="deletechild icon-del"><span v-on:click="remove_img(index,item.this_type)"    class="deletechild icon-del"><img src="/public/menu/icon/del_icon.png" alt="删除"></span></span></div>
+                <div class="item-inner"> <span class="labeltext">职位</span> <input type="text"  v-model="item.name" v-on:click="select_join(index)" class="es-input linkurl data-bind-url " placeholder="请选择职位" readonly value="">
+                </div>
+            </div>
+            <div onclick="add_join()" class="addChild">+添加</div>
+        </div>
+    </div>
+    <!-- 底部导航 -->
+    <div style="display: block;" v-if="now_type=='tabbar'" class="form_edit">
+        <div class="form-item item_tit">
+            <span>底部导航</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="form-label">选择颜色</div>
+            <div class="form-item ">
+                <color name="字体" flag="text_color"></color>
+                <color name="选中" flag="select_color"></color>
+                <color name="背景" flag="bg_color"></color>
+            </div>
+            <div    v-for="(item,index) in now_right_data.list" class="item drag ui-sortable-handle mt10">
+                <div class="item-prompt"> 建议尺寸100x100 <span class="deletechild icon-del"><span v-on:click="clip_menu(index)"  class="deletechild icon-del"><img src="/public/menu/icon/del_icon.png" alt="删除"></span></span></div>
+                <div class="item-inner"> <span class="labeltext">名称</span> <input type="text" class="es-input data-bind" v-model="item.name"> </div> <div class="item-inner maxlength" style="margin-left: 36px;"></div>
+                <div class="item-inner item-image">
+                    <span class="labeltext pull-left">图片</span>
+                    <div class="es-uploader data-bind-image">
+                        <div class="es-selector iconbox noval" style="float: left; margin-right: 10px;" v-on:click="select_img(index,'tabbar_icon')">
+                            <img style="display:block;" :src="item.tabbar_icon"> <p>替换</p>
+                        </div>
+                        <div class="es-selector iconbox noval" style="float: left; margin-right: 10px;" v-on:click="select_img(index,'tabbar_select_icon')">
+                            <img style="display:block;" :src="item.tabbar_select_icon"> <p>替换</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="item-inner"> <span class="labeltext">链接</span> <input type="text"  v-model="item.alias" v-on:click="select_menu(index,'tabbar')" class="es-input linkurl data-bind-url " placeholder="请选择链接或地址" readonly value="">
+                </div>
+            </div>
+            <div v-if="now_right_data.list.length < 5" style="display: block;" onclick="list_add_item('tabbar')" class="addChild">+添加</div>
+        </div>
+    </div>
+</div>

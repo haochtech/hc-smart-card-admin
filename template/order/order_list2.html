@@ -1,0 +1,293 @@
+{extend name="base"/}
+{block name="resources"/}
+<style>.goods_info {height:86px; border-top:1px solid #ddd;padding:8px;}
+/*	.goods_info {height:78px; line-height: 78px; border-top:1px solid #ddd;padding:8px;}*/
+.goods_info:first-child {border-top:0;}
+.goods_info img { height:70px;width:70px;}
+.table-bordered {
+    border: 1px solid #eeeeee;
+}
+.table > thead > tr > th,
+.table > tbody > tr > th,
+.table > tfoot > tr > th,
+.table > thead > tr > td,
+.table > tbody > tr > td,
+.table > tfoot > tr > td {
+    padding: 8px;
+    line-height: 1.42857143;
+    vertical-align: top;
+    border-top: 1px solid #eeeeee;
+    border-right: 1px solid #eeeeee;
+    vertical-align: middle;
+}
+.btn-group button {background:#fff !important;color: #0066cc !important;margin-right:10px;border:0 !important;}
+</style>
+{/block}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div class="tabBar clearfix">
+            <span onclick="load_page('__CONF_SITE__admin/goods/goodslist')">商品列表</span>
+            <span class="current" onclick="load_page('__CONF_SITE__admin/order/orderlist2')">到店核销</span>
+            <span onclick="load_page('__CONF_SITE__admin/goods/goodsCategoryList')">商品分类</span>
+            <span onclick="load_page('__CONF_SITE__admin/goods/goods_attr_mod')">规格属性</span>
+            <span onclick="load_page('__CONF_SITE__admin/express/express_list')">物流模板</span>
+            <span onclick="load_page('__CONF_SITE__admin/Order/OrderList')">订单列表</span>
+            <span onclick="load_page('__CONF_SITE__admin/order/OrderRefund')">退款/退单</span>
+            <span onclick="layer_open('数据统计','__CONF_SITE__admin/count/OrderCount',1000,1000)">数据统计</span>
+            <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px;display: none;" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a>
+        </div>
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+            <div class="text-c">
+                日期范围：
+                <input type="text" onfocus="WdatePicker()" value="{$star_time}" name="star_time" class="input-text Wdate" style="width:120px;">
+                -
+                <input type="text" onfocus="WdatePicker()" value="{$end_time}" name="end_time" class="input-text Wdate" style="width:120px;">
+                <input type="hidden" name="order_status" value="{$order_status}">
+                <input type="text" class="input-text" value="{$order_no}" style="width:250px" placeholder="输入订单号"  name="order_no">
+                <button onclick="send_submit()" class="btn btn-search radius"  name=""><i class="Hui-iconfont">&#xe665;</i> 搜订单</button>
+            </div>
+        </div>
+        <div id="tab_demo" class="HuiTab" style="margin-top: 15px;">
+            <div class="tabBar clearfix">
+                {foreach name="child_menu_list" item="child_menu" key="k" }
+                {eq name="child_menu['active']" value="1"}
+                <span class="current" onclick="load_page('__CONF_SITE__{$child_menu['url']}');">{$child_menu.menu_name}</span>
+                {else/}
+                <span onclick="load_page('__CONF_SITE__{$child_menu['url']}');">{$child_menu.menu_name}</span>
+                {/eq}
+                {/foreach}
+            </div>
+        </div>
+        <table class="table table-border table-bordered table-hover table-bg">
+            <thead>
+            <tr class="text-c">
+                <th>订单信息</th>
+                <th>商品清单</th>
+                <th>买家</th>
+                <th>收货信息</th>
+                <th>实付金额</th>
+                <th>状态</th>
+                <th>订单类型</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="vo"}
+            <tr class="title-tr" bgcolor="#e4f2ff">
+                <td colspan="8">
+                    <span>订单编号：{$vo['order_no']} 交易号：{$vo['out_trade_no']}</span>
+                    <span>下单时间：{$vo['create_time']}</span>
+                    {if $vo['seller_memo']!=''}
+                    <a title="查看备注" href="javascript:;" onclick="orderMessage('备注','__CONF_SITE__admin/order/getOrderSellerMemo&order_id={$vo.order_id}&re=h','','340')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe622;</i></a>
+                    {/if}
+                </td>
+            </tr>
+            <?php $num = count($vo['order_item_list']);?>
+            <tr>
+                <td style="padding:0 !important;">
+                    {volist name="$vo['order_item_list']" id="it"}
+                    <div class="goods_info">
+                        <img style="vertical-align: middle;: left" src="{$it['picture']['img_cover']}">
+                        <a title="{$it['goods_name']}"  href="javascript:;">{$it['goods_name']|subtext='15'}</a>
+                    </div>
+                    {/volist}
+                </td>
+                <td style="text-align:center;padding:0 !important;">
+                    {volist name="$vo['order_item_list']" id="it"}
+                    <div class="goods_info" style="text-align: center;line-height: 22px; vertical-align: middle; height: 86px;padding-top:18px;">
+                        <span>{$it['price']}元</span><br>
+                        {$it['num']}件</div>
+                    {/volist}
+                </td>
+                <td rowspan="1" style="text-align:center">
+                    <div class="cell" style="text-align: center;line-height: 22px; vertical-align: middle; height: 86px;padding-top:18px;">{$vo['user_name']}<br>
+                        <!--                        <i class="fa fa-television" style="color:#666;"><i class="Hui-iconfont">&#xe696;</i></i>-->
+                    </div>
+                </td>
+                <td rowspan="1" style="text-align:center">
+                    <div style="text-align:center;">
+                        <span class="expressfee">{$vo['receiver_name']}</span><br>
+                        <span class="expressfee">{$vo['receiver_mobile']}</span><br>
+                        <span class="expressfee">{$vo['receiver_province_name']}{$vo['receiver_city_name']}{$vo['receiver_county_name']}{$vo['receiver_address']}</span><br>
+                        <span class="expressfee">
+                            {if $vo['mailing_type']==1}
+                               <span class="label label-danger">邮寄</span><br>
+                            {else}
+                            <span class="label label-success">自提</span>
+                               <div class="alert alert-info">
+                                   自提时间：     {:date('Y-m-d H:i:s',$vo.mention_time)}
+                               </div>
+                            {/if}
+                        </span>
+                        <br>
+                    </div>
+                </td>
+                <td rowspan="1" style="text-align:center">
+                    <div class="cell">
+                        <b class="netprice" style="color:#666;">{$vo['pay_money']}</b><br>
+                        <span class="expressfee">(含快递:{$vo['shipping_money']})</span><br>
+                        <span class="expressfee">在线支付</span>
+                    </div>
+                </td>
+                <td rowspan="1">
+                    <div class="business-status" style="text-align: center;line-height: 22px; vertical-align: middle; height: 60px;padding-top:18px;">{$status_arr[$vo['order_status']]}<br>
+                    </div>
+                </td>
+                <td rowspan="1">
+                    <div class="business-status" style="text-align: center;line-height: 22px; vertical-align: middle; height: 60px;padding-top:18px;">
+                        {if $vo['platform_order_type']==0}
+                        商家订单
+                        {/if}
+                        {if $vo['platform_order_type']==1}
+                        平台订单
+                        {/if}
+                        <br>
+                    </div>
+                </td>
+                <td rowspan="1" style="text-align:center;">
+                    <div class="business-status" style="text-align: center;line-height: 22px; vertical-align: middle; height: 60px;padding-top:18px;">
+                        <div class="btn-group btn-group-xs">
+                            {if $vo['order_status'] == -1}
+                            <button type="button" onclick="OrderDel(this,'{$vo.order_id}')" class="btn btn-default caozuo">删除订单</button>
+                            {/if}
+                            {if $vo['order_status'] == 1&&$vo['mailing_type']==1}
+                            <button type="button" onclick="orderDelivery('商品发货','__CONF_SITE__admin/order/orderDelivery&order_id={$vo.order_id}&re=h','','340')"  class="btn btn-default show_layer">发货</button>
+                            <button type="button" onclick="orderAddress('修改收货地址','__CONF_SITE__admin/order/getOrderUpdateAddress&order_id={$vo.order_id}&re=h','','')" class="btn btn-default show_layer">修改收货地址</button>
+                            {/if}
+                            {if $vo['order_status'] == 1&&$vo['mailing_type']==2}
+                            <button type="button" onclick="gukeyiquzhou('{$vo.order_id}')"  class="btn btn-default caozuo">核销</button>
+                            {/if}
+                            <!--{if $vo['order_status'] == 2}-->
+                            <!--<button type="button" onclick="getdelivery('{$vo.order_id}')" class="btn btn-default">确认收货</button>-->
+                            <!--{/if}-->
+                            {if $vo['order_status'] == 4}
+                            <button type="button" onclick="getderefund('{$vo.order_id}')" class="btn btn-default caozuo">确认退款</button>
+                            {/if}
+                            <button type="button" onclick="load_page('__CONF_SITE__admin/order/OrderDetail&order_id={$vo.order_id}&re=h')" class="btn btn-default show_layer">查看详情</button>
+                            {if $vo['seller_memo']==''}
+                            <button type="button" onclick="orderMessage('备注','__CONF_SITE__admin/order/getOrderSellerMemo&order_id={$vo.order_id}&re=h','','340')" class="btn btn-default show_layer">添加备注</button>
+                            {/if}
+                            {if $vo['status_name']=='待支付' || $vo['order_status']=='0'}
+                            <button type="button" onclick="load_page('__CONF_SITE__admin/order/OrderDetail&order_id={$vo.order_id}&re=h')" class="btn btn-default caozuo">修改价格</button>
+                            {/if}
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </article>
+    <div class="n_page_no">
+        {$page}
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    function send_submit() {
+        load_page('__CONF_SITE__admin/order/OrderList2', '', {
+            star_time: $("input[name=star_time]").val(),
+            status: $("input[name=order_status]").val(),
+            end_time: $("input[name=end_time]").val(),
+            order_no: $("input[name=order_no]").val()
+        })
+    }
+    /*订单-发货*/
+    function orderDelivery(title,url,w,h){
+        layer_show(title,url,w,h);
+    }
+    /*订单-备注*/
+    function orderMessage(title,url,w,h){
+        layer_show(title,url,w,h);
+    }
+    /*订单-修改收货地址*/
+    function orderAddress(title,url,w,h){
+        layer_show(title,url,w,h);
+    }
+    //订单删除
+    function OrderDel(obj,id){
+        layer.confirm('确认删除这个订单吗？',function(index){
+            //此处请求后台程序，下方是成功后的后台处理……
+            $.ajax({
+                type : "post",
+                url : "{:url('order/deleteOrder')}",
+                data : {
+                    "order_id" : id,
+                },
+                success : function(data) {
+                    if (data['code'] > 0) {
+                        layer.msg('删除成功!',{icon:1,time:1000},function () {
+                            parent_flash('__CONF_SITE__admin/order/orderlist2');
+                        });
+                    }else{
+                        layer.msg('操作失败', {icon: 2, time: 1000});
+                    }
+                }
+            })
+        });
+    }
+    //确认收货
+    function getderefund(order_id){
+        var refund_type = "<?php echo $refund_type;?>";
+        var title = refund_type == 0 ? "系统未配置微信退款, 需要先手动退款给用户, 确定已退款?" : "系统已配置微信退款, 点击确定此订单款项会立即退回用户微信, 是否确认退款?";
+        layer.confirm(title,function(index){
+            //此处请求后台程序，下方是成功后的后台处理……
+            $.ajax({
+                type : "post",
+                url : "{:url('order/orderTakeRefund')}",
+                data : { "order_id" : order_id },
+                success : function(data) {
+                    if(data["code"] > 0 ){
+                        layer.msg('退款成功', {icon: 1, time: 1000},function () {
+                            parent_flash('__CONF_SITE__admin/order/orderlist2');
+                        });
+                    }else {
+                        layer.msg('退款失败', {icon: 2, time: 1000});
+                    }
+                }
+            })
+        });
+    }
+    //确认退款
+    function getdelivery(order_id){
+        layer.confirm('确认发货？',function(index){
+            //此处请求后台程序，下方是成功后的后台处理……
+            $.ajax({
+                type : "post",
+                url : "{:url('order/orderTakeDelivery')}",
+                data : { "order_id" : order_id },
+                success : function(data) {
+                    if(data["code"] > 0 ){
+                        layer.msg('收货成功', {icon: 1, time: 1000},function () {
+                            parent_flash('__CONF_SITE__admin/order/orderlist2');
+                        });
+                    }else {
+                        layer.msg('收货失败', {icon: 2, time: 1000});
+                    }
+                }
+            })
+        });
+    }
+    function gukeyiquzhou(id) {
+        layer.confirm('确认核销该订单？',function(index){
+            $.ajax({
+                type : "post",
+                url : "{:url('order/add_mention')}",
+                data : { "order_id" : id },
+                success : function(data) {
+                    if(data["code"] > 0 ){
+                        layer.msg('销该成功', {icon: 1, time: 1000},function () {
+                            parent_flash('__CONF_SITE__admin/order/orderlist2');
+                        });
+                    }else {
+                        layer.msg('销该失败', {icon: 2, time: 1000});
+                    }
+                }
+            })
+        })
+    }
+</script>
+{/block}

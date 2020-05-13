@@ -1,0 +1,114 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div class="tabBar clearfix">
+            <span onclick="load_page('__CONF_SITE__admin/Group/collage')">拼团列表</span>
+            <span onclick="load_page('__CONF_SITE__admin/Group/group_list')">商品列表</span>
+            <span onclick="load_page('__CONF_SITE__admin/Group/group_carousel')">轮播图</span>
+            <span onclick="load_page('__CONF_SITE__admin/Group/group_order')" >订单管理</span>
+            <span class="current" onclick="load_page('__CONF_SITE__admin/Group/type')" >分类管理</span>
+            <div onclick="type_add()"  class="n_tab_add"><i class="Hui-iconfont">&#xe600;</i>添加分类</div>
+        </div>
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+            <div class="text-c">
+                <input type="text" class="input-text" value="{$soname}" style="width:250px" placeholder="输入分类"
+                       name="soname">
+                <button onclick="send_submit()" class="btn btn-search radius" name=""><i class="Hui-iconfont">&#xe665;</i>
+                    搜索分类
+                </button>
+            </div>
+        </div>
+        <table class="table table-border table-bordered table-bg">
+            <thead>
+            <tr class="text-c">
+                <th>排序</th>
+                <th>分类名称</th>
+                <th>图标</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="vo"}
+            <tr class="text-c">
+                <td>
+                    {$vo.sort}
+                </td>
+                <td>{$vo.name}</td>
+                <td>
+                    <img src="{$vo.img}" style="width: 50px;height: 50px;">
+                </td>
+                <td>
+                    <a title="编辑" href="javascript:;" onclick="type_edit('{$vo.id}')" class="ml-5 show_layer"
+                       style="text-decoration:none">编辑</a>
+                    <a title="删除" href="javascript:;" onclick="type_del('{$vo.id}')" class="ml-5 caozuo"
+                       style="text-decoration:none">删除</a>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </article>
+    <div class="n_page_no">
+        {$list->render()}
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript" src="/public/js/jquery-2.1.1.js"></script>
+<script type="text/javascript">
+    function send_submit() {
+        load_page("__CONF_SITE__admin/group/type",'',{soname:$("input[name=soname]").val()});
+    }
+    function type_add() {
+        layer.open({
+            type: 2,
+            area: ['1000px', '800px'],
+            fix: false, //不固定
+            maxmin: true,
+            shade: 0.4,
+            title: '添加分类',
+            content: '__CONF_SITE__admin/group/type_add',
+            scrollbar: false,
+            shadeClose: true,
+        });
+    }
+    function type_edit(id) {
+        layer.open({
+            type: 2,
+            area: ['1000px', '800px'],
+            fix: false, //不固定
+            maxmin: true,
+            shade: 0.4,
+            title: '编辑分类',
+            content: '__CONF_SITE__admin/group/type_edit&id=' + id,
+            scrollbar: false,
+            shadeClose: true,
+        });
+    }
+    var lock = false;
+    function type_del(id) {
+        if (!lock) {
+            layer.confirm('确认要删除吗？', function (index) {
+                lock = true;
+                $.ajax({
+                    type: "post",
+                    url: "__CONF_SITE__admin/group/type_del",
+                    data: {'id': id},
+                    success: function (data) {
+                        if (data['code'] > 0) {
+                            layer.msg('删除成功', {icon: 1, time: 1000}, function () {
+                                parent_flash('__CONF_SITE__admin/Group/type');
+                            });
+                        } else {
+                            layer.msg('删除失败', {icon: 5, time: 1000});
+                            lock = false;
+                        }
+                    }
+                });
+            });
+        }
+    }
+</script>
+{/block}

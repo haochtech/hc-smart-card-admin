@@ -1,0 +1,176 @@
+{include file="noue"}
+<style>
+    /*.row {height: 32px !important; line-height: 32px !important;}*/
+    .thumbnail {margin-right: 20px !important;display: inline-block !important;}
+    .upload-thumb img{max-width: 150px;}
+</style>
+<article class="cl pd-20">
+    <form action="" method="post" class="form form-horizontal" id="my_bargain">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>活动名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" v-model="name" value="" placeholder="活动名称" class="input-text" id="name">
+                <input type="hidden" id="goods_id" v-model="goods_id" value="0">
+                <a href="javascript:;" onclick="layer_open('选择商品','__CONF_SITE__admin/bargain/select_goods',800,600)">选择商品</a>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>活动主图：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <div style="position: absolute;top:5px;left:200px;color: #ccc;">建议图标尺寸：600*300px</div>
+                <img width="120" v-if="pic!=''" :src="pic" class="thumbnail">
+                <input onclick="select_img('1','zhu');" class="btn btn-default" type="button" value="选择图片">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>轮播图：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <div style="position: absolute;top:5px;left:200px;color: #ccc;">建议图标尺寸：600*300px</div>
+                <img v-for="item in img" width="120" :src="item.url" class="thumbnail">
+                <input onclick="select_img('5','lun');" class="btn btn-default" type="button" value="选择图片">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>原价：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input id="oprice" type="text" autocomplete="off" v-model="oprice" value="" placeholder="原价"
+                       class="input-text">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>秒杀价：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input id="nprice" type="text" autocomplete="off" v-model="nprice" value="" class="input-text" placeholder="秒杀价">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>基础销量：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input id="base_sell" type="number" autocomplete="off" value="0" class="input-text">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>总库存：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input id="all_sell" type="number" autocomplete="off" value="0" class="input-text">
+                <p><i>此处库存为单独设置，与原商品库存并无关联</i></p>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>限购数量：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input id="max_pre" type="text" autocomplete="off" value="" class="input-text" placeholder="限购数量,0为不限制">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>开始时间：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input id="stime" class="input-text Wdate" type="text" onclick="WdatePicker({dateFmt:'yyyy-M-d H:mm:ss',minDate:'%y-%M-{%d}'})" style="width:160px;"/>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>结束时间：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input id="etime" type="text" onclick="WdatePicker({dateFmt:'yyyy-M-d H:mm:ss',minDate:'%y-%M-{%d+1}'})" value="" class="input-text Wdate" style="width:160px;">
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" onclick="addSuppAjax()" type="button" value="提交">
+            </div>
+        </div>
+    </form>
+</article>
+<script src="/public/menu/js/jquery.artdialog.js"></script>
+<script src="/public/menu/js/iframetools.js"></script>
+<script type="text/javascript">
+    var bannerVM = new Vue({
+        el: '#my_bargain',
+        data: {
+            goods_id: 0,//商品ID
+            name: '',//商品名称
+            pic: '',//图片链接
+            oprice: '',//价格
+            nprice: '',//价格
+            img: []
+        }
+    });
+    function get_images(item) {
+        bannerVM.pic = item['img_path'];
+        bannerVM.goods_id = item['goods_id'];
+        bannerVM.name = item['name'];
+        bannerVM.oprice = item['price'];
+        bannerVM.nprice = item['price'];
+    }
+    function lun_images(id_array, path_array) {
+        var arr = [];
+        id_array = id_array.split(",");
+        path_array = path_array.split(",");
+        for (var i = 0; i < id_array.length; i++) {
+            var item = {};
+            item['url'] = path_array[i];
+            arr.push(item);
+        }
+        bannerVM.img = arr;
+    }
+    function zhu_images(id, path) {
+        bannerVM.pic = path;
+    }
+    var flag = false;//防止重复提交
+    //添加用户
+    function addSuppAjax() {
+        if(bannerVM.goods_id<=0){
+            layer.msg("请选择商品", {icon: 5, time: 1000});
+            return false;
+        }
+        if(bannerVM.img.length<1){
+            layer.msg("请添加轮播图", {icon: 5, time: 1000});
+            return false;
+        }
+        if (!flag) {
+            flag = true;
+            $.ajax({
+                type: "post",
+                url: "{:url('activity/add_miaosha')}",
+                data: {
+                    'img': JSON.stringify(bannerVM.img),
+                    'name' : bannerVM.name,
+                    'pic' : bannerVM.pic,
+                    'oprice' : bannerVM.oprice,
+                    'nprice' : bannerVM.nprice,
+                    'goods_id' : bannerVM.goods_id,
+                    'base_sell' :$("#base_sell").val(),
+                    'all_sell' : $("#all_sell").val(),
+                    'max_pre' : $("#max_pre").val(),
+                    'stime': $("#stime").val(),
+                    'etime' : $("#etime").val(),
+                    'type':1
+                },
+                success: function (data) {
+                    if (data['code'] > 0) {
+                        layer.msg('添加成功!', {icon: 1, time: 1000}, function () {
+                            layer_close("{:url('activity/miaosha')}");
+                        });
+                    }
+                    else {
+                        flag = false;
+                        layer.msg(data['message'], {icon: 5, time: 1000});
+                    }
+                }
+            });
+        }
+    }
+    function select_img(number, type) {
+        layer_open("我的图片001",'__CONF_SITE__admin/images/dialogalbumlist&number=' + number + '&type=' + type,900,620);
+//        art.dialog.open(('__CONF_SITE__admin/images/dialogalbumlist&number=' + number + '&type=' + type), {
+//            lock: true,
+//            title: "我的图片",
+//            width: 900,
+//            height: 520,
+//            drag: false,
+//            background: "#000000",
+//            scrollbar: false,
+//        }, true);
+    }
+</script>
+</html>

@@ -1,0 +1,71 @@
+{extend name="base"/}
+{block name="main"}
+<style>
+    .table>tbody>tr>td{
+        text-align: center;
+    }
+</style>
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div class="tabBar clearfix">
+            <span class="current" onclick="load_page('__CONF_SITE__admin/Group/collage')">拼团列表</span>
+            <span onclick="load_page('__CONF_SITE__admin/Group/group_list')">商品列表</span>
+            <span onclick="load_page('__CONF_SITE__admin/Group/group_carousel')">轮播图</span>
+            <span onclick="load_page('__CONF_SITE__admin/Group/group_order')" >订单管理</span>
+            <span onclick="load_page('__CONF_SITE__admin/Group/type')" >分类管理</span>
+        </div>
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+                <div class="text-c"> 商品名称：
+                    <input type="text" class="input-text" value="{$goods_name}" style="width:250px" placeholder="输入商品名称"  name="goods_name">
+                    <button onclick="send_submit()" id="submit_button" class="btn btn-search radius" style="padding: 5px 12px;margin-left: 5px;border-radius: 3px;box-sizing:border-box;background: #ebebeb;border: 1px solid #dcdfe6;"><i class="Hui-iconfont" style="    color: #a2a2a2;
+    font-size: 18px;">&#xe665;</i></button>
+                </div>
+        </div>
+        <table class="table table-border table-bordered table-hover table-bg">
+            <thead>
+            <tr class="text-c">
+                <th>商品名称</th>
+                <th>状态</th>
+                <th>开团时间</th>
+                <th>到期时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="vo"}
+            <tr>
+                <td>{$vo['name']}</td>
+                <td>
+                    {if $vo.groupTime==0 && $vo.endTime>=$time}
+                    <span class="label label-warning radius">未成团</span>
+                    {/if}
+                    {if $vo.groupTime>0}
+                    <span class="label label-success radius">拼团成功</span>
+                    {/if}
+                    {if $vo.groupTime==0 && $vo.endTime<$time}
+                    <span class="label label-success radius">拼团失败</span>
+                    {/if}
+                </td>
+                <td>{:date('Y-m-d H:i:s',$vo.createTime)} </td>
+                <td>{:date('Y-m-d H:i:s',$vo.endTime)} </td>
+                <td>
+                    <a onclick="load_page('__CONF_SITE__admin/group/group_user_list&id={$vo.id}')" href="javascript:;" style="text-decoration:none;" class="show_layer">查看拼团信息</a>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </article>
+    <div class="n_page_no">
+        {$list->render()}
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    function send_submit() {
+        load_page("{:url('Group/collage')}",'',{goods_name:$("input[name=goods_name]").val()});
+    }
+</script>
+{/block}

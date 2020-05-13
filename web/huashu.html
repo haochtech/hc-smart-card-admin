@@ -1,0 +1,102 @@
+<html style="font-size: 48px;">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <title>话术管理</title>
+    <link rel="stylesheet" href="./vue/css/iconfont.css">
+    <script src="https://pingjs.qq.com/h5/stats.js?v2.0.4" name="MTAH5" sid="500619036"></script>
+    <script type="text/ecmascript">
+        var winWidth = 750
+        window.onresize = function () {
+            getRem(winWidth, 100)
+        }
+        function getRem(pwidth, prem) {
+            var html = document.getElementsByTagName('html')[0]
+            var oWidth = document.documentElement.clientWidth
+            html.style.fontSize = oWidth / pwidth * prem + 'px'
+        }
+        (function () {
+            if (typeof WeixinJSBridge == "object" && typeof WeixinJSBridge.invoke == "function") {
+                handleFontSize();
+            } else {
+                document.addEventListener("WeixinJSBridgeReady", handleFontSize, false);
+            }
+            function handleFontSize() {
+                // 设置网页字体为默认大小
+                WeixinJSBridge.invoke('setFontSizeCallback', {
+                    'fontSize': 0
+                });
+                // 重写设置网页字体大小的事件
+                WeixinJSBridge.on('menu:setfont', function () {
+                    WeixinJSBridge.invoke('setFontSizeCallback', {
+                        'fontSize': 0
+                    });
+                });
+            }
+            function onBridgeReady() {
+                WeixinJSBridge.call('hideOptionMenu');
+            }
+            if (typeof WeixinJSBridge == "undefined") {
+                if (document.addEventListener) {
+                    document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+                } else if (document.attachEvent) {
+                    document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                    document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+                }
+            } else {
+                onBridgeReady();
+            }
+        })()
+        getRem(winWidth, 100)
+    </script>
+     <script src="vue/js/common.js"></script>
+     <script src="vue/js/vue.js"></script>
+     <script src="vue/js/vue-resource.js"></script>
+     <script src="vue/js/huashu.js?v=1.0"></script>
+    <style>
+        body, dd, dl, dt { margin: 0; padding: 0; } body { -webkit-user-select: none; -webkit-text-size-adjust: 100%; background-color: #fff; } body, html { width: 100%; height: 100%; overflow: auto; } #app { font-family: PingFangSC-Regular,Avenir,Helvetica,Arial,sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; color: #2c3e50; } .choosetype_wrap[data-v-76a087a8] { position: fixed; top: 0; bottom: 0; left: 0; right: 0; overflow: hidden; } .talk-box[data-v-76a087a8] { position: absolute; top: 0; left: 0; right: 0; bottom: 0; } .talk-left[data-v-76a087a8] { position: fixed; top: 0; bottom: 0; left: 0; float: left; font-size: .28rem; color: #252525; text-align: center; line-height: .5rem; width: 1.9rem; border-right: 1px solid #e0e0e0; box-sizing: border-box; overflow-y: auto; } .talk-left p[data-v-76a087a8] { margin-top: .5rem; } h1, h3, p { margin: 0; } p { margin: 0; } .talk-left-active[data-v-76a087a8] { color: #0eb799; border-left: .06rem solid #0eb799; } .talk-right[data-v-76a087a8] { overflow: hidden; width: 5.6rem; background-color: #fafafa; } li, ul { list-style: none; } ul { margin: 0; padding: 0; } .add-talk[data-v-76a087a8] { width: 5.59rem; height: .8rem; font-size: .28rem; line-height: .8rem; text-align: center; color: #0eb799; background-color: #fff; } .talk-right li[data-v-76a087a8] { width: 5rem; max-height: 2rem; min-height: 1.2rem; margin-top: .2rem; margin-left: .31rem; box-sizing: border-box; background-color: #fff; border: 1px solid #e8e8e8; box-shadow: 0 0.02rem 0.08rem 0 rgba(0, 0, 0, .06); border-radius: .06rem; font-size: .26rem; color: #333; line-height: .39rem; background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAwCAYAAAACYxrZAAAAAXNSR…bBPM9PqM6yuFSpZS21H8uT3EZhQ6tbqNlhgVrcPs2gLb/4A/q1iR0PGDYZAAAAAElFTkSuQmCC); background-size: .22rem .28rem; background-position: 4.55rem; background-repeat: no-repeat; } .talk-rihgt-item[data-v-76a087a8] { width: 4.01rem; max-height: 1.17rem; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; font-size: .26rem; color: #333; line-height: .39rem; margin-left: .2rem; margin-top: .21rem; word-break: break-all; } .talk-right-wordkey[data-v-76a087a8] { font-size: .22rem; color: #999; line-height: .3rem; margin-left: .2rem; margin-bottom: .21rem; margin-top: .1rem; } .talk-right-box[data-v-76a087a8] { position: fixed; right: 0; top: 0; left: 1.9rem; bottom: 0; overflow: hidden; } .addtalk-box textarea[data-v-1fe76eb8] { background-color: #fff; width: 100%; height: 2.97rem; resize: none; border: none; outline: none; font-size: .32rem; color: #333; line-height: .45rem; padding-left: .4rem; box-sizing: border-box; margin-top: .1rem; word-break: break-all; } .addtalk-title[data-v-1fe76eb8] { margin-top: .2rem; font-size: .24rem; color: #999; line-height: .33rem; } .addtalk-box[data-v-1fe76eb8] { overflow: hidden; background-color: #fff; } .addtalk-wrapper[data-v-1fe76eb8] { position: fixed; top: 0; bottom: 0; width: 100%; background-color: #f0f0f0; } .addtalk-title span[data-v-1fe76eb8]:first-of-type { float: left; margin-left: .4rem; } .addtalk-title span[data-v-1fe76eb8]:last-of-type { float: right; margin-right: .4rem; } .save_talk[data-v-1fe76eb8] { width: 6.7rem; height: .9rem; background: #0eb799; border-radius: .1rem; font-size: .36rem; color: #fff; text-align: center; line-height: .9rem; margin: 0 auto; margin-top: .4rem; }
+    </style>
+</head>
+<body>
+<div id="app">
+    <div data-v-76a087a8="" class="choosetype_wrap" style="display:none" v-show="show">
+        <div data-v-76a087a8="" class="talk-box" v-if="type==1">
+            <div data-v-76a087a8="" class="talk-left">
+                <div data-v-76a087a8=""
+                     style="overflow: hidden; transition-property: transform; transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1); transition-duration: 0ms; transform: translate(0px, 0px) scale(1) translateZ(0px);">
+                    <p data-v-76a087a8="" v-for="(k,v) in huashu_list" @click="index_huashu=k"
+                       :class="{'talk-left-active':index_huashu==k}" style="pointer-events: auto;">{{v.name}}</p>
+                </div>
+            </div>
+            <div data-v-76a087a8="" class="talk-right-box clearfix">
+                <section data-v-76a087a8=""
+                         style="padding-bottom: 0.2rem; transition-property: transform; transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1); transition-duration: 0ms; transform: translate(0px, 0px) scale(1) translateZ(0px);">
+                    <ul data-v-76a087a8="" class="talk-right clearfix" style="pointer-events: auto;">
+                        <div data-v-76a087a8="" class="add-talk" @click="type=2">新增话术</div>
+                        <li data-v-76a087a8="" v-for="(k,v) in huashu_list[index_huashu]['child']"
+                            v-if="huashu_list.length>0">
+                            <div data-v-76a087a8="" class="talk-rihgt-item" @click="del_talk(v.id)">{{v.value}}</div>
+                            <div data-v-76a087a8="" class="talk-right-wordkey"></div>
+                        </li>
+
+                    </ul>
+                </section>
+            </div>
+        </div>
+        <div data-v-1fe76eb8="" class="addtalk-wrapper" v-if="type==2">
+            <div data-v-1fe76eb8="" class="addtalk-box">
+                <div data-v-1fe76eb8="" class="addtalk-title clearfix"><span data-v-1fe76eb8="">话术内容</span> <span
+                        data-v-1fe76eb8="">{{inputCnt}}/300</span></div>
+                <textarea data-v-1fe76eb8="" v-model="talk_value" placeholder="编写您的话术内容" maxlength="300" @input="descInput"></textarea>
+            </div>
+            <div style="justify-content:center;display: flex;">
+                <div data-v-1fe76eb8="" class="save_talk" @click="add_talk()" style="width:45%;">保存</div>
+            <div data-v-1fe76eb8="" class="save_talk" @click="type=1" style="width:45%;background:#B5B5B5;">返回</div>
+          </div>
+        </div>
+    </div>
+</div>
+<script src="./vue/js/jquery-1.7.2.js"></script>
+<script src="./vue/js/layer.js"></script>
+</body>
+</html>

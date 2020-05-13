@@ -1,0 +1,102 @@
+{include file="demo"}
+<link rel="stylesheet" type="text/css" href="/public/css/defau.css">
+<body>
+<article class="cl pd-20">
+    <form action="" method="post" class="form form-horizontal" id="">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>分类名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" value="" placeholder="分类名称" class="input-text" id="cate_name"
+                       name="supplier_name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">排序：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" value="0" class="input-text" placeholder="排序" id="sort">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">图片：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <p style="height: 165px;width:165px;border: dashed 1px #e5e5e5">
+                    <img src="" alt="" id="imgcate_pic" class="thumbnail">
+                </p>
+                <div class="upload-btn">
+				<span>
+					<input type="hidden" value="" id="cate_pic"/>
+				</span>
+                    <input onclick="select_img('1','zhu');" class="btn btn-default" type="button" value="选择图片">
+                </div>
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" onclick="addSuppAjax()" type="button"
+                       value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</article>
+<script src="/public/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="/public/js/file_upload.js" type="text/javascript"></script>
+<!--<script src="/public/menu/js/jquery.artdialog.js"></script>-->
+<!--<script src="/public/menu/js/iframetools.js"></script>-->
+<script type="text/javascript">
+    //模块输入信息验证
+    function verify(category_name) {
+        if(category_name == ''){
+            layer.msg('名称不能为空', {icon: 2, time: 1000});
+            return false;
+        }
+        return true;
+    }
+    var flag = false;//防止重复提交
+    //添加用户
+    function addSuppAjax() {
+        var cate_name = $("#cate_name").val();
+        var short_name = $("#short_name").val();
+        var sort = $("#sort").val();
+        var cate_pic = $("#cate_pic").val();
+        if (verify(cate_name,short_name) && !flag) {
+            flag = true;
+            $.ajax({
+                type : "post",
+                url : "{:url('bargain/add_activity_class')}",
+                data : {
+                    'cate_name' : cate_name,
+                    'sort' : sort,
+                    "cate_pic" : cate_pic,
+                },
+                success : function(data) {
+                    if (data["code"] > 0) {
+                        layer.msg('添加成功',{icon:1,time:1000},function () {
+                            layer_close('__CONF_SITE__admin/bargain/activity_class');
+                        });
+                    }else{
+                        layer.msg('添加失败', {icon: 2, time: 1000});
+                    }
+                }
+            });
+        }
+    }
+    //图片上传
+    function zhu_images(id,path) {
+        $("#cate_pic").val(path);
+        $("#imgcate_pic").attr('src',path);
+    }
+    function select_img(number,type) {
+        layer_open("我的图片001",'__CONF_SITE__admin/images/dialogalbumlist&number=' + number + '&type=' + type,900,620);
+//        art.dialog.open(('__CONF_SITE__admin/images/dialogalbumlist&number=' + number + '&type=' + type), {
+//            lock : true,
+//            title : "我的图片",
+//            width : 900,
+//            height:620,
+//            drag : false,
+//            background : "#000000",
+//            scrollbar:false,
+//        }, true);
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+{extend name="base"/}
+{block name="main"}
+<article class="cl pd-20">
+	<div class="n_tab_line">
+		<a href="{:url('admin/admin_list')}" class="n_tab_list02">管理员列表</a>
+		<a href="{:url('admin/admin_add')}" class="n_tab_add02">添加管理员</a>
+		<a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a>
+		<div class="cl"></div>
+	</div>
+	<form action="" method="post" class="form form-horizontal" id="">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>管理员：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="" placeholder="登录名" class="input-text" id="user_name" name="user_name">
+				<p class="error">请输入登陆名</p>
+				<p class="error">登陆名不合法</p>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>初始密码：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" autocomplete="off" value="" class="input-text" placeholder="密码" id="password">
+				<p class="error">请输入密码</p>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">用户组：</label>
+			<div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="width:150px;">
+				<select class="select"  id="group_id" size="1">
+					<option value="-1">请选择用户组</option>
+					{foreach name="auth_group" item="v1"}
+					<option value="{$v1['role_id']}">&nbsp;&nbsp;{$v1['role_name']}</option>
+					{/foreach}
+				</select>
+				</span>
+				<p class="error">请选择用户组</p>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">备注：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<textarea name="" cols="" rows="" id="info" class="textarea"  placeholder="说点什么...100个字符以内" dragonfly="true" onKeyUp="textarealength(this,100)"></textarea>
+				<p class="textarea-numberbar"><em class="textarea-length">0</em>/100</p>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<input class="btn btn-primary radius" onclick="addUserAjax()" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+			</div>
+		</div>
+	</form>
+</article>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+$(function(){
+	$('.skin-minimal input').iCheck({
+		checkboxClass: 'icheckbox-blue',
+		radioClass: 'iradio-blue',
+		increaseArea: '20%'
+	});
+});
+//模块输入信息验证
+function verify() {
+    var user_name = $("#user_name").val();
+    var group_id = $("#group_id").val();
+    var password = $("#password").val();
+    var info = $("#info").val();
+    if (user_name == '') {
+        $("#user_name").next().show();
+        return false;
+    } else {
+        $(".error").hide();
+    }
+    pattern= new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？_]");
+    if(pattern.test(user_name)){
+        $("#user_name").next().next().show();
+        return false;
+    }
+    if (password == '') {
+        $("#password").next().show();
+        return false;
+    } else {
+        $(".error").hide();
+    }
+    if(group_id == -1){
+        $("#group_id").parent().next().show();
+        return false;
+    }else{
+        $(".error").hide();
+    }
+    return true;
+}
+var flag = false;//防止重复提交
+//添加用户
+function addUserAjax() {
+    var user_name = $("#user_name").val();
+    var group_id = $("#group_id").val();
+    var password = $("#password").val();
+    var info = $("#info").val();
+    if(verify() && !flag){
+        flag = true;
+        $.ajax({
+            type : "post",
+            url : "{:url('admin/admin_add')}",
+            data : {
+                'user_name' : user_name,
+                'group_id' : group_id,
+                'password' : password,
+                'info' : info
+            },
+            success : function(data) {
+                if(data['code']>0){
+                    layer.msg('添加成功!',{icon:1,time:1000},function () {
+                        window.parent.location.href="{:url('admin/admin_list')}";
+                    });
+                }
+                else{
+                    layer.msg(data['message'],{icon:5,time:1000});
+                    $("#admin-role-save").removeAttr("disabled");
+                }
+            }
+        });
+    }
+}
+</script>
+{/block}

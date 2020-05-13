@@ -1,0 +1,61 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+            <div class="tabBar clearfix">
+                <span onclick="load_page('__CONF_SITE__admin/paycontent/index')" >内容列表</span>
+                <span onclick="load_page('__CONF_SITE__admin/paycontent/class_list')">内容分类</span>
+                <span onclick="load_page('__CONF_SITE__admin/paycontent/groups')">内容合集</span>
+                <span onclick="load_page('__CONF_SITE__admin/paycontent/prices')">资费管理</span>
+                <span class="current">订单列表</span>
+            </div>
+        </div>
+        <div>
+            <div class="cl pd-5 bg-1 bk-gray mt-20">
+                <div class="text-c">
+                    <input type="text" name="search_text" value="{$search_text}" placeholder="用户,内容,资费" style="width:250px" class="input-text">
+                    <button class="btn btn-search radius" onclick="send_submit2()"><i class="Hui-iconfont">&#xe665;</i> 搜内容</button>
+                </div>
+            </div>
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-bg table-hover table-sort">
+                    <thead>
+                    <tr class="text-c">
+                        <th>用户</th>
+                        <th>购买内容</th>
+                        <th>资费类型</th>
+                        <th>数量</th>
+                        <th>金额</th>
+                        <th>订单状态</th>
+                        <th>下单时间</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {foreach name="$list" item="v1"}
+                    <tr class="pid_0" style="height: 30px;">
+                        <td style="text-align: center;">{$v1['nick_name']}</td>
+                        <td style="text-align: center;">{$v1['title'] ? $v1['title'] : '续费'}</td>
+                        <td style="text-align: center;">{$v1['price_name']}</td>
+                        <td style="text-align: center;">{$v1['num']}</td>
+                        <td style="text-align: center;">{$v1['totalPrice']}</td>
+                        <td style="text-align: center;">{if $v1.isPay==0}待付款{else/}已付款{/if}</td>
+                        <td style="text-align: center;"> {:date('Y-m-d H:i:s',$v1['create_time'])} </td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+                <div class="n_page_no">
+{$page}
+                </div>
+            </div>
+        </div>
+        <script>
+            function send_submit2() {
+                load_page('__CONF_SITE__admin/paycontent/orders', '', {
+                    search_text: $("input[name=search_text]").val()
+                })
+            }
+        </script>
+        {/block}

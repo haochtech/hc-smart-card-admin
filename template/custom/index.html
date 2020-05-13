@@ -1,0 +1,169 @@
+{extend name="base"/}
+{block name="main"}
+<style>
+    input.color_input {
+        padding-top: 10px;
+    }
+</style>
+<link media="all" href="/public/menu/css/{$skin}/index_mod.css?v=1.2" type="text/css" rel="stylesheet">
+<link media="all" href="/public/menu/css/{$skin}/index_module.css?v=1.2" type="text/css" rel="stylesheet">
+<link media="all" href="/public/menu/css/{$skin}/formconfig_index.css?v=1.3" type="text/css" rel="stylesheet">
+<link href="/public/static/umedito/themes/default/_css/umeditor.css" type="text/css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/public/menu/css/{$skin}/defau.css">
+<link rel="stylesheet" type="text/css" href="/public/menu/css/{$skin}/custom.css">
+<script type="text/javascript" src="/public/static/umedito/third-party/template.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="/public/static/umedito/umeditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="/public/static/umedito/_examples/editor_api2.js"></script>
+<script type="text/javascript" src="/public/static/umedito/lang/zh-cn/zh-cn.js"></script>
+<script type="text/javascript" src="/public/js/vue.js"></script>
+<script type="text/javascript" src="/public/js/vue-dragging.es5.js"></script>
+<script src="/public/js/html2canvas.js"></script>
+<script>
+    Vue.use(VueDragging);
+</script>
+<body>
+<input type="hidden" id="bus_select_up_id" value="0">
+<input type="hidden" id="bus_select_up_name" value="">
+<div class="diypage" id="page">
+    <div class="diypage-header">
+        <div class="header-left"></div>
+        <div class="header-control" id="header-control"></div>
+        <div class="header-right" style="width: 260px;display: flex;justify-content: space-around;align-items: center;">
+            <div onclick="save(0)" class="bottomButon saveButon bg_save style_btn01" style="">保存修改页面</div>
+            <div onclick="load_page('__CONF_SITE__admin/menu/import_mod&nimei=1&wn_id={$wn_id}&type={$type}','','','',2)" class="bottomButon bg_save style_btn02" style="">模版导入</div>
+            <div onclick="save(1)" class="bottomButon bg_save style_btn03" style="">添加到模板库</div>
+        </div>
+    </div>
+    <div class="diypage-container" id="b_menu" style="top:95px !important;">
+        {include file="custom/left" /}
+        {include file="custom/center" /}
+        <div class="updown" id="toolbar">
+                <span class="tool_up" onclick="tool_up_vue()">
+                     <p>上移组件</p>
+                </span>
+            <span class="tool_down" onclick="tool_down_vue()">
+                    <p>下移组件</p>
+                </span>
+        </div>
+        {include file="custom/right" /}
+    </div>
+</div>
+<input  type="hidden" id="join_select_id" value="">
+<!--<script src="/public/menu/js/jquery.artdialog.js"></script>-->
+<!--<script src="/public/menu/js/iframetools.js"></script>-->
+<script src="/public/menu/js/center_component.js"></script>
+<script src="/public/menu/js/center_my.js"></script>
+<script src="/public/menu/js/jquery.gridly.js" type="text/javascript"></script>
+<div style="display: none; position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; cursor: move; opacity: 0; background: rgb(255, 255, 255) none repeat scroll 0% 0%;"></div>
+<script>
+    var page_flag = '{$page_flag}';
+    var id = '{$id}';
+    //首页管理
+    $(document).ready(function () {
+        bannerVM.page.show_tabbar = page_flag == '1' || page_flag == '3' ? 'true' : 'false';
+        if(page_flag == '2' && id == '0') {return;}
+        $.ajax({
+            type: "post",
+            url: "{:url('custom/gettmpl')}",
+            data:{page_flag:page_flag,id:id},
+            success: function (data) {
+                if(data){
+                    if(data.all_data){
+                        var list = [];
+                        for(var key in data.all_data)
+                        {
+                            var item = data.all_data[key];
+                            if(item)
+                            {
+                                list.push(item);
+                            }
+                        }
+                        bannerVM.all_data=list;
+                    }
+                    if(data.page){bannerVM.page = data.page;}
+                    if(data.tabbar){bannerVM.tabbar = data.tabbar;}
+                    if(page_flag == '2'){bannerVM.page.show_tabbar = 'false';}
+                    if(typeof(bannerVM.page.open_img) != 'object')
+                    {
+                        bannerVM.page.open_img = {
+                            imgurl:'',
+                            name:'',
+                            url:'',
+                            key:'1',
+                        };
+                    }
+                }
+            }
+        });
+    })
+    
+    function save(flag) {
+        var data={
+            all_data:bannerVM.all_data,
+            page:bannerVM.page,
+            tabbar:bannerVM.tabbar,
+        };
+        var src='';
+        event.preventDefault();
+        layer.msg('保存中,请稍等！',{icon:16,shade: 0.05,time:999999});
+        if(page_flag == '2' || page_flag == '3' || flag == 1)
+        {
+            html2canvas(document.querySelector("#content"),{
+                useCORS:true,
+                logging:false,
+            }).then(canvas => {
+                var dataUrl = canvas.toDataURL();
+            src=dataUrl;
+            if(flag == 1 && id == "0")
+            {
+                layer.prompt({title: '输入模版名称', formType: 0}, function (text, index) {
+                    dosave(data,page_flag,src,text,flag);
+                });
+            }
+            else
+            {
+                dosave(data,page_flag,src,bannerVM.page.name,flag);
+            }
+        });
+        }
+        else
+        {
+            dosave(data,page_flag,src,bannerVM.page.name,flag);
+        }
+    }
+    var lock_a=false;
+    function dosave(data,page_flag,src,name,flag) {
+        if (!lock_a)
+        {
+            lock_a = true;
+            $.ajax({
+                type : "post",
+                url : host+"addons/yb_mingpian/core/index.php?s=/admin/custom/save_tmpl",
+                data : {
+                    data:JSON.stringify(data),
+                    page_flag:page_flag,
+                    id:id,
+                    title:name,
+                    img_src:src,
+                    flag:flag
+                },
+                success : function(data) {
+                    if(data['code']>0){
+                        layer.msg('保存成功!',{icon:1,time:1000});
+                        lock_a = false;
+                        if(data['new_id'])
+                        {
+                            id = data['new_id'];
+                        }
+                    }
+                    else{
+                        layer.msg(data['message'],{icon:5,time:1000});
+                        lock_a = false;
+                    }
+                }
+            });
+        }
+    }
+</script>
+</body>
+{/block}

@@ -1,0 +1,147 @@
+{extend name="base"/}
+{block name="main"}
+<link rel="stylesheet" href="/public/static/bast/xenon-forms.css">
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div class="tabBar clearfix">
+            <span onclick="load_page('__CONF_SITE__admin/card/index')" class="current" >名片管理</span>
+            <!--<a href="javasctipt:;" onclick="load_page('__CONF_SITE__admin/offweb/radar')" class="n_tab_add"><i class="Hui-iconfont">&#xe600;</i>添加名片</a>-->
+        </div>
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+                <div class="text-c">
+                    <input type="text" class="input-text" value="{$search_text}" style="width:250px" placeholder="输入姓名"  name="search_text">
+                    <button onclick="send_submit()" id="submit_button" class="btn btn-search radius" style="padding: 5px 12px;margin-left: 5px;border-radius: 3px;box-sizing:border-box;background: #ebebeb;border: 1px solid #dcdfe6;"><i class="Hui-iconfont" style="    color: #a2a2a2;
+    font-size: 18px;">&#xe665;</i></button>
+                </div>
+        </div>
+        <table class="table table-border table-bordered table-bg">
+            <thead>
+            <tr class="text-c">
+                <th>姓名</th>
+                <th>职位</th>
+                <th>手机</th>
+                <th>电话</th>
+                <th>邮箱</th>
+                <th>默认名片</th>
+                <th>添加时间</th>
+                <th>名片禁止转发</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="vo"}
+            <tr class="text-c va-m">
+            <td>
+            {$vo.user_name}
+            </td>
+            <td>
+                {$vo.position}
+            </td>
+            <td>
+                {$vo.tel}
+            </td>
+            <td>
+                {$vo.phone}
+            </td>
+            <td>
+                {$vo.email}
+            </td>
+            <td>
+                {if $vo.default==2}
+                <a style="text-decoration:none;"  title="默认" onclick="change_default('{$vo.id}','1')" >默认</a>
+                {else}
+                <a style="text-decoration:none;"  title="设置" onclick="change_default('{$vo.id}','2')" >设置</a>
+                {/if}
+                {if $vo.is_head==2}
+                &emsp;<a style="text-decoration:none;"  title="置顶" onclick="do_head('{$vo.id}')" >置顶</a>
+                {/if}
+            </td>
+            <td>
+                {:date("Y-m-d" ,$vo["create_time"])}
+            </td>
+                <td>
+                    <input type="checkbox" class="iswitch iswitch-secondary"  onclick="card_ban(this,'{$vo.id}','{$vo.is_relay}')" name="is_relay" id="is_relay" {if $vo.is_relay==2}checked{/if}>
+                </td>
+            <td>
+                <a style="text-decoration:none;margin-right:15px;"  title="编辑" href="javascript:;" onclick="layer_open('编辑名片','__CONF_SITE__admin/card/card_edit&id={$vo.id}','1000','750')" class="show_layer">编辑</a>
+                <a style="text-decoration:none;margin-right:15px;"  title="选择模板" href="javascript:void(0);" onclick="layer_open('选择模板','__CONF_SITE__admin/card/select_mod&id={$vo.id}',900,700)"  class="show_layer">选择模板</a>
+            </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </article>
+    <div class="n_page_no">
+        {$page}
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    function send_submit() {
+        var search_text=$("input[name=search_text]").val();
+        load_page(top_menu.now_url,'',{search_text:search_text});
+    }
+    function change_default(id,type) {
+        var msg='';
+        if (type==2){
+            msg='确定要设置为默认名片吗？';
+        }else {
+            msg='确定要取消默认吗？';
+        }
+        layer.confirm(msg,function(index){
+            $.ajax({
+                type : "post",
+                url : "__CONF_SITE__admin/card/change_card",
+                data : {'id':id,'default':type},
+                success : function(data) {
+                    if(data['code']>0 ){
+                        layer.msg('成功',{icon:1,time:1000},function () {
+                            parent_flash();
+                        });
+                    }else{
+                        layer.msg('失败',{icon:5,time:1000});
+                    }
+                }
+            });
+        })
+    }
+    function card_ban(obj,id,data) {
+        $.ajax({
+            data:{
+                "id":id,
+                "is_relay":data
+            },
+            type:"post",
+            url:"{:url('admin/card/card_ban')}",
+            success:function (res) {
+                if (res['code']>0){
+                    layer.msg('操作成功', {icon: 1, time:1000});
+                    parent_flash();
+                }else {
+                    layer.msg('操作失败', {icon: 2, time:1000});
+                    parent_flash();
+                }
+            }
+        })
+    }
+    function do_head(id) {
+        $.ajax({
+            data:{
+                "id":id
+            },
+            type:"post",
+            url:"{:url('admin/card/do_head')}",
+            success:function (res) {
+                if (res['code']>0){
+                    layer.msg('操作成功', {icon: 1, time:1000});
+                    parent_flash();
+                }else {
+                    layer.msg('操作失败', {icon: 2, time:1000});
+                }
+            }
+        })
+    }
+</script>
+{/block}

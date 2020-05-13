@@ -1,0 +1,130 @@
+{extend name="base"/}
+{block name="main"}
+<link rel="stylesheet" href="/public/static/bast/xenon-forms.css">
+<script src="/public/static/layer/2.4/layer.js"></script>
+<div class="Hui-article">
+    <style>.tabBar a:hover {
+        color: #fff !important;
+        text-decoration: none !important;
+    }</style>
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div class="tabBar clearfix">
+            <!--<span onclick="load_page('__CONF_SITE__admin/card/send_card')">名片分发</span>-->
+            <span class="current">客户列表</span>
+            <style>.tabBar a:hover {
+                color: #fff;
+            }</style>
+        </div>
+        <div>
+            <div class="cl pd-5 bg-1 bk-gray mt-20">
+                选择部门:
+                <select class="input-text" name="depart" id="depart" onchange="show_staff(this.value)" style="width: auto">
+                    {if $depart_id==0}
+                    <option selected value="0">选择</option>
+                    {volist name="depart" id="d"}
+                    <option value="{$d.id}">{$d.name}</option>
+                    {/volist}
+                    {else}
+                    <option value="0">选择</option>
+                    {volist name="depart" id="d"}
+                    <option {if $depart_id==$d.id } selected {/if} value="{$d.id}">{$d.name}</option>
+                    {/volist}
+                    {/if}
+                </select>
+                选择员工:
+                <select class="input-text" name="staff" id="staff" style="width: auto">
+                    <option value="">请选择</option>
+                    {volist name="staff" id="d"}
+                    <option {if condition="$staff_id==$d.id" } selected {/if} value="{$d.id}">{$d.user_name}</option>
+                    {/volist}
+                </select>
+                日期范围：
+                <input type="text" onfocus="WdatePicker()" value="{$stime}" name="star_time"
+                       class="input-text Wdate"
+                       style="width:120px;">
+                -
+                <input type="text" onfocus="WdatePicker()" value="{$etime}" name="end_time" class="input-text Wdate"
+                       style="width:120px;">
+                <button onclick="send_submit()" id="submit_button" class="btn btn-search radius" style="padding: 5px 12px;margin-left: 5px;border-radius: 3px;box-sizing:border-box;background: #ebebeb;border: 1px solid #dcdfe6;">
+                    <i class="Hui-iconfont" style="    color: #a2a2a2;
+    font-size: 18px;">&#xe665;</i></button>
+            </div>
+        </div>
+        <div>
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-bg table-hover table-sort" id="mains">
+                    <thead>
+                    <tr class="text-c">
+                        <th>用户头像</th>
+                        <th>用户昵称</th>
+                        <th>备注名称</th>
+                        <th>授权电话</th>
+                        <th>首位联络人</th>
+                        <th>联络次数</th>
+                        <th>来源</th>
+                        <th>最后访问时间</th>
+                        <th>其他联络人</th>
+                        <th>AI分析</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    {foreach name="list" item="vo"}
+                    <tr class="text-c va-m">
+                        <td><img src="{$vo.head}" style="max-width: 50px;" alt="用户头像"></td>
+                        <td>{$vo.nick_name}</td>
+                        <td>{$vo.remark}</td>
+                        <td title="未授权表示用户对该员工未授权">{$vo.tel}</td>
+                        <td>{$vo.user_name}</td>
+                        <td>{$vo.click}</td>
+                        <td>{$vo.source}</td>
+                        <td>{:date('Y-m-d H:i:s',$vo.last_time)}</td>
+                        <td>{if $vo.other>0}<span onclick="layer_open('其他联络人','__CONF_SITE__admin/arliki/show_other&user_id={$vo.user_id}&staff_id={$vo.staff_id}',800,700)" style="cursor: pointer" class="show_layer">其他{$vo.other}位联络人</span>{else}--{/if}</td>
+                        <td><span onclick="layer_open('详情分析','__CONF_SITE__admin/arliki/ai_show&user_id={$vo.user_id}&staff_id={$vo.staff_id}',800,700)" style="cursor: pointer" class="show_layer">详情</span>&emsp;<span onclick="layer_open('商品分析','__CONF_SITE__admin/arliki/ai_show&user_id={$vo.user_id}&staff_id={$vo.staff_id}&goods=1',800,700)" style="cursor: pointer" class="show_layer">商品</span></td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </article>
+    <div class="n_page_no" id="page">
+        {$page}
+    </div>
+    {/block}
+    {block name="script"}
+    <script type="text/javascript">
+        function send_submit() {
+            load_page('__CONF_SITE__admin/arliki/custom', '', {
+                stime: $("input[name=star_time]").val(),
+                etime: $("input[name=end_time]").val(),
+                depart: $("#depart").val(),
+                staff_id: $("#staff").val()
+            })
+        }
+        function show_staff(id) {
+            if(id==0){
+                $("#staff").empty();
+                $("#staff").append('<option value="">请选择</option>');
+            }else {
+                $.ajax({
+                    type: "post",
+                    url: "{:url('arliki/show_staff')}",
+                    data: {
+                        'id': id
+                    },
+                    success: function (data) {
+                        data = JSON.parse(data);
+                        var html = '';
+                        html += '<option value="">请选择</option>';
+                        for (var i = 0; i < data.length; i++) {
+                            html += '<option value="' + data[i]['id'] + '">' + data[i]['user_name'] + '</option>';
+                        }
+                        $("#staff").empty();
+                        $("#staff").append(html);
+                    }
+                });
+            }
+        }
+    </script>
+    {/block}

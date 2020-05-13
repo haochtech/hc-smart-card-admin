@@ -1,0 +1,93 @@
+<link rel="stylesheet" type="text/css" href="/public/static/h-ui-{$skin}/css/H-ui.min.css?v=1.0" />
+<link rel="stylesheet" type="text/css" href="/public/static/Hui-iconfont/1.0.8/iconfont.css?v=1.0" />
+<link rel="stylesheet" type="text/css" href="/public/css/defau.css">
+<script src="/public/js/all.js"></script>
+<script src="/public/js/jquery-2.1.1.js"></script>
+
+<article class="cl pd-20">
+    <form action="" method="post" class="form form-horizontal" id="">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">排序：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" value="0" class="input-text" placeholder="排序" id="sort">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">图片：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <div style="position: absolute;top:70px;left:200px;color: #ccc;">建议图片尺寸：750*280px </div>
+                <p style="height: 165px;width:165px;border: dashed 1px #e5e5e5">
+                    <img src="" onerror="this.src='/public/goods/img/default_goods_image_240.gif'" alt="" id="imgbrand_pic" class="thumbnail">
+                </p>
+                <div>
+				<span>
+					<input type="hidden" value="" id="brand_pic" />
+				</span>
+                    <input onclick="select_img('1','zhu');" class="btn btn-default" type="button" value="选择图片">
+                </div>
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" onclick="addSuppAjax()" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</article>
+<script type="text/javascript" src="/public/static/layer/2.4/layer.js"></script>
+<!--<script src="/public/menu/js/jquery.artdialog.js"></script>-->
+<!--<script src="/public/menu/js/iframetools.js"></script>-->
+<script type="text/javascript">
+    //模块输入信息验证
+    function verify(logo) {
+        if (logo==''){
+            layer.msg('图片不能为空',{icon:5,time:1000});
+            return false;
+        }
+        return true;
+    }
+    var flag = false;//防止重复提交
+    //添加用户
+    function addSuppAjax() {
+        var logo=$("#brand_pic").val();
+        var sort=$("#sort").val();
+        if(verify(logo) && !flag){
+            flag = true;
+            $.ajax({
+                type : "post",
+                url : "{:url('bargain/add_activity_carousel')}",
+                data : {
+                    'logo':logo,
+                    'sort':sort
+                },
+                success : function(data) {
+                    if(data['code']>0){
+                        layer.msg('添加成功!',{icon:1,time:1000},function () {
+                            layer_close("__CONF_SITE__admin/bargain/activity_carousel");
+                        });
+                    }
+                    else{
+                        flag = false;
+                        layer.msg(data['message'],{icon:5,time:1000});
+                    }
+                }
+            });
+        }
+    }
+    function zhu_images(id,path) {
+        $("#brand_pic").val(path);
+        $("#imgbrand_pic").attr('src',path);
+    }
+    function select_img(number,type) {
+        layer_open("我的图片001",'__CONF_SITE__admin/images/dialogalbumlist&number=' + number + '&type=' + type,900,620);
+//        art.dialog.open(('__CONF_SITE__admin/images/dialogalbumlist&number=' + number + '&type=' + type), {
+//            lock : true,
+//            title : "我的图片",
+//            width : 900,
+//            height:620,
+//            drag : false,
+//            background : "#000000",
+//            scrollbar:false,
+//        }, true);
+    }
+</script>

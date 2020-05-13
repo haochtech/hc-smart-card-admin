@@ -1,0 +1,88 @@
+{extend name="base"/}
+{block name="main"}
+<link rel="stylesheet" href="/public/static/bast/xenon-forms.css">
+<script src="/public/static/layer/2.4/layer.js"></script>
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+             <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+                        <div class="tabBar clearfix">
+                            <span class="current">雷达列表</span>
+                            <span onmouseover="layer.tips('<img src={$picurl} width=400px; height=400px>',this,{tips:[2,'#fff'],time:0});" onmouseout="layer.closeAll()">企业二维码</span>
+                        </div>
+                    </div>
+        <div>
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-bg table-hover table-sort">
+                    <thead>
+                    <tr class="text-c">
+                        <th>姓名</th>
+                        <th>职务</th>
+                        <th>部门</th>
+                        <th>手机</th>
+                        <th>AI雷达与名片</th>
+                        <th>BOSS雷达</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    {foreach name="list" item="s"}
+                    <tr class="text-c va-m">
+                        <td>{$s.user_name}</td>
+                        <td>{$s.position}</td>
+                        <td>{$s.name}</td>
+                        <td>{$s.wxtel}</td>
+                        <td>
+                            <input type="checkbox" class="iswitch iswitch-secondary" onclick="radar(this,'{$s.id}','{$s.radar}')" name="radar" id="radar" {if $s.radar==1}checked{/if}>
+                        </td>
+                        <td>
+                            <input type="checkbox" class="iswitch iswitch-secondary"  onclick="boss_radar(this,'{$s.id}','{$s.boss_radar}')" name="boss_radar" id="boss_radar" {if $s.boss_radar==1}checked{/if}>
+                        </td>
+                        <td > <a onclick="layer_open('{$s.user_name}的二维码','__CONF_SITE__admin/offweb/wx_code&id={$s.id}','500px','500px')"  >二维码</a></td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </article>
+        {/block}
+        {block name="script"}
+        <script type="text/javascript">
+            function radar(obj,id,data) {
+                $.ajax({
+                    data:{
+                        "id":id,
+                        "radar":data
+                    },
+                    type:"post",
+                    url:"{:url('admin/offweb/radar')}",
+                    success:function (res) {
+                        if (res['code']>0){
+                            layer.msg('操作成功', {icon: 1, time:1000});
+                            parent_flash();
+                        }else {
+                            layer.msg(res["message"], {icon: 2, time:1000});
+                            parent_flash();
+                        }
+                    }
+                })
+            }
+            function boss_radar(obj,id,data) {
+                $.ajax({
+                    data:{
+                        "id":id,
+                        "boss_radar":data
+                    },
+                    type:"post",
+                    url:"{:url('admin/offweb/radar')}",
+                    success:function (res) {
+                        if (res['code']>0){
+                            layer.msg('操作成功', {icon: 1, time: 500});
+                            parent_flash();
+                        }
+                    }
+                })
+            }
+        </script>
+        {/block}

@@ -1,0 +1,463 @@
+{extend name="base"}
+{block name="resources"}
+<!-- 编辑商品时，用到的JS、CSS资源 -->
+{include file="goods/controlEditGoodsCommonResources"}
+<style>
+    input[disabled], select[disabled], textarea[disabled], input[readonly], select[readonly], textarea[readonly] {
+        background-color: #fff;
+        cursor: pointer;
+    }
+    .required {display: inline;}
+    html, body {
+        position: relative;
+        height: 100%;
+    }
+    body {
+        background: #eee;
+        color:#000;
+        margin: 0;
+        padding: 0;
+    }
+    .swiper-container {
+        width: 100%;
+        height: 100%;
+    }
+    .swiper-slide {
+        text-align: center;
+        font-size: 18px;
+        background: #fff;
+        /* Center slide text vertically */
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        -webkit-justify-content: center;
+        justify-content: center;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        -webkit-align-items: center;
+        align-items: center;
+    }
+</style>
+{/block}
+{block name="main"}
+<link rel="stylesheet" type="text/css" href="/public/index_home/css/mdui.css?v=1.1">
+<script src="/public/index_home/js/mdui.js"></script>
+<button class="app-btn" onclick="leftDrawer()" style="position: fixed;top:11.5rem;right:8rem;z-index: 999999999;padding:5px 10px;">查看手机端效果</button>
+<div class="ncsc-form-goods" id="get_all">
+    <div class="mdui-drawer mdui-drawer-right mdui-drawer-close" id="left-drawer">
+    <div class="leftPhonewrap">
+        <div class="holderPhone" style="position: fixed;right: 2rem;top: 8rem;z-index: 999999999999;">
+            <div class="wxHd">
+                <div id="actName" class="phoneTitle">
+                    <h2>商品详情</h2>
+                </div>
+            </div>
+            <div id="anythingContent" style="background: #fff;overflow:scroll">
+                <div class="wrap">
+                    <div class="slide_pic" style="height: 250px;">
+                        <div class="swiper-container">
+                            <div class="swiper-wrapper" >
+                                <div class="swiper-slide" v-for="item in goods_img">
+                                    <img :src="item.url">
+                                </div>
+                            </div>
+                            <!-- Add Pagination -->
+                            <div class="swiper-pagination"></div>
+                        </div>
+                    </div>
+                    <div class="goods_info">
+                        <div class="goods_price">￥<span>{{goods_price}}</span></div>
+                        <div class="goods_count">销量：{{goods_xiao}}</div>
+                        <div class="goods_tit">{{ goods_name }}</div>
+                        <div class="goods_d">{{ goods_cuxiao }}</div>
+                    </div>
+                    <div class="goods_type li_arrow"><span class="type_info">规格</span>
+                        <div class="type_choice">
+                            <ul>
+                                <li style="list-style: none;float: left" v-for="item in goods_sku">{{item.name}}</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="switch_box">图文详情</div>
+                    <div class="goods_intro" v-html="goods_desc">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <h3 class="js-goods-info">商品信息</h3>
+    <dl>
+        <dt><i class="required">*</i>商品名称：</dt>
+        <dd>
+            <div class="controls">
+                <input class="productname" v-model="goods_name" type="text" id="txtProductTitle" placeholder="请输入商品名称，不能超过60个字符" value="{$goods_info.goods_name}"oninput='if(value.length>60){value=value.slice(0,60);$(this).next().text("商品名称不能超过60个字符").show();}'/>
+                <span class="help-inline">请输入商品名称，不能超过60个字符</span>
+            </div>
+        </dd>
+    </dl>
+    <dl>
+        <dt><i class="required">*</i>商品分类：</dt>
+        <dd id="Category" data-flag="category" data-goods-id="0" cid="" data-attr-id="" cname="">
+            <span class="category-text" id="cate_name"></span>
+            <input type="hidden" value="" id="cate_id">
+            <input type="hidden" value="" id="cate_id_v1">
+            <button class="category-button" onclick="goods_cate('分类选择','goods_cate','1000','500')">选择</button>
+            <span><label for="g_name" class="error"><i class="icon-exclamation-sign"></i>商品分类不能为空</label></span>
+            <span class="help-inline">请选择商品分类</span>
+        </dd>
+    </dl>
+    <dl>
+        <dt>导入商品库商品：</dt>
+        <dd>
+            <button class="category-button" onclick="select_lib_goods()">选择商品</button>
+        </dd>
+    </dl>
+    <input type="hidden" value="1" id="goods_lib">
+    <dl>
+        <dt>商品促销语：</dt>
+        <dd>
+            <div class="controls">
+                <input class="productname" v-model="goods_cuxiao" type="text" id="txtIntroduction" placeholder="请输入商品名称，不能超过60个字符" value="{$goods_info.introduction}" oninput='if(value.length>60){value=value.slice(0,60);$(this).next().text("促销语不能超过60个字符").show();}'/>
+                <span class="help-inline">请输入商品促销语，不能超过60个字符</span>
+            </div>
+        </dd>
+    </dl>
+    <dl style="display: none">
+        <dt>关键词：</dt>
+        <dd>
+            <div class="controls">
+                <input class="productname" type="text" id="txtKeyWords" placeholder="商品关键词用于SEO搜索" value="{$goods_info.keywords}" oninput='if(value.length>40){value=value.slice(0,40);$(this).next().text("商品关键词不能超过40个字符").show();}'/>
+                <span class="help-inline">请输入商品促销语，不能超过40个字符</span>
+            </div>
+        </dd>
+    </dl>
+<dl style="display: none">
+    <dt>市场价：</dt>
+    <dd>
+        <div class="controls">
+            <input type="number" id="txtProductMarketPrice" min="0" placeholder="0" value="{$goods_info.market_price}" style="width:114px;" /><em class="add-on">元</em>
+            <span class="help-inline">商品市场不能为空且需是数字</span>
+        </div>
+    </dd>
+</dl>
+<dl>
+    <dt><i class="required">*</i>销售价：</dt>
+    <dd>
+        <div class="controls">
+            <input type="number" id="txtProductSalePrice" min="0"  value="{$goods_info.price}" style="width:114px;"/><em class="add-on">元</em>
+            <span class="help-inline">商品现价不能为空且需是数字</span>
+        </div>
+    </dd>
+</dl>
+<dl style="display: none">
+    <dt>成本价：</dt>
+    <dd>
+        <div class="controls">
+            <input type="number" id="txtProductCostPrice" min="0" placeholder="0" value="{$goods_info.cost_price}" style="width:114px;"/><em class="add-on">元</em>
+            <span class="help-inline">商品成本不能为空且需是数字</span>
+        </div>
+    </dd>
+</dl>
+<dl>
+    <dt>基础销量：</dt>
+    <dd>
+        <div class="controls">
+            <input type="number" v-model="goods_xiao" class="span1" id="BasicSales" placeholder="0" value="{$goods_info.sales}" />
+            <span class="help-inline">基础销量需是数字</span>
+        </div>
+    </dd>
+</dl>
+<dl style="display: none">
+    <dt>基础点击数：</dt>
+    <dd>
+        <div class="controls">
+            <input type="number" class="span1" id="BasicPraise" placeholder="0" value="{$goods_info.clicks}" />
+            <span class="help-inline">基础点击数需是数字</span>
+        </div>
+    </dd>
+</dl>
+<dl {if condition="$user_info.mod_class_id==5"} style="display: none" {/if}>
+    <dt><i class="required">*</i>总库存：</dt>
+    <dd>
+        <div class="controls">
+            <input type="number" class="goods-stock"  id="txtProductCount" min="0" value="{$goods_info.stock}" />
+            <span class="help-inline">请输入总库存数量，必须是大于0的整数</span>
+        </div>
+    </dd>
+</dl>
+<h3 class="js-goods-type">商品类型</h3>
+    <dl {if condition="$user_info.mod_class_id==5"} style="display: none" {/if}>
+        <dt>商品类型：</dt>
+        <dd>
+            <div class="controls">
+                <select id="goodsType">
+                    <option value="0">请选择商品类型</option>
+                    {foreach name="goods_attribute_list" item="attribute"}
+                    {if condition="$goods_info.goods_attribute_id == $attribute.attr_id"}
+                    <option value="{$attribute.attr_id}" selected="selected">{$attribute.attr_name}</option>
+                    {else/}
+                    <option value="{$attribute.attr_id}">{$attribute.attr_name}</option>
+                    {/if}
+                    {/foreach}
+                </select>
+                <span class="help-inline">请选择商品类型</span>
+            </div>
+        </dd>
+    </dl>
+    <dl class="control-group js-goods-spec-block" style="display:none;height: auto">
+        <dt><span class="color-red"></span></dt>
+        <dd><table class="goods-sku js-goods-sku"></table></dd>
+    </dl>
+<dl class="control-group js-spec-table" name="skuTable" style="display: none;height: auto">
+    <dt><span class="color-red"></span>商品库存：</dt>
+    <dd>
+        <div class="controls">
+            <div class="js-goods-stock control-group" style="font-size: 14px; margin-top: 10px;height: auto">
+                <div id="stock-region" class="sku-group">
+                    <table class="table-sku-stock">
+                        <thead></thead>
+                        <tbody></tbody>
+                        <tfoot></tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </dd>
+</dl>
+    <dl class="control-group js-goods-attribute-block" style="display:none;">
+        <dt><span class="color-red"></span>商品属性：</dt>
+        <dd>
+            <div class="controls">
+                <table class="goods-sku-attribute js-goods-sku-attribute" style="margin:0;"></table>
+            </div>
+        </dd>
+    </dl>
+<h3 class="js-goods-img">商品图片</h3>
+<dl>
+    <dt><i class="required">*</i>商品图片：</dt>
+    <dd>
+        <div id="goods_picture_box" class="controls" style="background-color:#FFF;border: 1px solid #E9E9E9;">
+            <div class="ncsc-goods-default-pic" >
+                <div class="goodspic-uplaod" style="padding: 15px;">
+                    <div class='img-box' style="min-height:160px;">
+                        {if condition="count($goods_info['img_temp_array']) gt 0" }
+                        {foreach $goods_info["img_temp_array"]  as $vo}
+                        <div class="upload-thumb draggable-element">
+                            <img src="/{$vo['img_cover']}" />
+                            <input type="hidden" class="upload_img_id" value="{$vo['img_id']}" />
+                            <div class="black-bg">
+                                <div class="off-box">&times;</div>
+                            </div>
+                        </div>
+                        {/foreach}
+                        {else /}
+                        <div class="upload-thumb" id="default_uploadimg">
+                            <img src="/public/goods/img/default_goods_image_240.gif" />
+                        </div>
+                        {/if}
+                    </div>
+                    <div class="clear"></div>
+                    <span class="img-error">最少需要一张图片作为商品主图</span>
+                    <p class="hint">上传商品图片，<font color="red">第一张图片将作为商品主图</font>,支持同时上传多张图片,多张图片之间可随意调整位置；支持jpg、gif、png格式上传或从图片空间中选择，建议使用尺寸800x800像素以上、大小不超过1M的正方形图片，上传后的图片将会自动保存在图片空间的默认分类中。</p>
+                    <div class="handle">
+                        <div class="ncsc-upload-btn">
+                            <a href="javascript:void(0);">
+									<span>
+										<input style="cursor:pointer;font-size:0;" type="file" id="fileupload" hidefocus="true" size="1" class="input-file" name="file_upload"multiple="multiple" />
+									</span>
+                                <p>图片上传</p>
+                            </a>
+                        </div>
+                        <a class="ncsc-btn mt5" id="img_box"nctype="show_image" href="javascript:void(0);">从图片空间选择</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dd>
+</dl>
+<dl {if condition="$user_info.mod_class_id==5"} style="display: none" {/if}>
+    <dt><i class="required"></i>规格图片：</dt>
+    <dd>
+        <div class="sku-picture-div">
+        </div>
+        <div class="clear"></div>
+        <div class="sku-picture-box">
+        </div>
+    </dd>
+</dl>
+<h3 class="js-goods_detail">商品详情</h3>
+<dl>
+    <dt><i class="required">*</i>商品描述：</dt>
+    <dd>
+        <div class="controls" id="discripContainer">
+            <textarea id="tareaProductDiscrip" name="discripArea" style="height: 500px; width: 800px; display: none;"></textarea>
+            <script id="editor" type="text/plain" style="width: 100%; height: 500px;"></script>
+            <span class="help-inline">请输入商品描述</span>
+                </div>
+                </dd>
+                </dl>
+                <dl {if condition="$user_info.mod_class_id==5"} style="display: none" {/if}>
+                <dt><i class="required">*</i>运费：</dt>
+            <dd>
+            <div class="controls">
+                {if condition = "$goods_info.shipping_fee  eq 0"}
+                <label class="radio inline normal"><input type="radio" name="fare" value="0" checked="checked" /> 免邮</label>
+                <label class="radio inline normal"><input type="radio" name="fare" value="1"> 买家承担运费</label>
+                {else /}
+            <label class="radio inline normal"><input type="radio" name="fare" value="0" >免邮</label>
+                <label class="radio inline normal"><input type="radio" name="fare" value="1" checked="checked" /> 买家承担运费</label>
+                {/if}
+            <span class="help-inline">请选择运费类型</span>
+                </div>
+                </dd>
+                </dl>
+                {if condition = "$goods_info.shipping_fee  eq 0"}
+                <dl id="valuation-method" style=" display:none;">
+                <dt><i class="required">*</i>计价方式：</dt>
+            <dd>
+            <label class="radio inline normal"><input type="radio" name="shipping_fee_type" value="3" checked="checked" />计件</label>
+                <label class="radio inline normal"><input type="radio" name="shipping_fee_type" value="2" />体积</label>
+                <label class="radio inline normal"><input type="radio" name="shipping_fee_type" value="1" />重量</label>
+                </dd>
+                </dl>
+                <dl id="commodity-weight" style=" display:none;">
+                <dt><i class="required">*</i>商品重量：</dt>
+            <dd>
+            <input type="number" class="goods-stock" id="goods_weight" min="0" value="0" />公斤
+                <span class="help-inline">商品重量不能为空</span>
+                </dd>
+                </dl>
+                <dl id="commodity-volume" style=" display:none;">
+                <dt><i class="required">*</i>商品体积：</dt>
+            <dd>
+            <input type="number" class="goods-stock" id="goods_volume" min="0" value="0" />立方米
+                <span class="help-inline">商品体积不能为空</span>
+                </dd>
+                </dl>
+                <dl id="express_Company" style="display: none;">
+                <dt>物流公司：</dt>
+            <dd>
+            <select id="expressCompany">
+                <option value="0">请选择物流公司</option>
+                {foreach name="expressCompanyList" item="vo"}
+                <option value="{$vo.co_id}">{$vo.company_name}</option>
+            {/foreach}
+            </select>
+            </dd>
+            </dl>
+            {else /}
+            <dl id="valuation-method">
+                <dt><i class="required">*</i>计价方式：</dt>
+            <dd>
+            {if condition = "$goods_info.shipping_fee_type eq 3"}
+            <label class="radio inline normal"><input type="radio" name="shipping_fee_type" value="3" checked="checked" />计件</label>
+                <label class="radio inline normal"><input type="radio" name="shipping_fee_type" value="2" />体积</label>
+                <label class="radio inline normal"><input type="radio" name="shipping_fee_type" value="1" />重量</label>
+                {elseif condition = "$goods_info.shipping_fee_type eq 2"/}
+                <label class="radio inline normal"><input type="radio" name="shipping_fee_type" value="3" />计件</label>
+                <label class="radio inline normal"><input type="radio" name="shipping_fee_type" value="2" checked="checked" />体积</label>
+                <label class="radio inline normal"><input type="radio" name="shipping_fee_type" value="1" />重量</label>
+                {else/}
+            <label class="radio inline normal"><input type="radio" name="shipping_fee_type" value="3" />计件</label>
+                <label class="radio inline normal"><input type="radio" name="shipping_fee_type" value="2" />体积</label>
+                <label class="radio inline normal"><input type="radio" name="shipping_fee_type" value="1" checked="checked" />重量</label>
+                {/if}
+            </dd>
+            </dl>
+            <dl id="commodity-weight">
+                <dt><i class="required">*</i>商品重量：</dt>
+            <dd>
+            <input type="number" class="goods-stock" id="goods_weight" min="0" value="{$goods_info.goods_weight}" />公斤
+                <span class="help-inline">商品重量必须大于0</span>
+                </dd>
+                </dl>
+                <dl id="commodity-volume">
+                <dt><i class="required">*</i>商品体积：</dt>
+            <dd>
+            <input type="number" class="goods-stock" id="goods_volume" min="0" value="{$goods_info.goods_volume}" />立方米
+                <span class="help-inline">商品体积必须大于0</span>
+                </dd>
+                </dl>
+                <dl id="express_Company">
+                <dt>物流公司：</dt>
+            <dd>
+            <select id="expressCompany">
+                <option value="0">请选择物流公司</option>
+                {foreach name="expressCompanyList" item="vo"}
+                <option value="{$vo.co_id}" {if condition="$goods_info['shipping_fee_id'] eq $vo['co_id']"}selected{/if}>{$vo.company_name}</option>
+            {/foreach}
+            </select>
+                </dd>
+                </dl>
+                {/if}
+                    <dl {if condition="$user_info.mod_class_id==5"} style="display: none" {/if}>
+                    <dt>最少购买数：</dt>
+                <dd>
+                <div class="controls">
+                    <input type="number" class="input-mini" min="1" placeholder="0" id="minBuy" value="{$goods_info.min_buy}" />
+                    <span class="help-inline">件</span>
+                    <span class="help-inline">最少购买数必须是大于0的整数</span>
+                    </div>
+                    </dd>
+                    </dl>
+                    <dl>
+                    <dt><i class="required">*</i>是否上架：</dt>
+                <dd>
+                <div class="controls">
+                    {if condition = "$goods_info.state eq 1"}
+                    <label class="radio inline normal"><input type="radio" name="shelves" value="1" checked="checked" /> 立刻上架</label>
+                    <label class="radio inline normal"><input type="radio" name="shelves" value="0" /> 放入仓库</label>
+                    {else /}
+            <label class="radio inline normal"><input type="radio" name="shelves" value="1" /> 立刻上架</label>
+                    <label class="radio inline normal"><input type="radio" name="shelves" value="0" checked="checked" /> 放入仓库</label>
+                    {/if}
+            </div>
+                </dd>
+                </dl>
+                </div>
+                <div class="btn-submit" >
+                    <button class="btn-common" id="btnSave" type="button" onClick="SubmitProductInfo(0,'ADMIN_MAIN','SHOP_MAIN')">保存</button>
+                    </div>
+                    <script>
+                var goods_spec_format = '{$goods_info.goods_spec_format}';//SKU数据
+                var sku_list = eval('{$goods_info.sku_list}');//SKU数据
+                var goods_attribute_list = eval('{$goods_info.goods_attribute_list}');
+                var sku_picture_array_str = '{$sku_picture_array_str}';
+                $(function(){
+                    //初始化规格图片记录数组
+                    var $selDiv = $("#productcategory-selected");
+                    var $lis = $("#procategory li");
+                    var html = "";
+                    $selDiv.append(html);
+                    ue.ready(function() {
+                        ue.setContent('{$goods_info.description}', false);
+                    });
+                    $(function () {
+                        app.goods_name="{$goods_info.goods_name}";
+                        app.goods_cuxiao="{$goods_info.introduction}";
+                        app.goods_price="{$goods_info.price}";
+                        app.goods_xiao="{$goods_info.sales}";
+                        app.goods_desc="{$goods_info.description }";
+                        var img_list=$(".img-box img");
+                        for(var i=0;i<img_list.length;i++){
+                            var item={};
+                            item['url']=img_list.get(i).src;
+                            app.goods_img.push(item);
+                        }
+                    })
+                });
+                        function leftDrawer() {
+                            if($('#left-drawer').hasClass('mdui-drawer-close')){
+                                $('#left-drawer').removeClass('mdui-drawer-close').addClass('mdui-drawer-open');
+                            }else{
+                                $('#left-drawer').removeClass('mdui-drawer-open').addClass('mdui-drawer-close');
+                            }
+                        }
+            </script>
+            {include file="goods/fileAlbumImg"/}
+            {include file="goods/controlEditGoodsCommonScript"}
+            {/block}

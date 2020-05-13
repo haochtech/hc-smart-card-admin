@@ -1,0 +1,138 @@
+{extend name="base"/}
+{block name="resources"}
+<script src="/public/js/highcharts.js"></script>
+<script type="text/javascript" src="/public/static/My97DatePicker/4.8/WdatePicker.js"></script>
+<style  type="text/css">
+    .count-box li{font-size: 12px;}
+</style>
+{/block}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <div class="n_tab_line">
+            <a href="javascript:;" class="n_tab_list">会员统计</a>
+            </div>
+<!--        <p class="f-20 text-success">会员统计</p>-->
+<div class="cl pd-5 bg-1 bk-gray mt-20">
+        <div class="text-c" style="padding: 15px;">
+            日期范围：
+            <input type="text" onfocus="WdatePicker({ dateFmt: 'yyyy-MM'})" id="star_time" value="{$star_time}" name="star_time" class="input-text Wdate" style="width:120px;">
+            <button type="submit" class="btn btn-search radius"  name="" onclick="search()"><i class="Hui-iconfont">&#xe665;</i></button>
+        </div> </div>
+        <div class="count-box">
+            <div class="main-content" id="mainContent" style="width: 1505px;">
+                <div id="container" data-highcharts-chart="0">
+                    <div class="highcharts-container" id="highcharts-0" style="position: relative; overflow: hidden; width: 100%; height: 400px; text-align: left; line-height: normal; z-index: 0; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); font-family: &amp; quot; Lucida Grande&amp;quot; , &amp; quot; Lucida Sans Unicode&amp;quot; , Verdana , Arial, Helvetica, sans-serif; font-size: 12px;"></div>
+                </div>
+            </div>
+        </div>
+    </article>
+    <script>
+        var time = [1+"日",2+"日",3+"日",4+"日",5+"日",6+"日",7+"日",8+"日",9+"日",10+"日",11+"日",12+"日",13+"日",14+"日",15+"日",16+"日",17+"日",18+"日",19+"日",20+"日",21+"日",22+"日",23+"日",24+"日",25+"日",26+"日",27+"日",28+"日",29+"日",30+"日"];
+        var data = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+        $(function(){
+            var widn = $('.n_tab_line').width();
+            $('#mainContent').css('width', widn - 76);
+            Chart = new Highcharts.Chart("container",{
+                "xAxis" : {
+                    "categories" : time
+                },
+                "legend" : {
+                    "enabled" : false
+                },
+                "series" : [ {
+                    "name" : "会员",
+                    "data" : data
+                } ],
+                "title" : {
+                    "text" : "<b>会员<\/b>",
+                    "x" : -20
+                },
+                "chart" : {
+                    "type" : "line"
+                },
+                "colors" : [ "#058DC7", "#ED561B", "#8bbc21",
+                    "#0d233a" ],
+                "credits" : {
+                    "enabled" : false
+                },
+                "exporting" : {
+                    "enabled" : false
+                },
+                "yAxis" : {
+                    "title" : {
+                        "text" : "会员"
+                    }
+                }
+            });
+            $.ajax({
+                type : "post",
+                url : "__CONF_SITE__admin/count/UserCount",
+                success : function(data) {
+                    Chart.update({
+                        xAxis : {
+                            categories : data[0]
+                        },
+                        series : [ {
+                            name : "会员",
+                            data : data[1]
+                        }]
+                    });
+                }
+            })
+        });
+        function search()
+        {
+            var star_time = $("#star_time").val();
+            Chart = new Highcharts.Chart("container",{
+                "xAxis" : {
+                    "categories" : time
+                },
+                "legend" : {
+                    "enabled" : false
+                },
+                "series" : [ {
+                    "name" : "会员",
+                    "data" : data
+                } ],
+                "title" : {
+                    "text" : "<b>会员<\/b>",
+                    "x" : -20
+                },
+                "chart" : {
+                    "type" : "line"
+                },
+                "colors" : [ "#058DC7", "#ED561B", "#8bbc21",
+                    "#0d233a" ],
+                "credits" : {
+                    "enabled" : false
+                },
+                "exporting" : {
+                    "enabled" : false
+                },
+                "yAxis" : {
+                    "title" : {
+                        "text" : "会员"
+                    }
+                }
+            });
+            $.ajax({
+                type : "post",
+                url : "__CONF_SITE__admin/count/UserCount",
+                data: {"star_time":star_time},
+                success : function(data) {
+                    Chart.update({
+                        xAxis : {
+                            categories : data[0]
+                        },
+                        series : [ {
+                            name : "会员",
+                            data : data[1]
+                        }]
+                    });
+                }
+            })
+        }
+    </script>
+</div>
+{/block}

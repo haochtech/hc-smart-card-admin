@@ -1,0 +1,167 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+            <div class="tabBar clearfix">
+                <span class="current" onclick="load_page('{:url('activity/coupon')}')">优惠券</span>
+                <div class="n_tab_add" onclick="layer_open('添加优惠券','__CONF_SITE__admin/Activity/add_coupon','700','620')" ><i class="Hui-iconfont">&#xe600;</i>添加优惠券</div>
+            </div>
+        </div>
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+                <div class="text-c"> 优惠券名称：
+                    <input type="text" class="input-text" value="{$search_text}" style="width:250px" placeholder="输入优惠券名称"  name="search_text">
+                    <button onclick="send_submit()" id="submit_button" class="btn btn-search radius" style="padding: 5px 12px;margin-left: 5px;border-radius: 3px;box-sizing:border-box;background: #ebebeb;border: 1px solid #dcdfe6;"><i class="Hui-iconfont" style="    color: #a2a2a2;
+    font-size: 18px;">&#xe665;</i></button>
+                </div>
+        </div>
+        <table class="table table-border table-bordered table-hover table-bg">
+            <thead>
+            <tr class="text-c">
+                <th>优惠券名称</th>
+                <th>满足金额</th>
+                <th>优惠金额</th>
+                <th>时间区间</th>
+                <th>是否开启</th>
+                <th>数量/剩余数量</th>
+                <th>单人可领取数</th>
+                <th>是否（满减）共用</th>
+                <th>领取情况/核销</th>
+                <!--<th>操作</th>-->
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="vo"}
+            <tr class="text-c">
+                <td>{$vo['activity_name']}</td>
+                <td>￥{$vo['satisfy_money']}</td>
+                <td>￥{$vo['discount_money']}</td>
+                <td>{$vo['star_time']|date='Y-m-d H:i:s',###}——{$vo['end_time']|date='Y-m-d H:i:s',###}</td>
+                <td>
+                    {if $vo['is_use']==1}
+                    <a href="javascript:;" onclick="activity_stop(this,'{$vo.id}')"><span class="label label-success radius">开启</span></a>
+                    {else}
+                    <a href="javascript:;" onclick="activity_start(this,'{$vo.id}')"><span class="label label-default radius">禁用</span></a>
+                    {/if}
+                </td>
+                <td>{$vo['count']}  /  {$vo['rem_count']}</td>
+                <td>{$vo['get_count']}</td>
+                <td>
+                    {if $vo['together']==1}
+                    <a href="javascript:;" onclick="together_start(this,'{$vo.id}')"><span class="label label-default radius">否</span></a>
+                    {else}
+                    <a href="javascript:;" onclick="together_stop(this,'{$vo.id}')"><span class="label label-warning radius">是</span></a>
+                    {/if}
+                </td>
+                <td><a class="show_layer" onclick="layer_open('详情','__CONF_SITE__admin/activity/together_user_list&id={$vo.id}','1000','700')" href="javascript:;">查看核销</a></td>
+                <!--<td class="td-manage">-->
+                    <!--&lt;!&ndash;<a title="编辑" href="javascript:;" onclick="activity_edit('活动编辑','edit_coupon?id={$vo.id}','700','620')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<a title="删除" href="javascript:;" onclick="activity_del(this,'{$vo.id}')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a>&ndash;&gt;-->
+                <!--</td>-->
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </article>
+    <div class="n_page_no">
+        {$page}
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    function send_submit() {
+        load_page("__CONF_SITE__admin/activity/coupon",'',{search_text:$("input[name=search_text]").val()});
+    }
+    /*活动-停用*/
+    function activity_stop(obj,id){
+        layer.confirm('确认要停用吗？',function(index){
+            //后台处理
+            $.ajax({
+                type : "post",
+                url : "{:url('Activity/off_coupon')}",
+                data : {
+                    "id" : id,
+                },
+                success : function(data) {
+                    if (data['code'] > 0) {
+                        layer.msg('已停用!',{icon: 5,time:1000},function () {
+                            parent_flash();
+                        });
+                    }else{
+                        layer.msg(data['message'], {icon: 2, time: 1000});
+                    }
+                }
+            })
+        });
+    }
+    /*活动-启用*/
+    function activity_start(obj,id){
+        layer.confirm('确认要启用吗？',function(index){
+            //此处请求后台程序，下方是成功后的处理……
+            //后台处理
+            $.ajax({
+                type : "post",
+                url : "{:url('Activity/on_coupon')}",
+                data : {
+                    "id" : id,
+                },
+                success : function(data) {
+                    if (data['code'] > 0) {
+                        layer.msg('已启用!', {icon: 6,time:1000},function () {
+                            parent_flash();
+                        });
+                    }else{
+                        layer.msg(data['message'], {icon: 2, time: 1000});
+                    }
+                }
+            })
+        });
+    }
+    /*活动-启用*/
+    function together_stop(obj,id){
+        layer.confirm('您确定要关闭（满减）共用功能吗？',function(index){
+            //此处请求后台程序，下方是成功后的处理……
+            //后台处理
+            $.ajax({
+                type : "post",
+                url : "{:url('Activity/together_stop')}",
+                data : {
+                    "id" : id,
+                },
+                success : function(data) {
+                    if (data['code'] > 0) {
+                        layer.msg('已停用!', {icon: 6,time:1000},function () {
+                            parent_flash();
+                        });
+                    }else{
+                        layer.msg(data['message'], {icon: 2, time: 1000});
+                    }
+                }
+            })
+        });
+    }
+    /*活动-启用*/
+    function together_start(obj,id){
+        layer.confirm('您确定要开启（满减）共用功能吗？',function(index){
+            $.ajax({
+                type : "post",
+                url : "{:url('Activity/together_on')}",
+                data : {
+                    "id" : id,
+                },
+                success : function(data) {
+                    if (data['code'] > 0) {
+                        layer.msg('已启用!', {icon: 6,time:1000},function () {
+                            parent_flash();
+                        });
+                    }else{
+                        layer.msg(data['message'], {icon: 2, time: 1000});
+                    }
+                }
+            })
+        });
+    }
+</script>
+{/block}

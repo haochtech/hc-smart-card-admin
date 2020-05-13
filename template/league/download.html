@@ -1,0 +1,25 @@
+{extend name="base"/}
+{block name="main"}
+<style>
+	.down_box {width:800px;margin:0 auto;}
+	.down_code {width:250px;height:250px;margin:0 auto; text-align: center;padding-top:15px;}
+	.down_about {width:800px; line-height: 25px; color:#666666; text-align: center;font-size:13px;}
+    .down_code img {width: 220px; height: 220px;}
+</style>
+<article class="cl pd-20">
+<div class="n_tab_line">
+            <a href="{:url('user/user_list')}" class="n_tab_list">手机端下载</a>
+            <div class="cl"></div>
+        </div>
+        
+        <div class="down_box">
+			<div class="down_code"><img src="{$img_url}public/static/images/down_code.jpg?v=1.0"/></div>
+			<div class="down_about">说明：请扫描上方二维码下载手机端APP<br>
+            {if empty($cops.is_dow_app) }
+            手机端APP仅限商业版用户使用，需联系客服授权</br>
+            客服QQ：2300078021
+            {/if}
+            </div>
+        </div>
+</article>
+{/block}

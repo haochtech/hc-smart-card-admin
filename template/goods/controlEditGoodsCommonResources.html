@@ -1,0 +1,146 @@
+<!-- 编辑商品，公共CSS、JS文件引用 -->
+<link rel="stylesheet" type="text/css" href="/public/goods/css/product.css">
+<link rel="stylesheet" type="text/css" href="/public/css/ns_blue_common.css">
+<link href="/public/lunbo/swiper.min.css" rel="stylesheet" />
+<!-- 选择商品图，弹出框的样式 -->
+<link rel="stylesheet" type="text/css" href="/public/css/defau.css">
+<link href="/public/goods/css/jquery.ui.css" type="text/css" rel="stylesheet">
+<link href="/public/goods/css/goods_create.css" type="text/css" rel="stylesheet">
+<link href="/public/goods/css/base.css" type="text/css" rel="stylesheet">
+<link href='/public/goods/css/jquery.gridly.css' rel='stylesheet' type='text/css'>
+<link href='/public/goods/css/sample.css' rel='stylesheet' type='text/css'>
+<link href='/public/goods/css/select_category_next.css' rel='stylesheet' type='text/css'>
+<link href="/public/goods/css/add_goods.css" rel="stylesheet" type="text/css">
+<link href="/public/static/umedito/themes/default/_css/umeditor.css" type="text/css" rel="stylesheet">
+<link href="/public/goods/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="/public/css/mdui.css">
+<link href="/public/goods/css/formconfig_index.css" rel="stylesheet" type="text/css">
+<link href="/public/goods/css/base1.css" rel="stylesheet" type="text/css">
+<link href="/public/goods/css/web.css" rel="stylesheet" type="text/css">
+<!-- 简约版 -->
+<script src="/public/goods/js/jquery-1.8.1.min.js"></script>
+<!--<script src="/public/js/jquery-2.1.1.js"></script>-->
+<!--<script src="/public/static/ueditor/third-party/jquery.min.js"></script>-->
+<!--<script src="/public/js/mdui.js"></script>-->
+<script src="/public/goods/js/image_common.js" type="text/javascript"></script>
+<!--  用  验证商品输入信息-->
+<script src="/public/goods/js/jscommon.js" type="text/javascript"></script>
+<!-- 用 ，加载数据-->
+<script src="/public/js/art_dialog.source.js"></script>
+<script src="/public/js/iframe_tools.source.js"></script>
+<!-- 我的图片 -->
+<script src="/public/goods/js/material_managedialog.js"></script>
+<script src="/public/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="/public/js/file_upload.js" type="text/javascript"></script>
+<script type="text/javascript" src="/public/goods/js/goods_sku_create.js"></script>
+<script src="/public/js/vue.js"></script>
+<script src="/public/goods/js/release_good_second.js"></script>
+<!--<script src="/public/goods/js/select2.js"></script>-->
+<script src="/public/lunbo/swiper.min.js"></script>
+<script type="text/javascript" src="/public/static/umedito/third-party/template.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="/public/static/umedito/umeditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="/public/static/umedito/_examples/editor_api2.js"></script>
+<script type="text/javascript" src="/public/static/umedito/lang/zh-cn/zh-cn.js"></script>
+<style>
+    .category-text {display: inline-block;background-color: #FFF;min-width: 150px;height: 30px;line-height: 30px;border: 1px solid #dcdcdc;float: left;}
+    .category-button {display: inline-block;background-color: #FFF;height: 32px;line-height: 32px;float: left;border: 1px solid #dcdcdc;border-left: none;padding: 0 10px;background-color: #eee;font-size: 13px;}
+    .select-button {padding:2px 9px;font-size: 12px;border: 1px solid #dcdcdc;background-color: #eeeeee;}
+    .extend-name-category {margin-bottom: 10px;}
+    .extend-name-category .do-style {display: inline-block;color: #27a9e3;cursor: pointer;}
+    .productcategory-selected .label {border-radius: 5px;font-weight: 100;padding:0 10px;}
+    a {color: #0072D2;text-decoration: none;cursor: pointer;}
+    /* 规格图片样式*/
+    .sku-picture-div {overflow: hidden;}
+    .sku-picture-span {display: inline-block;padding: 0px 11px;border: 1px solid #ccc;cursor: pointer;margin: 0 20px 0 0;}
+    .sku-picture-box{margin-top:10px;}
+    .sku-picture-active {border: 1px solid #004a73;background: url(/public/admin/images/icon_choose.gif) no-repeat right bottom;background-color: #eff7fe;}
+    .sku-picture-h3 {font-size: 14px;font-weight: 600;line-height: 22px;color: #000;clear: both;background-color: #F5F5F5;padding: 5px 0 5px 12px;border: solid 1px #E7E7E7;border-bottom: none;}
+    /* 商品标签 */
+    .gruop-button {padding:2px 9px;font-size: 12px;border: 1px solid #dcdcdc;background-color: #eeeeee;float: left;}
+    .add-on {margin: 0;vertical-align: middle;}
+    .goods-gruop-div {display: none;float: left;margin-left: 10px;}
+    .check-button {height: 30px;padding:2px 9px;background-color: #eeeeee;border: 1px solid #cccccc;}
+    .goods-gruop-select {width: 130px;}
+    .span-error {height: 30px;line-height: 30px;color: red;display: none;}
+    /*商品分组  */
+    .goods-group-line {float: left;margin-right: 15px;}
+    .goods-group-line select {min-width: 110px;width: 110px;}
+    .btn-submit {width: 350px;margin: 20px auto 30px;}
+    /*商品品牌*/
+    .select2-container--default .select2-selection--single{
+        border-radius: 0;
+    }
+    .select2-container .select2-selection--single{
+        -webkit-user-select:inherit;
+    }
+    .upload-thumb.draggable-element{
+        height: 147px !important;
+        line-height:147px !important;
+        text-align:center;
+    }
+    .upload-thumb.draggable-element img{
+        display: inline-block !important;
+        vertical-align: middle !important;
+        max-width: 100% !important;
+        max-height: 100% !important;
+        height: auto !important;
+        width:auto !important;
+    }
+    .upload-thumb.sku-draggable-element{
+        height: 147px !important;
+        line-height:147px !important;
+        text-align:center;
+    }
+    .upload-thumb.sku-draggable-element img{
+        display: inline-block !important;
+        vertical-align: middle !important;
+        max-width: 100% !important;
+        max-height: 100% !important;
+        height: auto !important;
+        width:auto !important;
+    }
+    .js-goods-spec-value-img.sku-img-check{
+        height: 25px;
+        width: 25px;
+        line-height: 23px;
+        text-align:center;
+    }
+    .js-goods-spec-value-img.sku-img-check img{
+        display: inline-block !important;
+        vertical-align: middle !important;
+        max-width: 100% !important;
+        max-height: 100% !important;
+        height: auto !important;
+        width: auto !important;
+    }
+</style>
+<script>
+    var timeoutID = null;//延迟双击编辑规格值
+    var img_id_arr = "";//图片标识ID
+    var speciFicationsFlag = 0;// 0：商品图的选择，1:商品详情的图片
+    var shopImageFlag = -1;//所点击的商品图片标识
+    var goodsFigure = null;//商品图对象
+    // 实例化编辑器，建议使用工厂方法getEditor创建和引用编辑器实例，如果在某个闭包下引用该编辑器，直接调用UE.getEditor('editor')就能拿到相关的实例
+    var group_str = '{$group_str}';//标签列表
+    $(function() {
+        var width = $(".ncsc-form-goods").width();
+        //浏览器窗 口监听事件
+        $(window).scroll(function() {
+            var left = $(".ncsc-form-goods").offset().left;
+            if ($(window).height() + $(window).scrollTop() < $(".ncsc-form-goods dl:last").offset().top) {
+                $(".btn-submit").css({
+                    'position' : 'fixed',
+                    'bottom' : 0,
+                    'left' : left,
+                    'z-index' : 1000,
+                    'width' : width - 30,
+                    "background-color" : "rgba(204,204,204,0.7)",
+                    "margin" : 0,
+                    "padding" : "15"
+                });
+            } else {
+                $(".btn-submit").removeAttr("style");
+            }
+        });
+    })
+</script>

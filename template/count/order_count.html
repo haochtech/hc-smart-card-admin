@@ -1,0 +1,144 @@
+{include file="demo"}
+<script src="/public/js/highcharts.js"></script>
+<script type="text/javascript" src="/public/static/My97DatePicker/4.8/WdatePicker.js"></script>
+<style  type="text/css">
+    .panel-secondary{border-color:#f5fafe}
+    .panel-secondary > .panel-header{ border-color:#f5fafe; background-color:#f5fafe; color:#333}
+    .w210{width:210px;}
+    .h30 {height: 30px !important;}
+    .count-box li{font-size: 12px;}
+</style>
+<body>
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <div class="cl pd-5 bg-1 bk-gray mt-20" style="margin-bottom: 15px;">
+        <div class="text-c" style="padding: 15px;">
+            日期范围：
+            <input type="text" onfocus="WdatePicker({ dateFmt: 'yyyy-MM'})" id="star_time" value="{$star_time}" name="star_time" class="input-text Wdate" style="width:120px;">
+            <button class="btn btn-search radius"  name="" onclick="search()"><i class="Hui-iconfont">&#xe665;</i>搜索</button>
+        </div></div>
+        <div class="panel panel-secondary">
+            <div class="panel-header" style="font-weight: normal;"><strong>订单统计</strong>-近30天下单金额：<strong id="order_money">元</strong>，近30天下单量：<strong id="order_num"></strong></div>
+        </div>
+        <div class="count-box">
+            <div class="main-content" id="mainContent" style="width: 1505px;">
+                <div id="container" data-highcharts-chart="0">
+                    <div class="highcharts-container" id="highcharts-0" style="position: relative; overflow: hidden; width: 100%; height: 400px; text-align: left; line-height: normal; z-index: 0; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); font-family: &amp; quot; Lucida Grande&amp;quot; , &amp; quot; Lucida Sans Unicode&amp;quot; , Verdana , Arial, Helvetica, sans-serif; font-size: 12px;"></div>
+                </div>
+            </div>
+        </div>
+    </article>
+    <script>
+        var time = [1+"日",2+"日",3+"日",4+"日",5+"日",6+"日",7+"日",8+"日",9+"日",10+"日",11+"日",12+"日",13+"日",14+"日",15+"日",16+"日",17+"日",18+"日",19+"日",20+"日",21+"日",22+"日",23+"日",24+"日",25+"日",26+"日",27+"日",28+"日",29+"日",30+"日"];
+        var data = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+        $(function(){
+            var widn = $('.Hui-article').width();
+            $('#mainContent').css('width', widn - 76);
+            Chart = new Highcharts.Chart("container",{
+                "xAxis" : {
+                    "categories" : time
+                },
+                "legend" : {
+                    "enabled" : false
+                },
+                "series" : [ {
+                    "name" : "下单量",
+                    "data" : data
+                } ],
+                "title" : {
+                    "text" : "<b>下单量<\/b>",
+                    "x" : -20
+                },
+                "chart" : {
+                    "type" : "line"
+                },
+                "colors" : [ "#058DC7", "#ED561B", "#8bbc21",
+                    "#0d233a" ],
+                "credits" : {
+                    "enabled" : false
+                },
+                "exporting" : {
+                    "enabled" : false
+                },
+                "yAxis" : {
+                    "title" : {
+                        "text" : "下单量"
+                    }
+                }
+            });
+            $.ajax({
+                type : "post",
+                url : "__CONF_SITE__admin/count/OrderCount",
+                success : function(data) {
+                    Chart.update({
+                        xAxis : {
+                            categories : data[0]
+                        },
+                        series : [ {
+                            name : "下单量",
+                            data : data[1]
+                        }]
+                    });
+                    $("#order_num").html(data[2]);
+                    $("#order_money").html(data[3]+"元");
+                }
+            })
+        });
+        function search()
+        {
+            var star_time = $("#star_time").val();
+            Chart = new Highcharts.Chart("container",{
+                "xAxis" : {
+                    "categories" : time
+                },
+                "legend" : {
+                    "enabled" : false
+                },
+                "series" : [ {
+                    "name" : "下单量",
+                    "data" : data
+                } ],
+                "title" : {
+                    "text" : "<b>下单量<\/b>",
+                    "x" : -20
+                },
+                "chart" : {
+                    "type" : "line"
+                },
+                "colors" : [ "#058DC7", "#ED561B", "#8bbc21",
+                    "#0d233a" ],
+                "credits" : {
+                    "enabled" : false
+                },
+                "exporting" : {
+                    "enabled" : false
+                },
+                "yAxis" : {
+                    "title" : {
+                        "text" : "下单量"
+                    }
+                }
+            });
+            $.ajax({
+                type : "post",
+                url : "__CONF_SITE__admin/count/OrderCount",
+                data: {"star_time":star_time},
+                success : function(data) {
+                    Chart.update({
+                        xAxis : {
+                            categories : data[0]
+                        },
+                        series : [ {
+                            name : "下单量",
+                            data : data[1]
+                        }]
+                    });
+                    $("#order_num").html(data[2]);
+                    $("#order_money").html(data[3]+"元");
+                }
+            })
+        }
+    </script>
+</div>
+</body>
+</html>

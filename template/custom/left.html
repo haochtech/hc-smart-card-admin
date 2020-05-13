@@ -1,0 +1,128 @@
+<div class="page-structure nav_inner subnav">
+    {if $page_flag == 0}
+    <div class="tool_box_li">
+        <div class="tool_class_name">会员中心组件</div>
+        <div class="tool_box">
+            {volist name="my_cell" id="vo"}
+            <a  href="javascript:;" class="j-diy-addModule  icon_{$vo.icon}" data-type="{$vo.type}" title="{$vo.text}">
+                <span class="icon_pic"></span><span>{$vo.text}</span>
+            </a>
+            {/volist}
+            <div class="clear"></div>
+        </div>
+    </div>
+    {/if}
+    <div class="tool_box_li">
+        <div class="tool_class_name">基本组件</div>
+        <div class="tool_box">
+            <a href="javascript:;" class="j-diy-addModule  icon_1" data-type="banner" title="轮播图1">
+                <span class="icon_pic"></span><span>轮播图</span>
+            </a>
+            <a href="javascript:;" class="j-diy-addModule  icon_2" data-type="advert" title="广告位">
+                <span class="icon_pic"></span> <span>广告位</span>
+            </a>
+            <a href="javascript:;" class="j-diy-addModule  icon_3" data-type="navigation" title="宫格导航">
+                <span class="icon_pic"></span> <span>宫格导航</span>
+            </a>
+            <a href="javascript:;" class="j-diy-addModule  icon_4" data-type="headline" title="标题">
+                <span class="icon_pic"></span><span>标题</span>
+            </a>
+            <a href="javascript:;" class="j-diy-addModule  icon_8" data-type="article_list" title="图文集">
+                <span class="icon_pic"></span> <span>图文集</span>
+            </a>
+            <a href="javascript:;" class="j-diy-addModule  icon_3" data-type="edit_piclist" title="图片列表">
+                <span class="icon_pic"></span> <span>图片列表</span>
+            </a>
+            <a href="javascript:;" class="j-diy-addModule  icon_19" data-type="tripartite" title="三方图">
+                <span class="icon_pic"></span><span>三方图</span>
+            </a>
+            <a  href="javascript:;" class="j-diy-addModule  icon_20" data-type="quartet" title="四方图">
+                <span class="icon_pic"></span><span>四方图</span>
+            </a>
+            <div class="clear"></div>
+        </div>
+    </div>
+    <div class="tool_box_li">
+        <div class="tool_class_name">辅助组件</div>
+        <div class="tool_box">
+            <a href="javascript:;" class="j-diy-addModule  icon_15" data-type="edit_video" title="视频">
+                <span class="icon_pic"></span><span>视频</span>
+            </a>
+            <a href="javascript:;" class="j-diy-addModule  icon_17" data-type="edit_music" title="音频">
+                <span class="icon_pic"></span><span>音频</span>
+            </a>
+            <a href="javascript:;" class="j-diy-addModule  icon_12" data-type="rich_text" title="富文本">
+                <span class="icon_pic"></span><span>富文本</span>
+            </a>
+            <a href="javascript:;" class="j-diy-addModule  icon_5" data-type="blank" title="辅助空白">
+                <span class="icon_pic"></span><span>辅助空白</span>
+            </a>
+            <a href="javascript:;" class="j-diy-addModule  icon_7" data-type="blankline" title="分割线">
+                <span class="icon_pic"></span><span>分割线</span>
+            </a>
+            <a href="javascript:;" class="j-diy-addModule  icon_14" data-type="floaticon" title="悬浮图标">
+                <span class="icon_pic"></span><span>悬浮图标</span>
+            </a>
+            <a href="javascript:;" class="j-diy-addModule  icon_10" data-type="edit_button" title="按钮">
+                <span class="icon_pic"></span><span>按钮</span>
+            </a>
+            <a href="javascript:;" class="j-diy-addModule  icon_23" data-type="edit_form" title="表单">
+                <span class="icon_pic"></span><span>表单</span>
+            </a>
+            <a href="javascript:;" class="j-diy-addModule  icon_24" data-type="customer" title="客服">
+                <span class="icon_pic"></span><span>客服</span>
+            </a>
+            <a href="javascript:;" class="j-diy-addModule  icon_26" data-type="announcement" title="公告">
+                <span class="icon_pic"></span><span>公告</span>
+            </a>
+            <a href="javascript:;" class="j-diy-addModule  icon_27" data-type="ad" title="流量主">
+                <span class="icon_pic"></span><span>流量主</span>
+            </a>
+            <div class="clear"></div>
+        </div>
+    </div>
+    <div class="tool_box_li">
+        <div class="tool_class_name">商城组件</div>
+        <div class="tool_box">
+            <a href="javascript:;" class="j-diy-addModule  icon_9" data-type="goods" title="商品集">
+                <span class="icon_pic"></span><span>商品集</span>
+            </a>
+            <a href="javascript:;" class="j-diy-addModule  icon_8" data-type="product_list" title="产品集">
+                <span class="icon_pic"></span> <span>产品集</span>
+            </a>
+            <a href="javascript:;" class="j-diy-addModule  icon_6" data-type="search" title="搜索框">
+                <span class="icon_pic"></span><span>搜索框</span>
+            </a>
+            {if $isadmin==1 || $miaosha_show==2}
+            <a href="javascript:;" class="j-diy-addModule  icon_8" data-type="miaosha" title="秒杀活动">
+                <span class="icon_pic"></span><span>秒杀活动</span>
+            </a>
+            {/if}
+            <div class="clear"></div>
+        </div>
+    </div>
+    <div class="tool_box_li">
+        <div class="tool_class_name">官网组件</div>
+        <div class="tool_box">
+            <a href="javascript:;" class="j-diy-addModule  icon_21" data-type="join_us" title="招聘信息">
+                <span class="icon_pic"></span><span>招聘信息</span>
+            </a>
+            <div class="clear"></div>
+        </div>
+    </div>
+    <div class="tool_box_li">
+        <div class="tool_class_name">全局组件</div>
+        <div class="tool_box">
+            <a  href="javascript:;" class="j-diy-addModule  icon_21" data-type="message_board" title="留言板">
+                <span class="icon_pic"></span><span>留言板</span>
+            </a>
+            <a href="javascript:;" class="j-diy-addModule  icon_22" data-type="store_door" title="门店">
+                <span class="icon_pic"></span><span>门店</span>
+            </a>
+            <a href="javascript:;" class="j-diy-addModule  icon_11" data-type="position" title="地址位置">
+                <span class="icon_pic"></span><span>地址位置</span>
+            </a>
+            <div class="clear"></div>
+        </div>
+    </div>
+</div>

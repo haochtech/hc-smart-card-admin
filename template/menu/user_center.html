@@ -1,0 +1,112 @@
+{extend name="base"/}
+{block name="main"}
+<style>.input-common {    height: 40px;
+        line-height: 40px;
+        border-radius: 3px;
+        color: #666;}
+</style>
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+            <div class="tabBar clearfix">
+                <span onclick="load_page('__CONF_SITE__admin/config/WAppPay')">小程序管理</span>
+                <span onclick="load_page('__CONF_SITE__admin/menu/wxapp_page')">小程序页面</span>
+                <span class="current">会员中心</span>
+                <span onclick="load_page('__CONF_SITE__admin/config/wxrefund')">微信退款设置</span>
+            </div>
+        </div>
+        <div>
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-bg table-hover table-sort">
+                    <thead>
+                    <tr class="text-c">
+                        <th>名称</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    {volist name="list" id="r" key="k"}
+                    {if !$r.hidden}
+                    <tr class="text-c va-m">
+                        <td>
+                            <input type="text" onchange="set_form_title('{$r.type}',this.value)" value="{$r['title']}" class="input-common" style="text-align: center">
+                        </td>
+                        <td>
+                            {if $r.status==1}
+                            <span class="label label-success radius">显示</span>
+                            {else}
+                            <span class="label label-danger radius">隐藏</span>
+                            {/if}
+                        </td>
+                        <td>
+                            {if $r.status==1}
+                            <a style="text-decoration:none;color:#0066cc;" title="禁用" href="javascript:void(0);" onclick="universal_del('{$r.type}','off')">禁用</a>
+                            {else}
+                            <a style="text-decoration:none;color:#0066cc;" title="启用" href="javascript:void(0);" onclick="universal_del('{$r.type}','on')">启用</a>
+                            {/if}
+                        </td>
+                    </tr>
+                    {/if}
+                    {/volist}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {/block}
+        {block name="script"}
+        <script type="text/javascript">
+            function universal_del(type,key){
+                var msg='';
+                if (key=='on'){
+                    msg='确定要启用吗？';
+                }else {
+                    msg='确定要禁用吗？';
+                }
+                layer.confirm(msg,function(index){
+                    //后台处理
+                    $.ajax({
+                        type : "post",
+                        url : "__CONF_SITE__admin/menu/del_user_center",
+                        data : {
+                            "type" : type,
+                            'key':key
+                        },
+                        success : function(data) {
+                            if (data['code'] >0) {
+                                layer.msg('成功!',{icon:1,time:1000},function () {
+                                    parent_flash('__CONF_SITE__admin/Menu/user_center');
+                                });
+                            }
+                            else
+                            {
+                                layer.msg('失败', {icon: 2, time: 1000});
+                            }
+                        }
+                    })
+                });
+            }
+            function set_form_title(type,val) {
+                $.ajax({
+                    type : "post",
+                    url : "__CONF_SITE__admin/menu/set_center_title",
+                    data : {
+                        "type" : type,
+                        'val':val
+                    },
+                    success : function(data) {
+                        if (data['code'] >0) {
+                            layer.msg('成功!',{icon:1,time:1000},function () {
+                                parent_flash('__CONF_SITE__admin/Menu/user_center');
+                            });
+                        }
+                        else
+                        {
+                            layer.msg('失败', {icon: 2, time: 1000});
+                        }
+                    }
+                })
+            }
+        </script>
+        {/block}

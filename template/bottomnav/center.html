@@ -1,0 +1,93 @@
+<div class="diypage-content">
+    <div style="width:  380px; margin:  0 auto;">
+        <div style="border:0;">
+            <div style="padding-top:0;">
+                <div class="msgWrap form">
+                    <form action="" method="post" class="layui-form" id="custom_form">
+                        <div class="tableContent">
+                            <div class="content"  style="padding-top:0;">
+                                <div class="DL-Main" id="content" crossOrigin="Anonymous">
+                                    <div class="mainPanel clearfix">
+                                        <div class="leftPhonewrap" id="leftPhonewrap">
+                                            <div class="holderPhone">
+                                                <div v-on:click="now_type = 'head'" :style="'cursor: pointer;background: url('+nv_bg_url+') '+page.nv_color+' no-repeat scroll center top / 100% auto'" class="wxHd">
+                                                    <div  id="actName" class="phoneTitle" style="bottom: 15px;width: 100%;left: 0;padding: 0 65px;"><h2 :style="'color:'+page.text_color"><span id="bus_select_up_name_but">页面标题</span></h2></div>
+                                                </div>
+                                                <div id="anythingContent" style="background: #fff;">
+                                                    <!--底部菜单-->
+                                                    <ul  v-if="page.show_tabbar == 'true'" v-on:click="now_type = 'tabbar'" class="form_component style_1 clearfix ui-sortable" style="position: absolute;bottom:0;left:0;">
+                                                        <li class="ui-draggable" id="com1"
+                                                            name="id_bottom" title="" style="width:320px;cursor: pointer;height:50px;">
+                                                            <ul :style="'height:50px;justify-content:space-between;display:flex;flex-wrap:wrap;background-color:'+tabbar.bg_color"
+                                                                class="bottom-nav bottom-style-1 outCom column-3 clearfix'">
+                                                                <li style="height: 50px;" class="bottom-nav-item mod-Alink mlr"
+                                                                    v-for="(item,index) in tabbar.list">
+                                                                    <a class="bottom-navALink aFrame" href="javascript:;"
+                                                                    ></a>
+                                                                    <div class="li_content">
+                                                                        <div class="bottom-cmg objCom">
+                                                                            <img :src="index == 0 ? item.tabbar_select_icon : item.tabbar_icon"
+                                                                                 :alt="item.name"
+                                                                                 class="bottom-Cmge mCS_img_loaded"
+                                                                            >
+                                                                        </div>
+                                                                        <span :style="'color: '+(index == 0 ? tabbar.select_color : tabbar.text_color)"
+                                                                              class="bottom-text texCom"
+                                                                              id="com1banner0_url">{{ item.name }}</span>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                    <!--主体内容-->
+                                                    <div class="mianMod mCustomScrollbar _mCS_1 mCS-autoHide mCS_no_scrollbar"
+                                                         data-mcs-theme="minimal-dark"
+                                                         :style="'visibility: visible; overflow: visible;height:'+(page.show_tabbar == 'true' ? '520' : '570')+'px;'">
+                                                        <div id="mCSB_1"
+                                                             class="mCustomScrollBox mCS-minimal-dark mCSB_vertical mCSB_outside"
+                                                             style="max-height: none;" tabindex="0">
+                                                            <div id="mCSB_1_container"
+                                                                 class="mCSB_container mCS_y_hidden mCS_no_scrollbar_y"
+                                                                 style="position: relative; top: 0px; left: 0px;" dir="ltr">
+                                                                <div :style="'height:'+(page.show_tabbar == 'true' ? 520 : 570)+'px;background-color:'+page.bg_color+';background-image: url('+page.bg_img+');background-repeat:no-repeat;background-size:100%;-moz-background-size:100%;'"
+                                                                     class="activeMod">
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div id="mCSB_1_scrollbar_vertical"
+                                                             class="mCSB_scrollTools mCSB_1_scrollbar mCS-minimal-dark mCSB_scrollTools_vertical"
+                                                             style="display: none;">
+                                                            <div class="mCSB_draggerContainer">
+                                                                <div id="mCSB_1_dragger_vertical" class="mCSB_dragger"
+                                                                     style="position: absolute; min-height: 50px; height: 0px; top: 0px;"
+                                                                     oncontextmenu="return false;">
+                                                                    <div class="mCSB_dragger_bar"
+                                                                         style="line-height: 50px;"></div>
+                                                                </div>
+                                                                <div class="mCSB_draggerRail"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="rightEditwrap" style="position: fixed;right: 0;top: 120px;width:445px;">
+                                            <div class="formEditHd">
+                                                <ul class="clearfix">
+                                                    <li style="" class="on"><a href="javascript:;">页面组件</a></li>
+                                                    <li style=""><a href="javascript:;">编辑组件</a></li>
+                                                </ul>
+                                            </div>
+                                            <div class="formEditBd"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,160 @@
+﻿{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div class="n_tab_line">
+            <a href="{:url('goods/supplier')}" class="n_tab_list">供货商</a>
+            <a href="{:url('goods/supplier_add')}" class="n_tab_add">添加供货商</a>
+            <div class="cl"></div>
+        </div>
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+        <form class="Huiform" method="post" action="__CONF_SITE__admin/goods/supplier" target="_self">
+            <div class="text-c"> 供货商名称：
+               <input type="text" class="input-text" value="{$search_text}" style="width:250px" placeholder="输入供货商名称"  name="search_text">
+                <button type="submit" class="btn btn-search radius"  name=""><i class="Hui-iconfont">&#xe665;</i> 搜供货商</button>
+            </div>
+        </form>
+        </div>
+        <table class="table table-border table-bordered table-hover table-bg">
+            <thead>
+            <tr>
+                <th scope="col" colspan="9">供货商</th>
+            </tr>
+            <tr class="text-c">
+                <th>供货商Logo</th>
+                <th>供货商名称</th>
+                <th>联系人</th>
+                <th>联系电话</th>
+                <th>联系地址</th>
+                <th>供货商描述</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="vo"}
+            <tr class="text-c">
+                <td>
+                    <img src="/{$vo['logo']}" class="radius" width="50px">
+                </td>
+                <td>{$vo['supplier_name']}</td>
+                <td>{$vo['name']}</td>
+                <td>{$vo['tel']}</td>
+                <td>{$vo['address']}</td>
+                <td>{$vo['info']|default='无'}</td>
+                <td class="td-manage">
+                    <a title="编辑" href="javascript:;" onclick="supp_edit('供货商编辑','supplier_edit?supp_id={$vo.supplier_id}','800','700')" class="ml-5 show_layer" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>
+                    <a title="删除" href="javascript:;" onclick="supp_del(this,'{$vo.supplier_id}')" class="ml-5 caozuo" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </article>
+    <div class="n_page_no">
+        {$page}
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    function supp_add(title,url,w,h){
+        layer_show(title,url,w,h);
+    }
+	/*管理员-删除*/
+    function supp_del(obj,id){
+        layer.confirm('确认要删除吗？',function(index){
+            //此处请求后台程序
+            //后台处理
+            $.ajax({
+                type : "post",
+                url : "{:url('goods/supplier_del')}",
+                data : {
+                    "supp_id" : id,
+                },
+                success : function(data) {
+                    if (data['code'] > 0) {
+                        $(obj).parents("tr").remove();
+                        layer.msg('已删除!',{icon:1,time:1000});
+                    }else{
+                        layer.msg(data['message'], {icon: 2, time: 1000});
+                    }
+                }
+            })
+        });
+    }
+    /*管理员-密码重置*/
+    function admin_password(obj,id){
+        layer.confirm('确认定要把密码重置成"123456"吗？',function(index){
+            //此处请求后台程序
+            //后台处理
+            $.ajax({
+                type : "post",
+                url : "{:url('admin/resetUserPassword')}",
+                data : {
+                    "admin_id" : id,
+                },
+                success : function(data) {
+                    if (data['code'] > 0) {
+                        layer.msg('重置成功!',{icon:1,time:1000});
+                    }else{
+                        layer.msg(data['message'], {icon: 2, time: 1000});
+                    }
+                }
+            })
+        });
+    }
+	/*管理员-编辑*/
+    function supp_edit(title,url,w,h){
+        layer_show(title,url,w,h);
+    }
+	/*管理员-停用*/
+    function admin_stop(obj,id){
+        layer.confirm('确认要停用吗？',function(index){
+            //此处请求后台程序，下方是成功后的处理……
+            //后台处理
+            $.ajax({
+                type : "post",
+                url : "{:url('admin/adminLock')}",
+                data : {
+                    "admin_id" : id,
+                },
+                success : function(data) {
+                    if (data['code'] > 0) {
+                        $(obj).parents("tr").find(".td-manage").prepend('<a onClick="admin_start(this,id)" href="javascript:;" title="启用" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>');
+                        $(obj).parents("tr").find(".td-status").html('<span class="label radius">已禁用</span>');
+                        $(obj).remove();
+                        layer.msg('已停用!',{icon: 5,time:1000});
+                    }else{
+                        layer.msg(data['message'], {icon: 2, time: 1000});
+                    }
+                }
+            })
+        });
+    }
+	/*管理员-启用*/
+    function admin_start(obj,id){
+        layer.confirm('确认要启用吗？',function(index){
+            //此处请求后台程序，下方是成功后的处理……
+            //后台处理
+            $.ajax({
+                type : "post",
+                url : "{:url('admin/adminUnlock')}",
+                data : {
+                    "admin_id" : id,
+                },
+                success : function(data) {
+                    if (data['code'] > 0) {
+                        $(obj).parents("tr").find(".td-manage").prepend('<a onClick="admin_stop(this,id)" href="javascript:;" title="停用" style="text-decoration:none"><i class="Hui-iconfont">&#xe631;</i></a>');
+                        $(obj).parents("tr").find(".td-status").html('<span class="label label-success radius">已启用</span>');
+                        $(obj).remove();
+                        layer.msg('已启用!', {icon: 6,time:1000});
+                    }else{
+                        layer.msg(data['message'], {icon: 2, time: 1000});
+                    }
+                }
+            })
+        });
+    }
+</script>
+{/block}

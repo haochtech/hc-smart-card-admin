@@ -1,0 +1,109 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div id="tab_demo" class="HuiTab" style="margin-top: 0px; position: relative;">
+            <div class="tabBar clearfix">
+                <span onclick="load_page('{:url('express/express_list')}')">物流公司列表</span>
+                <span class="current">添加物流模版</span>
+                <div class="l n_tab_add"><a href="javascript:;"
+                                            onclick="layer_open('添加物流模版','__CONF_SITE__admin/express/freighttemplateedit&co_id={$co_id}','800px','900px')"><i
+                        class="Hui-iconfont">&#xe600;</i> 添加模版</a></div>
+            </div>
+        </div>
+        <table class="table table-border table-bordered table-hover table-bg">
+            <thead>
+            <tr class="text-c">
+            </tr>
+            </thead>
+            <tbody>
+            {foreach name="express_list_pagequery" item="v"}
+            <tr class="head" style="background-color: #E8F2FF">
+                <td colspan="6">
+                    <label style="margin-bottom: 10px;">
+                        <span style="font-size: 16px;margin-bottom:10px;" class="label label-default radius">{$v.shipping_fee_name}</span></label>
+                    <div>
+                        <a onclick="layer_open('编辑运费模版','__CONF_SITE__admin/express/freighttemplateedit&shipping_fee_id={$v.shipping_fee_id}&co_id={$co_id}','900','700')"
+                           href="javascript:;">
+                            <input class="btn btn-secondary-outline radius size-S" type="button" value="编辑">
+                        </a>
+                        {if condition="!$v.is_default"}
+                        <a href="javascript:;" onclick="fee_del('{$v.shipping_fee_id}')">
+                            <input class="btn btn-danger-outline radius size-S" type="button" value="删除">
+                        </a>
+                        {/if}
+                    </div>
+                </td>
+            </tr>
+            <tr class="address">
+                <td colspan="6">
+                    {if condition="$v.is_default == 1"}
+                    <span>默认模板(全国)</span>
+                    {else/}
+                    {foreach name="$v.address_list.province_list" item="province"}
+                    <span>{$province.name}</span>
+                    {/foreach}
+                    {/if}
+                </td>
+            </tr>
+            <tr>
+                <td align="center">按件数</td>
+                <td class="info">
+                    <label>首件(件)：</label>
+                    <span>{$v.bynum_snum}</span>
+                </td>
+                <td class="info">
+                    <label>首件运费(元)：</label>
+                    <span>{$v.bynum_sprice}</span>
+                </td>
+                <td class="info">
+                    <label>续件(件)：</label>
+                    <span>{$v.bynum_xnum}</span>
+                </td>
+                <td class="info">
+                    <label>续件运费(元)：</label>
+                    <span>{$v.bynum_xprice}</span>
+                </td>
+                <td align="center">
+                    {if condition="$v.bynum_is_use"}
+                    <span class="label label-success radius">启用</span>
+                    {else/}
+                    <span class="label label-warning radius">停用</span>
+                    {/if}
+                </td>
+            </tr>
+            {/foreach}
+            <input type="hidden" id="pagecount" value="{$pagecount}"/>
+            <input type="hidden" id="totalcount" value="{$totalcount}"/>
+            <input type="hidden" id="data_length" value="{$data_length}"/>
+            </tbody>
+        </table>
+    </article>
+</div>
+{/block}
+{block name="script"}
+<script>
+    /*模版-编辑*/
+    function fee_del(shipping_fee_id) {
+        layer.confirm('确认要删除吗？', function (index) {
+            //后台处理
+            $.ajax({
+                type: "post",
+                url: "{:url('express/freightTemplateDelete')}",
+                data: {'shipping_fee_id': shipping_fee_id.toString()},
+                dataType: "json",
+                success: function (res) {
+                    if (res.code > 0) {
+                        layer.msg(res.message, {icon: 1, time: 1000}, function () {
+                            parent_flash("__CONF_SITE__admin/express/freightTemplateList&co_id={$co_id}");
+                        });
+                    } else {
+                        layer.msg(res.message, {icon: 5, time: 1000});
+                    }
+                }
+            });
+        });
+    }
+</script>
+{/block}

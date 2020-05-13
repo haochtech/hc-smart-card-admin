@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <title>通讯录</title>
+    <link href="./vue/css/people.css" rel="stylesheet">
+    <link rel="stylesheet" href="./vue/css/iosSelect.css">
+    <link rel="stylesheet" href="./vue/css/iconfont.css">
+    <link rel="stylesheet" href="./vue/css/swiper.min.css">
+    <script src="./vue/js/stats.js?v2.0.4" name="MTAH5" sid="500619036"></script>
+    <script type="text/ecmascript">
+        var winWidth = 750
+        window.onresize = function () {
+            getRem(winWidth, 100)
+        }
+        function getRem(pwidth, prem) {
+            var html = document.getElementsByTagName('html')[0]
+            var oWidth = document.documentElement.clientWidth
+            html.style.fontSize = oWidth / pwidth * prem + 'px'
+        }
+        (function () {
+            if (typeof WeixinJSBridge == "object" && typeof WeixinJSBridge.invoke == "function") {
+                handleFontSize();
+            } else {
+                document.addEventListener("WeixinJSBridgeReady", handleFontSize, false);
+            }
+            function handleFontSize() {
+                // 设置网页字体为默认大小
+                WeixinJSBridge.invoke('setFontSizeCallback', {
+                    'fontSize': 0
+                });
+                // 重写设置网页字体大小的事件
+                WeixinJSBridge.on('menu:setfont', function () {
+                    WeixinJSBridge.invoke('setFontSizeCallback', {
+                        'fontSize': 0
+                    });
+                });
+            }
+            function onBridgeReady() {
+                WeixinJSBridge.call('hideOptionMenu');
+            }
+            if (typeof WeixinJSBridge == "undefined") {
+                if (document.addEventListener) {
+                    document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+                } else if (document.attachEvent) {
+                    document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                    document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+                }
+            } else {
+                onBridgeReady();
+            }
+        })()
+        getRem(winWidth, 100)
+    </script>
+    <script src="vue/js/common.js"></script>
+    <script src="./vue/js/echarts.min.js"></script>
+    <script src="vue/js/jquery-2.1.1.min.js"></script>
+    <script src="vue/js/vue.js"></script>
+    <script src="vue/js/vue-resource.js"></script>
+    <script src="vue/js/people.js?v=1.0"></script>
+    <script src="./vue/js/iscroll-zoom.js"></script>
+    <style>
+
+        .woyaodong{position: relative !important;}
+        .genjin_box_top span:first-of-type{
+            left: -.33rem;
+        }
+        .custom_container{
+            overflow: auto !important;
+        }
+        .custom_wrapper[data-v-8017bd18] { overflow: auto;bottom:0 !important; }
+        .user_list span[data-v-8017bd18] {display: inline-block;height: 0.36rem;}
+        .custom_genjin_container {position: relative !important;}
+        .custom_info_container[data-v-5cf03267] {position: relative !important;}
+        .genjin_wrapper {position: relative !important;}
+        .custom_label_box[data-v-5cf03267] {position: absolute;top: 0.8rem;left: 1.7rem;}
+        .custom_genjin_container {top:0 !important;}
+        .custom_time_label {
+            font-size: .32rem;
+            color: #333;
+            text-align: center;
+            display: inline-block;
+            line-height: .36rem;
+            margin-top: .3rem;
+            margin-left: .4rem;
+            font-weight: 700;
+        }
+        .custom_total_item {
+            text-align: left;
+        }
+        .custom_genjin_item .time-sign { min-width: 0.8rem;}
+        footer img{max-height: 20px;min-height: 20px;}
+    </style>
+</head>
+<body>
+<div id="app">
+    <!--列表-->
+    <div  class="woyaodong" style="display: none" v-show="type==1">
+        <div class="custom_container">
+            <div data-v-8017bd18="" class="search-box">
+                <div data-v-8017bd18="" class="search-content" @click="search_show">
+                    <img data-v-8017bd18="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAAAXNSR0IArs4c6QAAAqpJREFUSA21lc9uElEUxssAC0Jc1pAmdqHdGFzyAmg0BopSn6ErNURio49gLKZL44IXcKEl8qchxnZrE5bVnUnjAiE8AKHyx983zpDJzB0LCd5kuPee833nu+f+OUTWDK3T6cR7vV5xNpsVcWfoN+hnkUjkF32HvpZKpWqZTOa3gR4wRfyWRqPxiKAVvut+n3eO0A/me4VCoea1m8aWaySohUBlOp1+kABBzviexWKx9BWnaWxZVhnONzA3+A7r9fprcd04pn6eiSOwB+iCr8wK3yEyNZEUFPxjfAeM4+D2wb80YWWzRbRFyoD5BSu9v729fRJG8NrJ4g7zI0doJ2zrLB0yoIpDLi8qIDxBv5DFc40VQ7E09jer3+/vALDPQFvkB1w2z+fzb8F859vqdrsPTHiLbXroOKphZ2AiujY4E8ZVZ64rH2i6FRlZo9Ho54B3QQPnaHMRtGP5aRZbpYe2lkgkfvqdi84Rcbl2LD/vn/fbDw6bx+Nx+5ay4PmT8GItUuzKMBwON72OZcaj0eia8MTqmXjKpCMHF+CeCbCIjQxsLv2pCa9M7NqDyC6gpbcPTpTAuwrO2XwyiqiaIqRil3ZKhQkXaoPzBKGbAM55Mx9NQMsp16pZagdOqfg7u+S32WzeBfJGMBZa4tObCTR7e1RzAOyzIpWFI4SeOtsQIMggH5gSW9wUB+6Ad/bVCMY4v3KAVVlf0b9wwCoVVT009x0QdBO/Dlnnpy1SBgPG6/RnCN3O5XID2b1tLuIaWaH+EVUwt1xbSH9O4JIyGI/HqtrpMKGAiAKqmjrFrghRpWIDYYaRHv2pblEymTzMZrNj4dvt9lXeyjFDo5BRRMRlW6vVWp9MJscs4pY/o5WJaFFhQisVCRNauYgr5LkMJ/9FxBXijN5zPqU/L/lSLaHMnrAAAAAASUVORK5CYII=" alt="">搜索
+                </div>
+            </div>
+            <div data-v-d3b96232="" data-v-8017bd18="" class="custom-tab-container-box">
+                <div data-v-d3b96232="" class="custom-tab-container">
+                    <div data-v-d3b96232="">
+                        <span data-v-d3b96232=""><a href="people.html" style="color: #444444; text-decoration: none;">所有客户</a></span>
+                        <span data-v-d3b96232=""  class="choose-tab">已成交</span>
+                    </div>
+                </div>
+            </div>
+            <div data-v-8017bd18="" class="custom_head">
+                <div data-v-8017bd18="">
+                    <!--{{now_select}}-->
+                    <div data-v-8017bd18="" class="custom_num">
+                        <!--共{{all_num}}名客户-->
+                    </div>
+                </div>
+            </div>
+            <div data-v-8017bd18="" class="custom_wrapper"  @touchstart="touchStart($event)" @touchmove="touchMove($event)" @touchend="touchEnd($event)">
+                <div data-v-8017bd18=""
+                     style="transition-property: transform; transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1); transition-duration: 0ms; transform: translate(0px, 0px) scale(1) translateZ(0px);">
+                    <div data-v-8017bd18="" class="custom_list_box" style="pointer-events: auto;">
+                        <!---->
+                        <div data-v-8017bd18="" class="user_list" v-for="v in index_data" @click="statis(v.user_id)">
+                            <img data-v-8017bd18="" :src="v.user_headimg" alt="">
+                            <div data-v-8017bd18="">
+                                <p data-v-8017bd18="">
+                                    <span data-v-8017bd18="" class="custom_name">{{v.remark_name}}</span>
+                                    <span data-v-8017bd18="" class="right_span custom_genjin_sign" v-if="v.follow_numb>0">跟进中</span>
+                                    <span data-v-8017bd18="" class="right_span custom_genjin_sign" v-else>未跟进</span>
+                                    <!--<span data-v-8017bd18="" class="right_span custom_genjin_sign">最后活动<br>{{v.time}}</span>-->
+                                    <!--<span data-v-8017bd18="" class="right_span almost_time" style="display: none;">来源:来自搜索</span>-->
+                                </p>
+                                <p data-v-8017bd18="" style="font-size: 0.2rem;">
+                                    <span data-v-8017bd18="" class="custom_gen" v-if="v.follow_numb>0" style="color: #666;font-size: 13px;width: 98%;height: 0.5rem">{{v.follow_numb}}次互动</span>
+                                    <span data-v-8017bd18="" class="custom_gen" v-else style="display: none"></span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="loading_div2" style=" pointer-events: auto;" v-show='!down && index_data.length>0'>没有更多数据
+                        </div>
+                        <div class="loading_div2" style=" pointer-events: auto;" v-show='!down && index_data.length==0'>
+                            暂无数据
+                        </div>
+                        <div class="loading_div3" style=" pointer-events: auto;" v-show="bug" @click='get_list()'>
+                            <img src="vue/img/logo1.png"
+                                 alt="">请求超时或网络出错,点击再次请求
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--详情-->
+    <div  class="woyaodong" style="display: none" v-show="type==2">
+        <div data-v-98d23e78="" class="custom_card_big_info_box">
+            <div data-v-98d23e78="">
+                <div data-v-98d23e78="" class="custom_card_info_box">
+                    <p data-v-98d23e78="" class="custom_birthday">
+                        已成为你的客户{{user_detail.num}}天
+                    </p>
+                    <div data-v-98d23e78="" class="card_info_item_box">
+                        <div data-v-98d23e78="" class="card_info_item">
+                            <p data-v-98d23e78="">来源</p>
+                            <p data-v-98d23e78="">来自{{user_detail.from}}</p>
+                        </div>
+                        <div data-v-98d23e78="" class="card_info_item">
+                            <p data-v-98d23e78="">
+                                备注名
+                            </p><input data-v-98d23e78="" name="remark" id="remark" type="text" v-model="user_detail.remark_name" placeholder="未填写" maxlength="16" value="{{user_detail.remark_name}}">
+                        </div>
+                        <div data-v-98d23e78="" class="card_info_item" @click="change_gender(user_detail.gender)">
+                            <p data-v-98d23e78="">
+                                性别
+                            </p><span data-v-98d23e78="" class="custom_sex" id="is_show">{{user_detail.sax}}</span>
+                            <input type="hidden" v-model="user_detail.gender" id="gender">
+                        </div>
+                        <div data-v-98d23e78="" class="card_info_item">
+                            <p data-v-98d23e78="">
+                                手机号码
+                            </p><input data-v-98d23e78="" type="text" name="tel" id="tel" v-model="user_detail.tel"
+                                       placeholder="未填写" value="{{user_detail.tel}}"
+                                       onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9]+/,'');}).call(this)"
+                                       onblur="this.v();">
+                        </div>
+                        <div data-v-98d23e78="" class="card_info_item">
+                            <p data-v-98d23e78="">
+                                邮箱
+                            </p><input data-v-98d23e78="" type="text" name="email" v-model="user_detail.email"
+                                       id="email" value="{{user_detail.email}}" placeholder="未填写">
+                        </div>
+                        <div data-v-98d23e78="" class="card_info_item">
+                            <p data-v-98d23e78="">
+                                公司
+                            </p><input data-v-98d23e78="" type="text" name="corp" id="corp" v-model="user_detail.corp"
+                                       placeholder="未填写" value="{{user_detail.corp}}">
+                        </div>
+                        <div data-v-98d23e78="" class="card_info_item">
+                            <p data-v-98d23e78="">
+                                职位
+                            </p><input data-v-98d23e78="" type="text" name="position" id="position" v-model="user_detail.position" placeholder="未填写" value="{{user_detail.position}}">
+                        </div>
+                        <div data-v-98d23e78="" class="card_info_item">
+                            <p data-v-98d23e78="">详细地址</p>
+                            <input data-v-98d23e78="" type="text" name="address" id="address" v-model="user_detail.address" placeholder="未填写" value="{{user_detail.address}}">
+                        </div>
+                    </div>
+                    <input type="hidden" name="user_id" :value="user_detail.user_id" v-model="user_detail.user_id">
+                    <input type="hidden" name="id" :value="user_detail.id" v-model="user_detail.id">
+                    <div data-v-98d23e78="" class="custom_detail_save_btn" @click="save_info">
+                        保存
+                    </div>
+                    <div data-v-98d23e78="" class="custom_detail_save_btn" @click="go_back_" style="background-color: #dadada;">
+                        返回
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--统计-->
+    <div style="display: none" v-show="type==3"  class="woyaodong">
+        <div data-v-5cf03267="" class="custom_info_container">
+            <div data-v-5cf03267="" class="custom_head_box">
+                <div data-v-5cf03267="" class="custom_head_card">
+                    <div data-v-5cf03267="" class="custom_head_card_top" @click="get_user_detail(user_detail.id)">
+                        <img data-v-5cf03267="" alt="" class="custom_info_head_img" :src="user_detail.user_headimg" >
+                        <div data-v-5cf03267="" class="custom_head_card_info">
+                            <div data-v-5cf03267="" class="clearfix">
+                                <span data-v-5cf03267="" style="width: 250px;height: 1rem;text-align: center;color: #222222">{{user_detail.remark_name}}</span>
+                            </div>
+                            <div data-v-5cf03267="">
+                                <div data-v-5cf03267="" class="custom_label_box">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <ul data-v-5cf03267="" class="custom_head_box_tabs">
+                    <li data-v-5cf03267="" :class="{'actived_tab':wadaxiwahudong}" @click="get_liulan" style="margin-left: 1.6rem;">浏览记录</li>
+                    <li data-v-5cf03267="" :class="{'actived_tab':wadaxiwagenjin}" @click="statis(user_detail.user_id)" style="margin-left: 1.6rem;">跟进记录</li>
+                    <li data-v-5cf03267="" :class="{'actived_tab':wadaxiwafenxi}" @click="get_genjina" style="margin-left: 1.35rem;">AI分析</li>
+                </ul>
+            </div>
+            <div data-v-5cf03267="" class="custom_genjin_container">
+                <div class="genjin_wrapper">
+                    <div class="genjin_scroll" style="transition-property: transform; transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1); transition-duration: 200ms; transform: translate(0px, 0px) scale(1) translateZ(0px);margin-bottom: 100px;">
+                        <div style="pointer-events: auto;" v-show="xiuhudong" v-for="x in nidaye">
+                            <li>
+                                <div class="custom_total_item">
+                                    <span class="custom_time_label">{{x.op_time}}</span>
+                                </div>
+                            </li>
+                            <li class="clearfix">
+                                <div class="custom_genjin_item clearfix">
+                                    <span class="custom_genjin_head_img"><img :src="user_detail.user_headimg"  alt="" class="custom_user_logo"></span>
+                                    <div class="table">
+                                        <div class="table_center">
+                                            <p>
+                                                <span>{{user_detail.remark_name}}</span><span><span class="xingxin">{{x.type}}</span>你的<span class="xingxin">{{x.op_name}}</span>第{{x.times}}次</span>
+                                            </p>
+                                            <div class="time-sign">
+                                                {{x.op_time_cao}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </div>
+                        <!--<div style="pointer-events: auto;" v-show="xiugenjin">-->
+                        <!--<ul class="genjin_box" >-->
+                        <!--<li v-for="x in follow" :id="'dddd'+x.id">-->
+                        <!--<div class="genjin_box_top">-->
+                        <!--<span></span>{{x.time}}-->
+                        <!--</div>-->
+                        <!--<div class="genjin_box_bottom">-->
+                        <!--{{x.content}}-->
+                        <!--</div>-->
+                        <!--<div style="float: right;    margin-top: -0.7rem;">-->
+                        <!--<span @click="del_follow(x.id)">-->
+                        <!--删-->
+                        <!--</span>-->
+                        <!--</div>-->
+                        <!--</li>-->
+                        <!--</ul>-->
+                        <!--</div>-->
+                        <div style="pointer-events: auto;" v-show="xiugenjin">
+                            <ul class="genjin_box" >
+                                <li v-for="x in follow" :id="'dddd'+x.id">
+                                    <img data-v-5cf03267="" alt="" :src="user_detail.user_headimg" >
+                                    <div class="genjin_box_top">
+                                        <span></span>{{x.time}}
+                                    </div>
+                                    <div class="genjin_box_bottom">
+                                        {{x.content}}
+                                    </div>
+                                    <div style="float: right;    margin-top: -0.7rem;">
+                                    <span @click="del_follow(x.id)">
+                                        删
+                                    </span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <ul class="custom_genjin_footer">
+                    <li>
+                        <img src="vue/img/red/genjin.png" @click="statis(user_detail.user_id)" alt="">
+                        <p class="stl">跟进</p>
+                    </li>
+                    <!--<li class="xianshi">-->
+                    <!--<img src="vue/img/red/yigenjin.png" @click="get_genjina" alt="">-->
+                    <!--<p class="stl" style="color: #0eb799;">成交</p>-->
+                    <!--</li>-->
+                    <style>
+                        .custom_genjin_container .custom_genjin_footer .xianshi{
+                            display: none;
+                        }
+                        .custom_genjin_container .custom_genjin_footer .xianshi:hover{
+                            display: block;
+                        }
+                    </style>
+                    <!--<li>-->
+                    <!--<img src="vue/img/red/weichengjaio.png" @click="get_genjina" alt="">-->
+                    <!--<p class="stl">未成交</p>-->
+                    <!--</li>-->
+                    <li>
+                        <p @click="url('news_one')" style="background: #0eb799;border-radius: 5px;color: #fff;border: 0;margin-left: 150px">
+                            私信
+                        </p>
+                    </li>
+                </ul>
+                <!--<ul class="custom_genjin_footer">-->
+                <!--<li>-->
+                <!--<p @click="url('news_one')">-->
+                <!--发消息-->
+                <!--</p>-->
+                <!--</li>-->
+                <!--<li>-->
+                <!--<p @click="genjin_send">-->
+                <!--跟进-->
+                <!--</p>-->
+                <!--</li>-->
+                <!--</ul>-->
+            </div>
+        </div>
+    </div>
+    <div style="display: none" v-show="show_search">
+        <div class="custom_label_container">
+            <div data-v-4a33f41c="" class="search_container">
+                <div data-v-4a33f41c="" class="search_box">
+                    <img data-v-4a33f41c="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAAAXNSR0IArs4c6QAAAqpJREFUSA21lc9uElEUxssAC0Jc1pAmdqHdGFzyAmg0BopSn6ErNURio49gLKZL44IXcKEl8qchxnZrE5bVnUnjAiE8AKHyx983zpDJzB0LCd5kuPee833nu+f+OUTWDK3T6cR7vV5xNpsVcWfoN+hnkUjkF32HvpZKpWqZTOa3gR4wRfyWRqPxiKAVvut+n3eO0A/me4VCoea1m8aWaySohUBlOp1+kABBzviexWKx9BWnaWxZVhnONzA3+A7r9fprcd04pn6eiSOwB+iCr8wK3yEyNZEUFPxjfAeM4+D2wb80YWWzRbRFyoD5BSu9v729fRJG8NrJ4g7zI0doJ2zrLB0yoIpDLi8qIDxBv5DFc40VQ7E09jer3+/vALDPQFvkB1w2z+fzb8F859vqdrsPTHiLbXroOKphZ2AiujY4E8ZVZ64rH2i6FRlZo9Ho54B3QQPnaHMRtGP5aRZbpYe2lkgkfvqdi84Rcbl2LD/vn/fbDw6bx+Nx+5ay4PmT8GItUuzKMBwON72OZcaj0eia8MTqmXjKpCMHF+CeCbCIjQxsLv2pCa9M7NqDyC6gpbcPTpTAuwrO2XwyiqiaIqRil3ZKhQkXaoPzBKGbAM55Mx9NQMsp16pZagdOqfg7u+S32WzeBfJGMBZa4tObCTR7e1RzAOyzIpWFI4SeOtsQIMggH5gSW9wUB+6Ad/bVCMY4v3KAVVlf0b9wwCoVVT009x0QdBO/Dlnnpy1SBgPG6/RnCN3O5XID2b1tLuIaWaH+EVUwt1xbSH9O4JIyGI/HqtrpMKGAiAKqmjrFrghRpWIDYYaRHv2pblEymTzMZrNj4dvt9lXeyjFDo5BRRMRlW6vVWp9MJscs4pY/o5WJaFFhQisVCRNauYgr5LkMJ/9FxBXijN5zPqU/L/lSLaHMnrAAAAAASUVORK5CYII=" alt=""><input data-v-4a33f41c="" type="text" placeholder="搜索用户" v-model="search_text" :value="search_text">
+                </div>
+                <span data-v-4a33f41c="" id="cancel_search" @click="get_list">搜索</span>
+            </div>
+        </div>
+    </div>
+    <div data-v-5e101616="" style="display: none" v-show="follow_send">
+        <p data-v-5e101616="" class="choose-title choose-title" @click="genjin_select">
+            选择跟进常用语
+        </p>
+        <ul data-v-5e101616="" class="list" v-show="follow_select">
+            <div v-for="x in follow_lang"><li data-v-5e101616="" @click="change_lang(x.class_id,x.text)">{{x.text}}</li></div>
+        </ul>
+        <div data-v-5e101616="" style="position: relative;" v-show="!follow_select">
+            <p data-v-5e101616="" class="choose-desc-title">
+                跟进描述
+            </p>
+            <textarea data-v-5e101616="" maxlength="200" placeholder="在这里输入跟进语" v-model="lang_check">{{lang_check}}</textarea>
+            <div data-v-5e101616="" class="submit" @click="sub_follow(user_detail.id)">
+                提交
+            </div>
+            <div data-v-5e101616="" class="submit" @click="go_back_" style="background-color: #dadada;">
+                返回
+            </div>
+        </div>
+    </div>
+    <div data-v-11364152="" data-v-5e101616="" style="display: none" v-show="follow_msg">
+        <div data-v-11364152="" class="alert_hint">
+            <div data-v-11364152="">
+                <p data-v-11364152="">
+                    跟进信息不能为空
+                </p>
+            </div>
+            <div data-v-11364152=""></div>
+            <div data-v-11364152="" @click="is_done">
+                知道了
+            </div>
+        </div>
+        <div data-v-11364152="" class="background"></div>
+    </div>
+    <div data-v-8017bd18="" class="mark" style="z-index: 86; display: none;"></div>
+    <div data-v-8017bd18="" class="first_loading_mask" style="display: none;">
+        <div class="first_loading_box">
+            <img src="" alt="" id="in_loading"> <img src="" alt="" style="display: none;">
+            <p>
+                正在加载
+            </p>
+            <p style="display: none;">
+                加载失败,点击重新加载
+            </p>
+        </div>
+    </div>
+    <footer class="home_footer" v-if="type==1">
+        <div replace="" @click='url("index_ai")'>
+            <img src="vue/img/home.png" alt="">
+            <p class="">雷达</p>
+        </div>
+        <div replace="" @click='url("news_ai")'>
+            <img src="vue/img/news.png">
+            <p class="">消息</p>
+        </div>
+        <div replace="">
+            <img src="vue/img/people2.png" alt="">
+            <p class="choosed_tab">客户</p>
+        </div>
+        <div replace="" @click='url("message")'><img src="vue/img/find.png">
+            <p class="">动态</p>
+        </div>
+        <div replace="" @click='url("my")'>
+            <img src="vue/img/my.png">
+            <p class="">我</p>
+        </div>
+    </footer>
+</div>
+</body>
+<script src="./vue/js/jquery-1.7.2.js"></script>
+<script src="./vue/js/layer.js"></script>
+<script src="./vue/js/Mdate/iScroll.js"></script>
+<script src="./vue/js/Mdate/Mdate.js"></script>
+</html>

@@ -1,0 +1,171 @@
+{extend name="base"/}
+{block name="resources"/}
+<style>.goods_info {
+    height: 86px;
+    border-top: 1px solid #ddd;
+    padding: 8px;
+}
+.nick_name{
+    text-decoration:underline;
+}
+/*	.goods_info {height:78px; line-height: 78px; border-top:1px solid #ddd;padding:8px;}*/
+.goods_info:first-child {
+    border-top: 0;
+}
+.goods_info img {
+    height: 70px;
+    width: 70px;
+}
+.table-bordered {
+    border: 1px solid #eeeeee;
+}
+.table > thead > tr > th,
+.table > tbody > tr > th,
+.table > tfoot > tr > th,
+.table > thead > tr > td,
+.table > tbody > tr > td,
+.table > tfoot > tr > td {
+    padding: 8px;
+    line-height: 1.42857143;
+    vertical-align: top;
+    border-top: 1px solid #eeeeee;
+    border-right: 1px solid #eeeeee;
+    vertical-align: middle;
+}
+.btn-group button {
+    background: #fff !important;
+    color: #0066cc !important;
+    margin-right: 10px;
+    border: 0 !important;
+}
+</style>
+{/block}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div class="tabBar clearfix" style="position:relative;">
+            <span onclick="load_page('__CONF_SITE__admin/activity/user_share')">分销商列表</span>
+            <span class="current" onclick="load_page('__CONF_SITE__admin/activity/share_order')">订单列表</span>
+            <span onclick="load_page('__CONF_SITE__admin/distribute/index')">单商品分销</span>
+            <span onclick="load_page('__CONF_SITE__admin/activity/share_cash')">分销商提现</span>
+            <span onclick="load_page('__CONF_SITE__admin/activity/share_set')" >基础设置</span>
+            <span onclick="load_page('__CONF_SITE__admin/activity/share_pay')" >佣金设置</span>
+            <span onclick="load_page('__CONF_SITE__admin/activity/share_other')">自定义设置</span>
+        </div>
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+                <div class="text-c">
+                    日期范围：
+                    <input type="text" onfocus="WdatePicker()" value="{$stime}" name="stime"
+                           class="input-text Wdate" style="width:120px;">
+                    -
+                    <input type="text" onfocus="WdatePicker()" value="{$etime}" name="etime"
+                           class="input-text Wdate" style="width:120px;">
+                    <input type="text" class="input-text" value="{$order_no}" style="width:250px" placeholder="输入订单号" name="order_no">
+                    <button onclick="send_submit()" class="btn btn-search radius" name=""><i class="Hui-iconfont">&#xe665;</i> 搜订单
+                    </button>
+                    <!--<a class="btn btn-search radius" name="" onclick="load_page('__CONF_SITE__admin/activity/share_order')" href="javascript:;"> 清空-->
+                    <!--</a>-->
+                </div>
+        </div>
+        <table class="table table-border table-bordered table-hover table-bg">
+            <thead>
+            <tr class="text-c">
+                <th>订单信息</th>
+                <th>商品清单</th>
+                <th>买家</th>
+                <th>实付金额</th>
+                <th>状态</th>
+                <th>分销信息</th>
+            </tr>
+            </thead>
+            <tbody>
+            {foreach name="list" id="vo"}
+            <tr class="title-tr" bgcolor="#e4f2ff">
+                <td colspan="8">
+                    <span>订单编号：{$vo['order_no']} 交易号：{$vo['out_trade_no']}</span>
+                    <span>下单时间：{$vo['order_time']}</span>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:0 !important;">
+                    {if $vo['goods_name'] =='-99'}
+                    {foreach name="$vo['goods__']" item='gg'}
+                    <div class="goods_info">
+                        <img style="vertical-align: middle;: left" src="{$gg['img_path']}">
+                        <a title="{$gg['goods_name']}" href="javascript:;">{$gg['goods_name']|subtext='15'}</a>
+                    </div>
+                    {/foreach}
+                    {else}
+                    <div class="goods_info">
+                        <img style="vertical-align: middle;: left" src="{$vo['img_path']}">
+                        <a title="{$vo['goods_name']}" href="javascript:;">{$vo['goods_name']|subtext='15'}</a>
+                    </div>
+                    {/if}
+                </td>
+                <td style="text-align:center;padding:0 !important;">
+                    {if $vo['goods_name'] =='-99'}
+                    {foreach name="$vo['goods__']" item='gg'}
+                    <div class="goods_info"
+                         style="text-align: center;line-height: 22px; vertical-align: middle; height: 86px;padding-top:18px;">
+                        <span>{$gg['price']}元</span><br>
+                        {$gg['num']}件
+                    </div>
+                    {/foreach}
+                    {else}
+                    <div class="goods_info"
+                         style="text-align: center;line-height: 22px; vertical-align: middle; height: 86px;padding-top:18px;">
+                        <span>{$vo['price']}元</span><br>
+                        {$vo['num']}件
+                    </div>
+                    {/if}
+                </td>
+                <td rowspan="1" style="text-align:center">
+                    <div class="cell" style="text-align: center;line-height: 22px; vertical-align: middle; height: 86px;padding-top:18px;">
+                        {$vo['nick_name']}<br>
+                    </div>
+                </td>
+                <td rowspan="1">
+                    <div class="business-status"
+                         style="text-align: center;line-height: 22px; vertical-align: middle; height: 60px;padding-top:18px;">
+                        {$vo['pay_money']}  元<br>
+                    </div>
+                </td>
+                <td rowspan="1">
+                    <div class="business-status"
+                         style="text-align: center;line-height: 22px; vertical-align: middle; height: 60px;padding-top:18px;">
+                        {$vo['order_status']}<br>
+                    </div>
+                </td>
+                <td rowspan="1">
+                    <div class="business-status" style="text-align: center;line-height: 22px; vertical-align: middle; padding-top:18px;">
+                        {foreach name="$vo['share_detail']" item="ss"}
+                            昵称:<span class="nick_name">{$ss.name}</span><br/>
+                            {$ss.share}佣金:{$ss.price}<br/>
+                        {/foreach}
+                        自购返利：{$vo.rebate} 元
+                    </div>
+                </td>
+            </tr>
+            {/foreach}
+            </tbody>
+        </table>
+    </article>
+    <div class="n_page_no">
+        {$page}
+    </div>
+</div>
+<script>
+    function send_submit() {
+        load_page("__CONF_SITE__admin/activity/share_order",'',{
+            search_text:$("input[name=search_text]").val(),
+            stime:$("input[name=stime]").val(),
+            etime:$("input[name=etime]").val(),
+            order_no:$("input[name=order_no]").val()
+        });
+    }
+
+</script>
+{/block}
+{block name="script"}
+{/block}

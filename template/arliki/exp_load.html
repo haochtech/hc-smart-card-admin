@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="/public/static/h-ui-{$skin}/css/H-ui.min.css"/>
+</head>
+<style type="text/css">
+	input {
+		vertical-align: initial;
+	}
+	.table input[type="text"], input[type="password"], input.text, input.password {
+		font: 12px/20px Arial;
+		color: #777;
+		background-color: #FFF;
+		vertical-align: baseline;
+		margin-bottom: 0px;
+	}
+	.set-style dl dt {
+		text-align: left;
+		width: 7%;
+	}
+	.attr-choose-wrap label, .relate-norm label {
+		cursor: pointer;
+		float: left;
+		margin: 0 15px 10px 0;
+		padding: 0 10px;
+		color: #636363;
+		line-height: 28px;
+	}
+	.attr-choose-wrap label.current, .relate-norm label.current {
+		color: #636363;
+		background: url(../images/icon_choose.gif) no-repeat right bottom;
+	}
+	td {font-size:13px;}
+</style>
+
+<body>
+<div class="Hui-article">
+	<article class="cl" style="padding:0 10px !important;">
+		<table class="table table-border table-bordered table-hover table-bg">
+			<thead>
+			<tr class="text-c">
+				<th>时间</th>
+				<th>状态</th>
+			</tr>
+			</thead>
+			<tbody id="tbody">
+			{if $code==1}
+			<tr>
+				<td  colspan="2" style="text-align: left;">当前:<span style="color:#ff0000;">{$list["state"]}</span></td>
+			</tr>
+			{foreach name="list['data']" item="vo" key='k'}
+			<tr class="text-c">
+				<td>{$vo.time}</td>
+				<td style="text-align: left;">{$vo.status}</td>
+			</tr>
+			{/foreach}
+			{else}
+			<p>{$list.data}</p>
+			{/if}
+			</tbody>
+		</table>
+	</article>
+</div>
+</body>
+</html>

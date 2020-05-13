@@ -1,0 +1,102 @@
+{extend name="base"/}
+{block name="main"}
+<link rel="stylesheet" type="text/css" href="/public/menu/css/mod_list.css" />
+<style>
+    #3D {max-width: 1350px;}
+</style>
+<div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;margin-left: 10px; margin-top: 20px;">
+    <div class="tabBar clearfix">
+        <span class="current">我的模版</span>
+    </div>
+</div>
+<div class="content-right fl" style="width: 100%">
+    <div id="3D">
+        {volist name="list" id="m"}
+        <div class="programCode" style="position: relative">
+            <dl>
+                <dt><div style="max-width: 225px; position: relative; overflow: hidden; height: 250px;"><a href="" target="_top"><img  src="{$m.img}" alt="模板图" title="点击放大预览" style="cursor: zoom-in;"></a></div></dt>
+                <dd style="margin-top: 4px;"><div style="font-weight: bold; text-align: center; padding: 3px;">{$m['title']}</div></dd>
+                <dd><div style="font-weight: bold; text-align: center; padding: 3px;"> {:date('Y-m-d H:i:s',$m.create_time)}</div></dd>
+                <dd>
+                    <button onclick="this_mod('{$m.id}')" class="btn btn-success radius" style="z-index:1000;margin-left: 26px">选择</button>
+                    <a href="__CONF_SITE__admin/menu/index_module&my_mod={$m.id}"><button class="btn btn-danger radius" style="z-index:1000;background-color: orangered">编辑</button></a>
+                    <button onclick="del_my_mod('{$m.id}')" class="btn btn-danger radius" style="z-index:1000;background-color: red;border-radius: 3px;">删除</button>
+                </dd>
+            </dl>
+        </div>
+        {/volist}
+        {empty name="list"}
+        <div style="text-align: center;">
+            <h1 style="font-size: 24px;">您暂时没有已保存的模板，请在首页管理中编辑完成后保存到我的模板！</h1>
+        </div>
+        {/empty}
+    </div>
+    <div class="n_page_no" style="clear: both; float: right; margin-right: 15px; margin-top: 10px;">
+        {notempty name="list"}
+        {$page}
+        {/notempty}
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script>
+    $(function(){
+        $(".hPage-tpls-overlay").hide();
+        $(".showActions").mouseover(function(){
+            $(this).find(".hPage-tpls-overlay").show();
+        });
+        $(".showActions").mouseout(function(){
+            $(this).find(".hPage-tpls-overlay").hide();
+        });
+        $('.btn-tpllist').click(function(){
+        });
+    })
+    /**
+     * 用户选择了模版
+     */
+    function this_mod(id) {
+        layer.confirm('选择模版会清空原有小程序设置！请谨慎操作！',function(index){
+            //后台处理
+            $.ajax({
+                type : "post",
+                url : "{:url('menu/my_import_mod')}",
+                data : {
+                    "id" : id,
+                },
+                success : function(data) {
+                    console.log(data);
+                    if (data['code'] > 0) {
+                        layer.msg('导入成功!',{icon:1,time:1000},function () {
+                            window.location.href="__CONF_SITE__admin/menu/index_module";
+                        });
+                    }else{
+                        layer.msg(data['message'], {icon: 2, time: 1000});
+                    }
+                }
+            })
+        });
+    }
+    function del_my_mod(id) {
+        layer.confirm('确认要删除吗？',function(index){
+            $.ajax({
+                type : "post",
+                url : "__CONF_SITE__admin/menu/del_my_mode",
+                data : {'id':id},
+                success : function(data) {
+                    console.log(data);
+                    if(data['code']>0 ){
+                        layer.msg('成功',{icon:1,time:1000},function () {
+                            location.reload();
+                        });
+                    }else{
+                        layer.msg('失败',{icon:5,time:1000});
+                    }
+                }
+            });
+        })
+    }
+//    function edit_this_mod(id) {
+//        window.location.href="__CONF_SITE__admin/menu/index_module&my_mod="+id;
+//    }
+</script>
+{/block}

@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="/public/static/h-ui-{$skin}/css/H-ui.min.css"/>
+    <script src="/public/js/jquery-2.1.1.js"></script>
+
+</head>
+<body>
+<article class="cl pd-20">
+    <div class="row cl">
+        <label class="form-label col-xs-12 col-sm-12">
+            重要提示：<br/>
+            <span class="c-red">仅支持淘宝商品(域名为***.taobao.com/***)，部分商品样式可能会有偏差，请手动修改</span>
+        </label>
+    </div>
+    <div class="row cl" style="margin-top: 20px;">
+        <label class="form-label col-xs-3 col-sm-2">
+            <span class="c-red">*</span>
+            淘宝地址：</label>
+        <div class="formControls col-xs-9 col-sm-8">
+            <input type="text" autocomplete="off" value="" placeholder="请输入要采集商品的地址" class="input-text" id="url">
+        </div>
+    </div>
+    <div class="row cl" style="margin-top: 30px;">
+        <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+            <input class="btn btn-primary radius" onclick="rsave()" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+        </div>
+    </div>
+</article>
+ <script type="text/javascript" src="/public/static/layer/2.4/layer.js"></script>
+<script type="text/javascript">
+    function rsave() {
+        var url = $('#url').val();
+        url="'"+url.substring(0,url.length)+"'";
+        parent.pickrsve(url,1);
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);
+    }
+</script>
+</body>
+</html>

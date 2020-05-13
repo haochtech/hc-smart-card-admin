@@ -1,0 +1,115 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="renderer" content="webkit|ie-comp|ie-stand">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+	<meta http-equiv="Cache-Control" content="no-siteapp" />
+	<link rel="Bookmark" href="favicon.ico" >
+	<link rel="Shortcut Icon" href="favicon.ico" />
+	<!--[if lt IE 9]>
+	<script type="text/javascript" src="/lib/html5.js"></script>
+	<script type="text/javascript" src="/lib/respond.min.js"></script>
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="/static/h-ui-{$skin}/css/H-ui.min.css" />
+	<link rel="stylesheet" type="text/css" href="/static/h-ui.admin/css/H-ui.admin.css" />
+	<link rel="stylesheet" type="text/css" href="/lib/Hui-iconfont/1.0.8/iconfont.css" />
+	<link rel="stylesheet" type="text/css" href="/static/h-ui.admin/skin/default/skin.css" id="skin" />
+	<link rel="stylesheet" type="text/css" href="/static/h-ui.admin/css/style.css" />
+	<!--[if IE 6]>
+	<script type="text/javascript" src="/public/js/DD_belatedPNG_0.0.8a-min.js"" ></script>
+	<script>DD_belatedPNG.fix('*');</script>
+	<![endif]-->
+	<title>新建网站角色 - 管理员管理</title>
+	<meta name="keywords" content="洛阳易购商城">
+	<meta name="description" content="洛阳易购商城">
+</head>
+<body>
+<article class="cl pd-20">
+	<form action="" method="post" class="form form-horizontal" id="">
+		<div class="row cl" id="att">
+			{if $order_list!=''}
+			{foreach name='order_list' item="or" key="k" }
+				<div class="w100">
+					<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>属性名称：</label>
+					<div class="formControls col-xs-8 col-sm-9 spec_data">
+						<input type="text" autocomplete="off" value="{$or}" placeholder="" class="input-text" name="spec_value" id="spec_value">
+						<div class="inline-block w19"><a style="color: #00a2d4" href="javascript:;" onclick="delSpecValue(this)">删除</a></div>
+					</div>
+				</div>
+				{/foreach}
+			{else}
+			<div class="w100">
+				<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>属性名称：</label>
+				<div class="formControls col-xs-8 col-sm-9 spec_data">
+					<input type="text" autocomplete="off" value="" placeholder="" class="input-text" name="spec_value" id="spec_value">
+					<div class="inline-block w19"><a style="color: #00a2d4" href="javascript:;" onclick="delSpecValue(this)">删除</a></div>
+				</div>
+			</div>
+			{/if}
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"></label>
+			<div class="formControls col-xs-8 col-sm-3">
+				<a href="javascript:;" onclick="addSpecValue(this)"><i class="Hui-iconfont">&#xe600;</i>添加一个属性</a>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<input class="btn btn-primary radius" onclick="addSuppAjax()" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+			</div>
+		</div>
+	</form>
+</article>
+<input type="hidden" id="order" value="{$order}">
+<script type="text/javascript" src="/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/static/h-ui/js/H-ui.js"></script>
+<script type="text/javascript" src="/static/h-ui.admin/js/H-ui.admin.page.js"></script>
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+$(function(){
+	$('.skin-minimal input').iCheck({
+		checkboxClass: 'icheckbox-blue',
+		radioClass: 'iradio-blue',
+		increaseArea: '20%'
+	});
+});
+//添加一个属性
+function addSpecValue(e){
+var html= '<div class="w100">';
+	html+='<label class="form-label col-xs-4 col-sm-3"></label>';
+    html+='<div class="formControls col-xs-8 col-sm-9 spec_data">';
+    html+='<input type="text" autocomplete="off" value="" placeholder="" class="input-text" name="spec_value" id="spec_value">';
+    html+='<div class="inline-block w19"><a style="color: #00a2d4" href="javascript:;" onclick="delSpecValue(this)">删除</a></div>';
+    html+='</div>';
+    html+='</div>';
+   $("#att").append(html);
+}
+//删除一个属性
+function delSpecValue(e){
+    layer.confirm('确认要删除吗？',function(index){
+        layer.close(index);
+        $(e).parents('.w100').remove();
+    });
+}
+function addSuppAjax() {
+	var order=$("#order").val();
+    var spec_value_obj = $("input[name='spec_value']");
+    var spec_value_str = '';
+    spec_value_obj.each(function(i){
+        if(spec_value_obj.eq(i).val() != ''){
+            spec_value_str += ',' + spec_value_obj.eq(i).val();
+        }
+    });
+    spec_value_str = spec_value_str.substr(1);
+    parent.document.getElementById("value_"+order).innerHTML=spec_value_str;
+    parent.document.getElementById("value_hidden_"+order).value=spec_value_str;
+    parent.layer.closeAll();
+}
+</script>
+</body>
+</html>

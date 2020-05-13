@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <meta charset="UTF-8">
+    <title>Document</title>
+<style>
+	td a:hover {background-color: rgb(26, 173, 23);color:#fff;border:1px solid rgb(26, 173, 23);}
+	</style>
+    <link rel="stylesheet" type="text/css" href="/public/static/h-ui-{$skin}/css/style.css" />
+    <link media="all" href="/public/menu/css/article.css" type="text/css" rel="stylesheet">
+</head>
+
+<body style="background-color: rgb(255, 255, 255);">
+<div class="jbox-container" style="float: left; padding: 0px;">
+    <ul class="gagp-goodslist" style="padding: 10px; width: 750px;">
+        <!-- 栏目分类 -->
+        <table class="wxtables">
+            <colgroup>
+                <col width="10%"><col width="15%"><col width="20%"><col width="25%"><col width="15%">
+            </colgroup>
+            <thead>
+            <tr style="background-color: rgb(13, 163, 249);">
+                <td>ID</td>
+                <td>缩略图</td>
+                <td>名称</td>
+                <td>发布时间</td>
+                <td style="text-align: center;">操作</td>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="art" id="vo"}
+            <tr>
+                <td><p>{$vo['id']}</p></td>
+                <td><p><img src="{$vo.img}" width="50"></p></td>
+                <td><p>{$vo['name']}</p></td>
+                <td><p>{$vo['create_time']|date='Y-m-d H:i:s',###}</p></td>
+                <td style="text-align: center;">
+                    <a class="btn selecta" data-value="{$vo.id}" data-type="{$type}" data-a="{$url['path']}" data-b="{$url['path_prex']}" data-c="{$url['file']}" data-imgurl="" data-name="{$vo.name}">选择</a>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+        <div class="n_page_no">
+            {$page}
+        </div>
+    </ul>
+</div>
+<div style="height:80px; line-height: 80px;color:#fff; clear: both;">壹佰小程序占位</div>
+<div class="sel_fun_opt" style="position: fixed; bottom: 0px;background: #fff;height: 60px;width:100%;border-top:1px solid #eeeeee;padding-top:20px;">
+    <div class="sure" onclick="">确定</div>
+    <div class="cancel" onclick="">返回</div>
+</div>
+<script type="text/javascript" src="/public/js/jquery-2.1.1.js"></script>
+<script type="text/javascript" src="/public/static/layer/2.4/layer.js"></script>
+<script type="text/javascript">
+    $(".selecta").click(function(){
+        if ($(this).hasClass('selectedb')) {
+        }else{
+            $(this).addClass('selectedb');
+            $(this).html('已选择');
+            $(this).parent().parent().siblings().find('.selecta').removeClass('selectedb');
+            $(this).parent().parent().siblings().find('.selecta').html('选择');
+        }
+    });
+    $(".sure").click(function(){
+        if (typeof($('.selectedb').attr('data-name'))=="undefined"){
+            layer.msg('请选择内容',{icon:5,time:1000});
+            return false;
+        }
+        var item={};
+        if ("{$new}"=='0'){
+            item["imgurl"] = $('.selectedb').attr('data-imgurl');
+            item['name'] = $('.selectedb').attr('data-name');
+            item['param'] = $('.selectedb').attr('data-value');
+            item['type'] = $('.selectedb').attr('data-type');
+            item['short_title'] = $('.selectedb').attr('data-short_title');
+        }else {
+            //item["imgurl"] = 0;
+            item['name'] = '文章分类';
+            item['param'] = $('.selectedb').attr('data-value');
+            item['type'] = $('.selectedb').attr('data-type');
+        }
+        var a=$('.selectedb').attr('data-a');
+        var b=$('.selectedb').attr('data-b');
+        var c=$('.selectedb').attr('data-c');
+        //console.log(item);
+        parent.get_images('{$this_id}',item,a,b,c,parent.$("#goods_select_id").val());
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);
+    })
+    $(".cancel").click(function(){
+        javascript:history.go(-1);
+    });
+</script>
+</body>
+</html>

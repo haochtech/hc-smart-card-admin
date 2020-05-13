@@ -1,0 +1,490 @@
+﻿﻿<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>{if $site_name != '' || !empty($site_name)}{$site_name}{else}请在版权设置里配置您的站点名称{/if}</title>
+    <script src="/public/js/jquery-2.1.1.js"></script>
+    <script type="text/javascript" src="/public/js/vue.js"></script>
+    <link href="./favicon.ico?v=1.2" rel="shortcut icon" type="image/x-icon"/>
+    <link rel="stylesheet" href="/public/css/linecons.css">
+    <!--<link rel="stylesheet" href="/public/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="/public/static/bast/bootstrap.css">
+    <link rel="stylesheet" href="/public/static/bast/xenon-core.css?v=1.0">
+    <!--<link rel="stylesheet" href="/public/static/bast/font-awesome.min.css">-->
+    <link rel="stylesheet" href="/public/static/h-ui-{$skin}/css/H-ui.min.css"/>
+    <link rel="stylesheet" href="/public/static/h-ui-{$skin}/css/style.css"/>
+    <link rel="stylesheet" href="/public/static/Hui-iconfont/1.0.8/iconfont.css"/>
+    <link rel="stylesheet" type="text/css" href="/public/css/dashboard.css">
+    <link rel="stylesheet" type="text/css" href="/public/css/{$skin}/yb_index.css?v=1.0"/>
+    <link rel="stylesheet" href="/public/css/{$skin}/new_index.css">
+    <style>
+        .big_class_name {
+            display: inline-block;
+            height: 56px;
+            line-height: 56px;
+            font-size: 16px;
+            margin-left: 16px;
+            color: #555555;
+        }
+    </style>
+    <script>
+        var SSSS="";
+        $(function () {
+            if('{$redi}'==1){
+                console.log('{$redi}');
+                load_page('__CONF_SITE__admin/card/index');
+                return false;
+            }
+        })
+    </script>
+</head>
+<body class="page-body">
+<div class="new_page_top">
+    <div class="new_logo">
+        {if $about.logo != ''}
+        <img src="{$about.logo}" class="wq_logo">
+        {else}
+        <img src="/public/static/bast/img/wq_shop_logo.png" class="wq_logo">
+        {/if}
+    </div>
+    <a href="javascript:void(0);" class="app_name">{$xcx_name}</a>
+    <div class="new_top_right">
+        <div class="logout_box">
+            <span class="pifu" id="pifu" onclick="show_skin()">一键换肤</span>
+            <a href="javascript:;" onclick="clear__a()" class="back_sys">清理缓存</a>
+            {if !empty($last_visit_url) && $fanhui==1}
+            <a href="{$last_visit_url}" class="back_sys">
+                {else}
+                <a href="{$siteroot}web/index.php?c=module&a=welcome&m=yb_mingpian&uniacid={$mch_id}&version_id={$version_id}" class="back_sys">
+                    {/if}返回系统
+                </a>
+                <a href="{:url('login/logout')}" class="right_logout">退出</a>
+        </div>
+        <div class="tupian" id="tupian" style="display: none" data-value="2">
+            <img src="public/images/pifu.png" alt="">
+            <div class="red" onclick="change_skin(1)"></div>
+            <div class="blue" onclick="change_skin(2)"></div>
+            <div class="zise" onclick="change_skin(4)"></div>
+            <div class="lvse" onclick="change_skin(3)"></div>
+        </div>
+
+        <div class="clear"></div>
+    </div>
+    <div class="clear"></div>
+</div>
+<div class="page-container" style="border-collapse:inherit;">
+    <div class="new_left_menu" id="top_menu">
+        <div class="left_menu_box">
+            <ul v-for="x in list" class="first_menu">
+                <li v-if="x.sub!=''" :id="x.module_id">
+                    <img :src="x.test_log" style="display: inline-block;margin-top: -3px;vertical-align: middle;">
+                    <span class="big_class_name" @click="show_first(-1,x.module_id,-1)" v-text="x.module_name"></span>
+                    <ul v-for="y in x.sub" class="second_menu">
+                        <li @click="show_second(y.url,x.module_id,y.module_id,x.module_name)" :id="y.module_id">
+                            <span class="small_class_name" v-text="y.module_name"></span>
+                        </li>
+                    </ul>
+                </li>
+                <li v-else @click="show_first(x.url,x.module_id,-1)" :id="x.module_id">
+                    <img :src="x.test_log" style="display: inline-block;margin-top: -3px;vertical-align: middle;"><span class="big_class_name" v-text="x.module_name"></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="Hui-article">
+            <style>
+                .left_menu_box {
+                    top:-70px;
+                    overflow: scroll;
+                    height: 100%;
+                }
+            </style>
+            <article class="cl pd-20" style="padding-top:32px;">
+                <div class="card_group">
+                    <div class="card_box">
+                        <div class="card_header">
+                            <ul>
+                                <li class="card_icon"></li>
+                                <li class="title">名片状态</li>
+                            </ul>
+                        </div>
+                        <div class="card_body">
+                            <div class="card_li_h">
+                                <div class="card_li"><img src="/public/icon/admin_icon01.png">
+                                    <p>员工总数：</p></div>
+                                <div class="count_no_box"><span class="count_no">{$card_sum|default=0}</span></div>
+                            </div>
+                            {if $uuid!=1}
+                            <div class="card_li_h">
+                                <div class="card_li"><img src="/public/icon/admin_icon02.png">
+                                    <p> 已开通数/ 剩余开通数</p></div>
+                                <div class="count_no_box"><span class="count_no">{$is_card|default=0}/{$sur_card|default=0}</span></div>
+                            </div>
+                            {else/}
+                            <div class="card_li_h">
+                                <div class="card_li"><img src="/public/icon/admin_icon02.png">
+                                    <p> 已开通数：</p></div>
+                                <div class="count_no_box"><span class="count_no">{$is_card|default=0}</span></div>
+                            </div>
+                            {/if}
+                        </div>
+                    </div>
+                    <div class="card_box" style="width:39%;">
+                        <div class="card_header">
+                            <ul>
+                                <li class="card_icon"></li>
+                                <li class="title">账号状态</li>
+                            </ul>
+                        </div>
+                        <style> .card_header ul { width: 200px; height: 40px; } .card_header ul li { float: left; margin-left: 10px; } .card_header ul .title { line-height: 40px; font-size: 20px; }
+                        </style>
+                        <div class="state_body">
+                            <ul>
+                                <li style="font-size: 16px">已使用天数</li>
+                                <li class="nmb">{$diff|default=0}天</li>
+                                <li>{:date('Y-m-d',$dtime)}开通</li>
+                            </ul>
+                            <ul>
+                                <li class="fg"></li>
+                            </ul>
+                            <ul>
+                                <li style="font-size: 16px">剩余可用天数</li>
+                                {if $uuid!=1}
+                                <li class="nmb">{$sheng|default=0}天</li>
+                                    {if $corp["card_etime"]==-1}
+                                    <li>未开通</li>
+                                    {else/}
+                                    <li>{:date('Y-m-d',$corp['card_etime'])}截止</li>
+                                    {/if}
+                                {else/}
+                                <li class="nmb">--</li>
+                                <li>无限期</li>
+                                {/if}
+                            </ul>
+                            <ul>
+                                <li class="fg"></li>
+                            </ul>
+                            <ul>
+                                <li style="font-size: 16px">已获取客户数</li>
+                                <li class="nmb">{$cus|default=0}人</li>
+                                <li class="text"><!--截至昨天--></li>
+                            </ul>
+                            <style> .state_body ul { width: 100px; height: 100px; margin-left: 10px; float: left; } .state_body ul li { margin-top: 5px; color: #8c8c8c; } .state_body ul .nmb { color: #6fa123; font-size: 17px; text-indent: 1em; } .state_body ul .text { text-indent: 2em; } .state_body ul .fg { width: 2px; height: 50px; background: #e8e8e8; margin-left: 50px; }
+                            </style>
+                        </div>
+                    </div>
+                </div>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        var $tab_li = $('#radio_group a');
+                        $tab_li.click(function () {
+                            $(this).addClass('selected').siblings().removeClass('selected');
+                            var index = $tab_li.index(this);
+                            $('div.tab_box > div').eq(index).show().siblings().hide();
+                        });
+                    });
+                </script>
+                <div class="card_group">
+                    <div class="card_box02">
+                        <div class="card_header">
+                            <ul>
+                                <li class="card_icon"></li>
+                                <li class="title">数据概览</li>
+                            </ul>
+                        </div>
+                        <div class="radio_group" id="radio_group">
+                            <a onclick="get_info('8384')" class="selected">汇总</a>
+                            <a onclick="get_info('3')">近三日</a>
+                            <a onclick="get_info('7')">近一周</a>
+                            <a onclick="get_info('30')">近一月</a></div>
+                        <div class="group_box">
+                            <div class="group_li"><p>客户总数</p>
+                                <p><span id="customer">{$info.customer}</span></p></div>
+                            <div class="group_li"><p>点赞总数</p>
+                                <p><span id="likes">{$info.likes}</span></p></div>
+                            <div class="group_li"><p>阅读总数</p>
+                                <p><span id="click">{$info.click}</span></p></div>
+                            <div class="group_li"><p>转发总数</p>
+                                <p><span id="forward">{$info.forward}</span></p></div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+    <script src="/public/js/highcharts.js"></script>
+    <script>
+        function get_info(dd) {
+            $.ajax({
+                data: {
+                    date: dd,
+                    type: 3296
+                },
+                url: "{:url('index/count_info')}",
+                type: "post",
+                success: function (res) {
+                    res = JSON.parse(res);
+                    $("#customer").html(res.customer);
+                    $("#likes").html(res.likes);
+                    $("#click").html(res.click);
+                    $("#forward").html(res.forward);
+                }
+            })
+        }
+    </script>
+    <footer class="footer" style="background: #FFFFFF;height: 25px;margin-top: -5px;padding-top: 10px;line-height: 25px;">
+        <p>{$copyright.content}</p>
+        {if $show_we7}
+        <div class="container-fluid footer text-center" role="footer">
+            <div class="friend-link" >
+                {if empty($_W['footerright'])}
+                <a href="http://www.we7.cc">微信开发</a>
+                <a href="http://s.we7.cc">微信应用</a>
+                <a href="http://bbs.we7.cc">微擎论坛</a>
+                <a href="http://s.we7.cc">联系客服</a>
+                {else}
+                {$_W['footerright']}
+                {/if}
+            </div>
+            <div class="copyright">{if empty($_W['footerleft'])}Powered by <a href="http://www.we7.cc"><b>微擎</b></a> v{$version} &copy; 2014-2015 <a href="http://www.we7.cc">www.we7.cc</a>{else}{$_W['footerleft']}{/if}</div>
+            {if !empty($_W['icp'])}<div>备案号：<a href="http://www.miitbeian.gov.cn" target="_blank">{$_W['icp']}</a></div>{/if}
+        </div>
+        {if !empty($_W['statcode'])}{$_W['statcode']}{/if}
+        {if !empty($_GPC) && !in_array($_GPC, array('keyword', 'special', 'welcome', 'default', 'userapi')) || defined('IN_MODULE')}
+        <script>
+            if(typeof $.fn.tooltip != 'function' || typeof $.fn.tab != 'function' || typeof $.fn.modal != 'function' || typeof $.fn.dropdown != 'function') {
+                require(['bootstrap']);
+            }
+        </script>
+        {/if}
+        {/if}
+    </footer>
+    <input type="hidden" id="check_auth_ok" value="0">
+    <input type="hidden" id="needauth" value="{$isadmin}">
+    <script src="/public/static/bast/xenon-custom.js"></script>
+    <script src="/public/static/bast/TweenMax.min.js"></script>
+    <script src="/public/js/clipboard.js"></script>
+    <script src="/public/static/bast/resizeable.js"></script>
+    <script src="/public/static/layer/2.4/layer.js"></script>
+    <script src="/public/js/public_js.js"></script>
+    <script type="text/javascript" src="/public/static/My97DatePicker/4.8/WdatePicker.js"></script>
+</div>
+<script>
+    var str;
+    var all_menu = eval(decodeURIComponent('{$all_menu}'));
+    var root_url = "<?php global $_W; echo $_W['siteroot'].'addons/yb_mingpian/core/index.php?s=/admin/'; ?>";
+    var top_mid = '<?php echo $top_mid; ?>';
+    var now_first = '<?php echo $now_first; ?>';
+    var now_second = '<?php echo $now_second; ?>';
+    var now_key = '<?php echo $now_key; ?>';
+    var sub_menu_arr = [];
+    $(document).ready(function () {
+        if (now_first == '-1') {
+            $(".second_menu").hide();
+        } else {
+            $(".second_menu").hide();
+            $("#" + now_first).children().show();
+        }
+        if (now_second != '-1') {
+            $('').removeClass("select_second");
+            $("#" + now_second).addClass("select_second");
+        }
+        if (now_key != -1) {
+            $("#dont_touch_this").text(now_key)
+        }
+    });
+    all_menu.forEach(function (item, index) {
+        if (item.module_id == top_mid) {
+            item.class = 'f_name_box cur_name';
+            sub_menu_arr = item.sub ? item.sub : [];
+        }
+        else {
+            item.class = 'f_name_box';
+        }
+    });
+    var top_menu = new Vue({
+        el: '#top_menu',
+        data: {
+            list: all_menu,
+            top_mid: top_mid,
+            root_url: root_url,
+            old_first: 0,
+            now_first: now_first,
+            now_second: now_second,
+            now_key: now_key,
+            now_url:root_url+"index/index"
+        },
+        watch: {
+            old_first: function (n, o) {
+                var ta = this;
+                if (n == this.now_first) {
+                    $(".second_menu").hide();
+                    this.old_first = -1;
+                }
+            }
+        },
+        methods: {
+            show_first: function (url, x, y) {
+                var ta = this;
+                if (ta.old_first == -1) {
+                    ta.old_first = 0;
+                } else {
+                    ta.old_first = ta.now_first;
+                }
+                ta.now_first = x;
+                ta.now_second = y;
+                document.cookie = "now_first=" + x;
+                if (url != '-1') {
+                    window.location.reload();
+                } else {
+                    $(".second_menu").hide();
+                    $("#" + x).children('ul').show();
+                    return true;
+                }
+            },
+            show_second: function (url, x, y, k) {
+                var ta = this;
+                ta.now_first = x;
+                ta.now_second = y;
+                ta.now_key = k;
+                document.cookie = "now_second=" + y;
+                document.cookie = "now_key=" + k;
+                $('li').removeClass("select_second");
+                $("#" + ta.now_second).addClass("select_second");
+                if (url != '-1') {
+                    ta.now_url=this.root_url +url;
+                    console.log(this.root_url + url);
+                    console.log(url);
+                    if(url.indexOf("bottomnav")>=0 || url.indexOf("about/")>=0 || url.indexOf("import_mod")>=0 ) {
+                        load_page(this.root_url + url, '', '', 1);
+                    }else {
+                        load_page(this.root_url + url);
+                    }
+                }
+            },
+            top_click: function (top_item) {
+                if (this.top_mid != top_item.module_id) {
+                    var val = top_item.module_id;
+                    this.top_mid = val;
+                    sub_menu.expanded = false;
+                    document.cookie = "top_mid=" + val;
+                    if (top_item.sub.length > 0) {
+                        this.list.forEach(function (item, index) {
+                            if (item.module_id == val) {
+                                item.class = 'f_name_box cur_name';
+                                sub_menu.list = item.sub;
+                                sub_menu.sub_mid = 0;
+                                sub_menu.three_mid = 0;
+                                if (sub_menu.list != null && sub_menu.list != undefined) {
+                                    if (sub_menu.list.length > 0) {
+                                        sub_menu.expanded = true;
+                                        sub_menu.sub_mid = sub_menu.list[0]['module_id'];
+                                    }
+                                }
+                            }
+                            else {
+                                item.class = 'f_name_box';
+                            }
+                        });
+                    }
+                    else {
+                        window.location.href = this.root_url + top_item.url;
+                    }
+                }
+            }
+        },
+    });
+    function clear__a() {
+        $.ajax({
+            type: "post",
+            url: "__CONF_SITE__admin/base/clear_cache",
+            success: function () {
+                layer.msg("清理成功");
+            }
+        })
+    }
+    var layer_ii='';
+    function show_skin() {
+        var d=$("#tupian").attr("data-value");
+        if(d==2){
+            $("#tupian").attr("data-value",'3');
+            $("#tupian").show();
+        }else {
+            $("#tupian").attr("data-value",'2');
+            $("#tupian").hide();
+        }
+    }
+    function change_skin(id) {
+        $.ajax({
+            data:{
+                "id":id
+            },
+            type:"post",
+            url:"{:url('admin/arliki/change_skin')}",
+            success:function (res) {
+                if (res["code"]>0){
+                    layer.msg('切换成功', {icon: 1, time:1000});
+                    window.location.reload();
+                }else {
+                    layer.msg("操作失败", {icon: 2, time:1000});
+                }
+            }
+        })
+    }
+    function load_page(url,div_class,data,alert_time){
+        SSSS="";
+        div_class=div_class||"main-content";
+        data=data||"";
+        alert_time=alert_time||0;
+        if(alert_time>0) {
+            layer_ii = layer.msg("加载中，请稍后...", {icon: 16, shade: 0.3, time: alert_time*1000});
+        }
+        $("div[class="+div_class+"]").load(url,data,function (res) {
+            if (top_menu.now_key != -1) {
+                $("#dont_touch_this").text(top_menu.now_key)
+            }
+            layer.close(layer_ii);
+        });
+    }
+    function parent_flash(url) {
+        url=url||top_menu.now_url;
+        load_page(url);
+    }
+    function layer_open(title,url,w,h,close) {
+        if(typeof(close) != 'boolean'){ close = true; }
+        w=parseInt(w);
+        if(w>1000){w=1000;}
+        w+="px";
+        h=parseInt(h);
+        if(h>800){h=800;}
+        h+="px";
+        var index=layer.open({
+            type: 2,
+            area: [w,h],
+            fix: true,
+            maxmin: true,
+            shade:0.4,
+            title:title,
+            content: url,
+            scrollbar:false,
+            shadeClose:close
+        });
+    }
+    function layer_close(url){
+        url=url||'';
+        var index=layer.getFrameIndex(window.name);
+        parent_flash(url);
+        layer.close(index);
+    }
+    function add_second(url) {
+        top_menu.now_url=url;
+        load_page(url);
+    }
+</script>
+</body>
+</html>

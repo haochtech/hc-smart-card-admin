@@ -1,0 +1,76 @@
+<div class="diypage-right" >
+
+
+    <!-- 头部和背景 -->
+    <div style="display: block;" v-if="now_type=='head'" class="form_edit">
+        <div class="form-item item_tit">
+            <span>头部导航</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <!--<div class="item ">-->
+                <!--<div class="item-inner"> <span class="labeltext">名称</span>-->
+                    <!--<input type="text" v-model="now_right_data.name" class="es-input data-bind" style="cursor: text; border: 1px solid #efefef; background: #ffffff; text-align: left;">-->
+                <!--</div>-->
+            <!--</div>-->
+            <div class="form-label">选择颜色</div>
+            <div class="form-item ">
+                <color_n name="头部背景" flag="nv_color" ></color_n>
+                <color_n name="窗口背景" flag="bg_color" ></color_n>
+                <color_n name="按钮主题色" flag="button_color" ></color_n>
+            </div>
+            <div class="form-label mt10">头部文字颜色</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="item-inner">
+                        <div class="radio-inline"><input type="radio" class="magic-radio"  name="BtBorderColor" v-model="page.text_color" value="#000000" id="nvtxtcolor0"><label for="nvtxtcolor0">黑色</label></div>
+                        <div class="radio-inline"><input type="radio" class="magic-radio"  name="BtBorderColor" v-model="page.text_color" value="#ffffff" id="nvtxtcolor1"><label for="nvtxtcolor1">白色</label></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-label mt10">是否显示底部导航</div>
+            <div class="form-item ">
+                <div class="item-inner">
+                    <div class="item-inner">
+                        <div class="radio-inline"><input type="radio" class="magic-radio"  name="IsDiDisplay" v-model="now_right_data.show_tabbar" value="true" id="showtarbar0"><label for="showtarbar0">显示</label></div>
+                        <div class="radio-inline"><input type="radio" class="magic-radio"  name="IsDiDisplay" v-model="now_right_data.show_tabbar" value="false" id="showtarbar1"><label for="showtarbar1">不显示</label></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部导航 -->
+    <div style="display: block;" v-if="now_type=='tabbar'" class="form_edit">
+        <div class="form-item item_tit">
+            <span>底部导航</span>
+        </div>
+        <div class="form-item noborder" style="display:block;">
+            <div class="form-label">选择颜色</div>
+            <div class="form-item ">
+                <color_t name="字体" flag="text_color"></color_t>
+                <color_t name="选中" flag="select_color"></color_t>
+                <color_t name="背景" flag="bg_color"></color_t>
+            </div>
+            <div    v-for="(item,index) in now_right_data.list" class="item drag ui-sortable-handle mt10">
+                <div class="item-prompt"> 建议尺寸100x100 <span class="deletechild icon-del"><span v-if="index>0" v-on:click="clip_menu(index)"  class="deletechild icon-del"><img src="/public/menu/icon/del_icon.png" alt="删除"></span></span></div>
+                <div class="item-inner"> <span class="labeltext">名称</span> <input type="text" class="es-input data-bind" v-model="item.name"> </div> <div class="item-inner maxlength" style="margin-left: 36px;"></div>
+                <div class="item-inner item-image">
+                    <span class="labeltext pull-left">图片</span>
+                    <div class="es-uploader data-bind-image">
+                        <div class="es-selector iconbox noval" style="float: left; margin-right: 10px;" v-on:click="select_img(index,'tabbar_icon')">
+                            <img style="display:block;" :src="item.tabbar_icon"> <p>替换</p>
+                        </div>
+                        <div class="es-selector iconbox noval" style="float: left; margin-right: 10px;" v-on:click="select_img(index,'tabbar_select_icon')">
+                            <img style="display:block;" :src="item.tabbar_select_icon"> <p>替换</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="item-inner" v-if="index>0"> <span class="labeltext">链接</span> <input type="text"  v-model="item.alias"  v-on:click="select_menu_mp(index,'tabbar')" class="es-input linkurl data-bind-url " placeholder="请选择链接或地址" readonly value="">
+                </div>
+                <div class="item-inner" v-if="index==0"> <span class="labeltext">链接</span> <input type="text"  v-model="item.alias"   class="es-input linkurl data-bind-url " placeholder="请选择链接或地址" readonly value="">
+                </div>
+            </div>
+            <div v-if="now_right_data.list.length < 5" style="display: block;" onclick="list_add_item('tabbar')" class="addChild">+添加</div>
+        </div>
+    </div>
+</div>

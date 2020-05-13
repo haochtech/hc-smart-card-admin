@@ -1,0 +1,99 @@
+{extend name="base"/}
+{block name="main"}
+<style>td{line-height:20px;}</style>
+<div class="Hui-article">
+<article class="cl pd-20">
+    <h3 id="dont_touch_this"></h3>
+<div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+    <div class="tabBar clearfix">
+        <span class="current">留言列表</span>
+    </div>
+</div>
+<div>
+<div class="mt-20">
+    <table class="table table-border table-bordered table-bg table-hover table-sort">
+        <thead>
+            <tr class="text-c">
+                <th>会员昵称</th>
+                <th>用户姓名</th>
+                <th>联系方式</th>
+                <th>内容</th>
+                <th>留言时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody id="tbody">
+            {volist name="list" id="r"}
+                <tr class="text-c va-m smter" id="nick-{$r['id']}">
+                    <td>{$r['nick_name']}</td>
+                    <td>{$r['name']}</td>
+                    <td>{$r['phone']}</td>
+                    <td>
+                        <button class="btn radius" type="button" onclick="slook('{$r.contents|htmltotxt}')">查看</button>
+                    </td>
+                    <td>{:date('Y-m-d H:i:s',$r['create_time'])}</td>
+                    <td>
+                        <span class="btn radius " type="button" style="text-decoration: none;" onclick="dlook('{$r.id}')">
+                            删除
+                        </span>
+                    </td>
+                </tr>
+            {/volist}
+        </tbody>
+    </table>
+    <div class="n_page_no">
+        {$page}
+    </div>
+</div>
+</div>
+{/block}
+{block name="script"}
+<script>
+//查看留言内容
+function slook(cont) {
+    layer.alert(cont);
+}
+var looks = false;
+function dlook(id) {
+    if (!looks) {
+        looks = true;
+        layer.confirm('您确定要删除此条留言吗，删除后数据不可恢复！', {
+            btn: ['确定', '取消'] //按钮
+        }, function (index) {
+            $.ajax({
+                type: "post",
+                url: "{:url('book/rebook')}",
+                data: {id: id},
+                success: function (data) {
+                    if (data['code'] > 0) {
+                        layer.msg('删除成功', {icon: 1, time: 1000}, function () {
+                            var rick = '#nick-' + id;
+                            $(rick).remove();
+                            var cont = $('.pagination span').text();
+                            var count = cont.replace(/[^0-9]/ig, "");
+                            $('.pagination span').text('共' + (count - 1) + '条信息');
+                            layer.close(index);
+                            looks = false;
+                            var smterun = false;
+                            $('.smter').each(function () {
+                                smterun = true;
+                                return false;
+                            });
+                            if(!smterun){
+                                parent_flash();
+                            }
+                        });
+                    } else {
+                        layer.msg('删除失败', {icon: 5, time: 1000});
+                        layer.close(index);
+                        looks = false;
+                    }
+                }
+            });
+        }, function () {
+            looks = false;
+        });
+    }
+}
+</script>
+{/block}

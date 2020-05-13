@@ -1,0 +1,64 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div class="cl pd-5 bg-1 bk-gray">
+                <div class="text-c">
+                    表单：
+                    <select name="form_id" style="height: 30px;width:200px;text-align: center;" id="form_id">
+                        <option value="0">全部</option>
+                        {volist name="from_all" id="f"}
+                        <option {if condition="$form_id==$f.id" } selected {/if} value="{$f.id}">{$f.title}</option>
+                        {/volist}
+                    </select>
+                    <button onclick="send_submit()" class="btn btn-search radius" name="">
+                        搜索
+                    </button>
+                </div>
+        </div>
+        <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+            <div class="tabBar clearfix">
+                <span onclick="load_page('__CONF_SITE__admin/menu/universal_form')">表单列表</span>
+                <span class="current">表单反馈</span>
+                <div onclick="load_page('__CONF_SITE__admin/menu/universal_form_add','','',3)" class="n_tab_add"><i
+                        class="Hui-iconfont">&#xe600;</i>添加表单
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-bg table-hover table-sort">
+                    <thead>
+                    <tr class="text-c">
+                        <th>会员名称</th>
+                        <th>提交的表单</th>
+                        <th>提交时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    {volist name="list" id="r"}
+                    <tr class="text-c va-m">
+                        <td>{:getUserName($r['user_id'])}</td>
+                        <td>{:getFormrName($r['bus_form_id'])}</td>
+                        <td>{$r['create_time']|date="Y-m-d H:i:s",###}</td>
+                        <td>
+                            <a style="text-decoration:none;color:#0066cc;" title="详情" href="javascript:void(0);"
+                               onclick="layer_open('表单详情','__CONF_SITE__admin/menu/get_form_info&id={$r.id}','800px', '700px')">查看详情</a>
+                        </td>
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+                <div class="n_page_no">
+                    {$list->render()}
+                </div>
+            </div>
+        </div>
+        <script>
+            function send_submit() {
+                load_page('__CONF_SITE__admin/menu/get_form_list','',{form_id:$("#form_id").val()});
+            }
+        </script>
+        {/block}

@@ -1,0 +1,101 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+            <div class="tabBar clearfix">
+
+            <span onclick="load_page('__CONF_SITE__admin/reserve/thing')">项目管理</span>
+            <span class="current" >订单列表</span>
+        </div>
+        </div>
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+                <div class="text-c">
+                    <input type="text" class="input-text" value="{$soname}" style="width:250px" placeholder="输入分类"
+                           name="soname">
+                    <button onclick="send_submit()" class="btn btn-search radius" name=""><i class="Hui-iconfont">&#xe665;</i>
+                        搜索项目
+                    </button>
+                </div>
+        </div>
+        <table class="table table-border table-bordered table-bg">
+            <thead>
+            <tr class="text-c">
+                <th>会员名称</th>
+                <th>预约项目</th>
+                <th>添加时间</th>
+                <th>查看详情</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="vo"}
+            <tr class="text-c">
+                <td>{$vo.nick_name}</td>
+                <td>{$vo.tname}</td>
+                <td>
+                    {$vo.create_time|date='Y-m-d H:i:s',###}
+                </td>
+                <td>
+                    <a style="text-decoration:none;color:#0066cc;" title="详情" href="javascript:void(0);" onclick="get_form_info('{$vo.id}')">查看详情</a>
+                </td>
+                <td>
+                    <a title="删除" href="javascript:;" onclick="assort_del('{$vo.id}')" class="ml-5"
+                       style="text-decoration:none">删除</a>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </article>
+    <div class="n_page_no">
+        {$list->render()}
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript" src="/public/js/jquery-2.1.1.js"></script>
+<script type="text/javascript">
+    function send_submit() {
+        load_page('__CONF_SITE__admin/reserve/order', '', {
+            soname: $("input[name=soname]").val()
+        })
+    }
+    var lock = false;
+    function assort_del(id) {
+        if (!lock) {
+            layer.confirm('确认要删除吗？', function (index) {
+                lock = true;
+                $.ajax({
+                    type: "post",
+                    url: "__CONF_SITE__admin/reserve/order_del",
+                    data: {'id': id},
+                    success: function (data) {
+                        if (data['code'] > 0) {
+                            layer.msg('删除成功', {icon: 1, time: 1000}, function () {
+                                parent_flash();
+                            });
+                        } else {
+                            layer.msg('删除失败', {icon: 5, time: 1000});
+                            lock = false;
+                        }
+                    }
+                });
+            });
+        }
+    }
+    function get_form_info(id) {
+        layer.open({
+            type: 2,
+            area: ['800px', '700px'],
+            fix: false, //不固定
+            maxmin: true,
+            shade:0.4,
+            title: '表单详情',
+            content: "{:url('reserve/get_form_info')}&id="+id,
+            scrollbar:false,
+            shadeClose:true,
+        });
+    }
+</script>
+{/block}

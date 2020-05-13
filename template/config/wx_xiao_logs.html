@@ -1,0 +1,43 @@
+{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+            <div class="tabBar clearfix">
+                {if $type==1}
+                <span onclick="load_page('__CONF_SITE__admin/config/wx_upload')" >一键上传审核</span>
+                {else}
+                <span onclick="load_page('__CONF_SITE__admin/config/wq_upload')" >一键上传审核</span>
+                {/if}
+                <span class="current">操作日志</span>
+            </div>
+        </div>
+        <div>
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-bg table-hover table-sort">
+                    <thead>
+                    <tr class="text-c">
+                        <th>操作时间</th>
+                        <th>内容</th>
+                        <th>状态</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    {volist name="list" id="r"}
+                    <tr class="text-c va-m">
+                        <td>{$r['create_time']|date='Y-m-d H:i:s',###}</td>
+                        <td>{$r['content']}</td>
+                        <td>返回码：{$r['error_code']}，{$r['msg']} </td>
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+                <div class="n_page_no">
+            {$page}
+                </div>
+            </div>
+        </div>
+        {/block}
+        {block name="script"}
+        {/block}

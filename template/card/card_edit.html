@@ -1,0 +1,363 @@
+{include file="demo"}
+<script src="/public/lunbo/swiper.min.js"></script>
+<style>
+    .row {height: 32px !important; line-height: 32px !important;}
+    .thumbnail {margin-right: 20px !important;display: inline-block !important;}
+</style>
+<body>
+<article class="cl pd-20" id="main">
+    <form action="" method="post" class="form form-horizontal" id="my_card">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>姓名：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="hidden" id="id" name="id" value="{$card.id}" />
+                <input type="text" autocomplete="off" v-model="user_name" value="{$card.user_name}" placeholder="请输入姓名" class="input-text" name="user_name" id="user_name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>职位：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" v-model="position" value="{$card.position}" placeholder="请输入职位" class="input-text" name="position" id="position">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>性别：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="radio" value="1" name="gender" id="radioo1" {if $card.gender==1}checked{/if}><label for="radioo1">&emsp;&emsp;男</label>
+                <input type="radio" value="2" name="gender" id="radioo2" {if $card.gender==2}checked{/if}><label for="radioo2">&emsp;&emsp;女</label>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>部门：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <select name="did" id="did" style="height: 40px;border-radius: 3px;line-height: 40px; padding:0 15px;">
+                    {foreach name="depart" item="s"}
+                    <option value="{$s.id}" {if $s.id==$card.did} selected {/if}>{$s.name}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>手机：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" v-model="tel" value="{$card.tel}" placeholder="请输入手机" class="input-text" name="tel" id="tel">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">微信绑定手机号：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" v-model="wxtel" value="{$card.wxtel}" placeholder="微信绑定手机号" class="input-text" name="wxtel" id="wxtel" disabled>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">固话：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" v-model="phone" value="{$card.phone}" placeholder="请输入固话" class="input-text" name="phone" id="phone">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">微信号：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" v-model="wechat_number" value="{$card.wechat_number}" placeholder="请输入微信号" class="input-text" name="wechat_number" id="wechat_number">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>邮箱：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" autocomplete="off" v-model="email" value="{$card.email}" placeholder="请输入邮箱" class="input-text" name="email" id="email">
+            </div>
+        </div>
+        <!--<div class="row cl">-->
+            <!--<label class="form-label col-xs-4 col-sm-3">印象标签：</label>-->
+            <!--<div class="formControls col-xs-8 col-sm-9">-->
+                <!--<div style="position: absolute;top:5px;left:200px;color: #ccc;">多个以英文逗号隔开</div>-->
+                <!--<input type="text" autocomplete="off" v-model="effect_tag" value="{$effect_tag}" placeholder="请输入印象标签" class="input-text" name="effect_tag" id="effect_tag">-->
+            <!--</div>-->
+        <!--</div>-->
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">名片顺序：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <div style="position: absolute;top:5px;left:200px;color: #ccc;">数值越大 排名越前</div>
+                <input type="text" autocomplete="off" v-model="sort" value="{$card.sort}" placeholder="请输入数字" class="input-text" name="sort" id="sort">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">名片分享标题：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <div style="position: absolute;top:5px;left:200px;color: #ccc;"></div>
+                <input type="text" autocomplete="off" v-model="share_title" value="{$card.share_title}" placeholder="不填写则使用默认分享标题" class="input-text" name="share_title" id="share_title">
+            </div>
+        </div>
+        <div class="row cl" id="goods_chiose">
+            <label class="form-label col-xs-4 col-sm-3">我的推荐：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input onclick="select_goods_('选择商品','__CONF_SITE__admin/card/show_goods&ids={$card.id}&type=goods')" class="btn btn-default" type="button" value="选择商品">
+                <input onclick="select_goods_('选择产品','__CONF_SITE__admin/card/show_goods&ids={$card.id}&type=product')" class="btn btn-default" type="button" value="选择产品">
+                <input type="hidden" id="ssss" value="{$card.proposal_goods_id}">
+                <input type="hidden" id="aaaa" value="{$card.proposal_product_id}">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">头像：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <div style="position: absolute;top:5px;left:200px;color: #ccc;">建议图标尺寸：200*200px</div>
+                <img width="120"  v-if="head_photo!=''"  :src="head_photo" class="thumbnail">
+                <input onclick="select_img('1','head_photo');" class="btn btn-default" type="button" value="选择图片">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">照片墙：</label>
+            <div id="goods_picture_box" class="formControls col-xs-8 col-sm-9">
+                <div class="ncsc-goods-default-pic" >
+                    <div class="goodspic-uplaod" style="padding: 15px;">
+                        <div class='img-box' style="min-height:160px;">
+                            <div v-for="item in wall_photo" v-if="wall_photo.length>0">
+                                <div class="upload-thumb draggable-element">
+                                    <img :src="item" width="120"/>
+                                </div>
+                            </div>
+                            <div class="upload-thumb" id="default_uploadimg" v-else>
+                            </div>
+                        </div>
+                        <div class="clear"></div>
+                            <input onclick="select_img('9','wall_photo');" class="btn btn-default" type="button" value="选择图片">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" id="remove_flag" value="1">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3" style="padding-top:15px;">个人简介：</label>
+            <div class="formControls col-xs-8 col-sm-9" style="padding-top:15px;">
+                <div id="editor" type="text/plain" style="width: 50%; height: 300px;">{$card.profile}</div></div>
+        </div>
+    </form>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-3" style="padding-top: 15px;text-align: right;">音频介绍：</label>
+        <div class="formControls col-xs-8 col-sm-9" style="padding-top: 15px;">
+            <form method="post" action="" id="mymp3" enctype="multipart/form-data">
+                <video src="{$card.vioce_profile}" id="vioce_profile" style="width: 300px;height: 50px;" controls="controls">浏览器不支持音频播放</video>
+                <input type="file" name="mp3file" id="mp3file" onchange="filesize(this)">
+                <span><i>仅支持上传MP3格式音频且<span style="color:red">大小在5M以内</span>暂时不支持远程上传</i></span>
+            </form>
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-3" style="padding-top: 15px;text-align: right;">视频封面：</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <img width="120" alt="视频封面"  :src="video_img" class="thumbnail">
+            <input onclick="select_img('1','video_img');" class="btn btn-default" type="button" value="选择图片">
+        </div>
+    </div>
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-3" style="padding-top: 15px;text-align: right;">视频介绍：</label>
+        <div class="formControls col-xs-8 col-sm-9" style="padding-top: 15px;">
+            <input type="text" autocomplete="off" v-model="video_path" value="{$card.video_path}" placeholder="请填写完整视频链接地址,http://****" class="input-text" name="video_path" id="video_path">
+        </div>
+    </div>
+    <div class="row cl">
+        <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3" style="margin-top:10px;">
+            <input class="btn btn-primary radius" onclick="addCardAjax()" type="button" value="提交">
+        </div>
+    </div>
+    <input type="hidden" id="filesize" value="{$max_filesize}">
+</article>
+<!--<script src="/public/menu/js/jquery.artdialog.js?v=1"></script>-->
+<!---->
+{include file="offweb/choise_img"}
+<script type="text/javascript">
+    $(document).ready(function () {
+        var size=$("#filesize").val();
+        if(size<5){
+            layer.confirm('系统配置文件上传大小过低，可能会导致修改失败');
+        }
+    });
+    function filesize(ele) {
+        var si=(ele.files[0].size / 1024).toFixed(2);
+        if (si>1 && si<1024*5){
+        }else {
+            layer.msg('文件大小异常',{icon:5,time:1000});
+            return false;
+        }
+    }
+    (function($){
+        $.fn.serializeJson=function(){
+            var serializeObj={};
+            var array=this.serializeArray();
+            var str=this.serialize();
+            $(array).each(function(){
+                if(serializeObj[this.name]){
+                    if($.isArray(serializeObj[this.name])){
+                        serializeObj[this.name].push(this.value);
+                    }else{
+                        serializeObj[this.name]=[serializeObj[this.name],this.value];
+                    }
+                }else{
+                    serializeObj[this.name]=this.value;
+                }
+            });
+            return serializeObj;
+        };
+    })(jQuery);
+//    if('{$card.wall_photo}'.length<5){
+//        var s=eval('{$card.wall_photo}');
+//    }else {
+//        s=eval('public/images/default_goods_image_240.gif');
+//    }
+    var bannerVM = new Vue({
+        el: '#main',
+        data: {
+            user_name:'{$card.user_name}',
+            position:'{$card.position}',
+            tel:'{$card.tel}',
+            wxtel:'{$card.wxtel}',
+            phone:'{$card.phone}',
+            wechat_number:'{$card.wechat_number}',
+//            effect_tag:'{$effect_tag}',
+            email:'{$card.email}',
+            sort:'{$card.sort}',
+            video_path:'{$card.video_path}',
+            video_img:'{$card.video_img}',
+            share_title:'{$card.share_title}',
+            wall_photo:eval('{$card.wall_photo}'),
+            wall_photoa:[],
+            head_photo:"{$card.head_photo ? $card.head_photo : ''}"//图片链接
+        }
+    });
+    $(function () {
+        var ue =UM.getEditor('editor',{
+            imageUrl:"__CONF_SITE__app/Umupload/uploadFile", //处理图片上传的接口
+            imageFieldName:"upfile", //上传图片的表单的name
+            imagePath:""
+        });
+    })
+    function wall_photo(id_array,path_array) {
+//        console.log(path_array);
+//        $("#default_uploadimg").remove();
+        id_array=id_array.split(",");
+        path_array=path_array.split(",");
+//        console.log(path_array);
+        bannerVM.wall_photo=path_array;
+//        console.log(bannerVM.wall_photo);
+    }
+    function head_photo(id,path) {
+        bannerVM.head_photo=path;
+    }
+    function video_img(id,path) {
+        bannerVM.video_img=path;
+    }
+    function wadada(d) {
+        console.log(d);
+        console.log(11111);
+    }
+    //模块输入信息验证
+    function verify(parmes) {
+        if (parmes["user_name"]==''){
+            layer.msg('请输入姓名',{icon:5,time:1000});
+            return false;
+        }
+        if (parmes["position"]==''){
+            layer.msg('请输入职位',{icon:5,time:1000});
+            return false;
+        }
+        if(!(/^1[356789]\d{9}$/.test(parmes["tel"]))){
+            layer.msg("请填写正确格式的手机号", {icon: 2, time: 1000});
+            $("#tel").focus();
+            return false;
+        }
+        if(!(/^.*@.*\..*$/.test(parmes["email"]))){
+            layer.msg("请填写正确格式的邮箱", {icon: 2, time: 1000});
+            $("#email").focus();
+            return false;
+        }
+        return true;
+    }
+    var flag = false;//防止重复提交
+    //添加用户
+    function addCardAjax() {
+        var parmes = $('#my_card').serializeJson();
+        var img_list=$(".img-box img");
+        for(var i=0;i<img_list.length;i++){
+            var item={};
+            item=img_list.get(i).src;
+            bannerVM.wall_photoa.push(item);
+        }
+        var wall_photo= JSON.stringify(bannerVM.wall_photoa);
+        parmes["profile"]= UM.getEditor('editor').getContent();
+        parmes["wall_photo"]=wall_photo;
+        parmes["did"]=$("#did :selected").val();
+        parmes["proposal_goods_id"]=$("#ssss").val();
+        parmes["proposal_product_id"]=$("#aaaa").val();
+        parmes["video_path"]=$("#video_path").val();
+        parmes["head_photo"]=bannerVM.head_photo;
+        parmes["video_img"]=bannerVM.video_img;
+        parmes["gender"]=$("input[name=gender]:checked").val();
+        var formFile = new FormData($("#mymp3")[0]);
+//        var offf='{$off}';
+        formFile.append("parmes", JSON.stringify(parmes));
+        if(verify(parmes) && !flag){
+            flag = true;
+            var ad='';
+            $.ajax({
+                type :"post",
+                url :"{:url('card/do_card_edit')}",
+                data : formFile,
+                cache: false,
+                processData: false,
+                contentType: false,
+                dataType:'json',
+                beforeSend: function () {
+                    ad=layer.msg("修改中，请勿进行其他操作",{icon:16,shade:0.3})
+                },
+                success : function(data) {
+                    layer.close(ad);
+                    if(data['code']>0){
+                        layer.msg('修改成功！',{icon:1,time:1000},function () {
+                            layer_close();
+                        });
+                    }
+                    else{
+                        flag = false;
+                        layer.msg(data['message'],{icon:5,time:1000});
+                    }
+                }
+            });
+        }
+    }
+    function select_img(number,type) {
+        layer_open("我的图片001",'__CONF_SITE__admin/images/dialogalbumlist&number=' + number + '&type=' + type,900,620);
+//        art.dialog.open(('__CONF_SITE__admin/images/dialogalbumlist&number=' + number + '&type=' + type), {
+//            lock : true,
+//            title :"选择图片",
+//            width : 900,
+//            height:620,
+//            drag : false,
+//            background :"#000000",
+//            scrollbar:false
+//        }, true);
+    }
+    function select_goods_(title,url){
+        var sh=$("#ssss").val();
+        var pr=$("#aaaa").val();
+        layer.open({
+            type: 2,
+            area: ['1000px', '600px'],
+            fix: false, //不固定
+            maxmin: true,
+            shade:0.4,
+            title: title,
+            content: url+"&sha="+sh+"&pro="+pr,
+            scrollbar:false
+        });
+    }
+    function change_val(id,type) {
+        if(type=='goods') {
+            $("#ssss").val(id);
+        }else{
+            $("#aaaa").val(id);
+        }
+    }
+</script>
+{include file="goods/fileAlbumImg"/}
+</body>
+</html>

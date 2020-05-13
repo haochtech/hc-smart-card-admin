@@ -1,0 +1,162 @@
+<!doctype html>
+<html style="font-size: 48px;">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <title>名片海报</title>
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+    <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT">
+    <link rel="stylesheet" href="vue/css/iosSelect.css">
+    <link rel="stylesheet" href="vue/css/iconfont.css">
+    <link rel="stylesheet" href="vue/css/swiper.min.css">
+    <link rel="stylesheet" href="vue/css/poster.css?v=1.1">
+    <link rel="stylesheet" href="vue/css/index.css?v=1.1">
+    <script src="https://pingjs.qq.com/h5/stats.js?v2.0.4" name="MTAH5" sid="500619036"></script>
+    <script type="text/ecmascript">
+        var winWidth = 750
+        window.onresize = function () {
+            getRem(winWidth, 100)
+        }
+
+        function getRem(pwidth, prem) {
+            var html = document.getElementsByTagName('html')[0]
+            var oWidth = document.documentElement.clientWidth
+            html.style.fontSize = oWidth / pwidth * prem + 'px'
+        }
+
+        (function () {
+            if (typeof WeixinJSBridge == "object" && typeof WeixinJSBridge.invoke == "function") {
+                handleFontSize();
+            } else {
+                document.addEventListener("WeixinJSBridgeReady", handleFontSize, false);
+            }
+
+            function handleFontSize() {
+                // 设置网页字体为默认大小
+                WeixinJSBridge.invoke('setFontSizeCallback', {
+                    'fontSize': 0
+                });
+                // 重写设置网页字体大小的事件
+                WeixinJSBridge.on('menu:setfont', function () {
+                    WeixinJSBridge.invoke('setFontSizeCallback', {
+                        'fontSize': 0
+                    });
+                });
+            }
+
+            function onBridgeReady() {
+                WeixinJSBridge.call('hideOptionMenu');
+            }
+
+            if (typeof WeixinJSBridge == "undefined") {
+                if (document.addEventListener) {
+                    document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+                } else if (document.attachEvent) {
+                    document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                    document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+                }
+            } else {
+                onBridgeReady();
+            }
+        })()
+
+        getRem(winWidth, 100);
+
+    </script>
+
+
+
+
+</head>
+<body style="padding: 30px;">
+<div id="main">
+
+
+    <div  v-show="show && type==1"  class="display:none">
+        <div >
+            <div style="position: fixed;background: rgba(0,0,0,0.5);width:100%;height: 100%;top:0;left:0;" v-show="loading">
+                <div style="width: 100%;height: 36px; line-height: 36px;text-align: center; font-size: 12px; position: absolute;top:3rem;color:#fff;" >
+                    海报生成中，请稍后...
+                </div>
+            </div>
+            <div id="app" class="app">
+
+                <div class="main_img">
+                    <img id="main_img" :src="user.head_photo?user.head_photo:'vue/img/defaultlogo.png'" />
+                </div>
+
+                <div style="display: flex;justify-content: space-between; padding: 24px 12px 16px 12px;height: 2.2rem;">
+                    <div style="display: flex;flex-direction: column;justify-content: space-between;height: 100%;">
+
+                        <div style="display: flex;align-items: center;">
+                            <!--<img :src="user.head_photo" style="width: 40px;height: 40px;margin-right: 5px;" />-->
+                            <div style="display: flex; flex-direction: column">
+                                <div style="display: flex;align-items: flex-end; justify-content: space-between;margin-left: 8px;">
+                        <span style="font-size: 18px;font-weight: 600;" v-text="user.user_name">
+                        </span>
+                        <span style="font-size: 11px;margin-left: 8px;" v-text="user.position">
+                        </span>
+                                </div>
+                                <div style="font-size: 12px;margin-top: 5px;margin-left: 8px;" v-text="user.mch_name">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="font-size: 12px;margin-top: 8px;margin-left: 8px;">
+                            Tel <span v-text="user.tel"></span>
+                        </div>
+
+                    </div>
+                    <div style="display: flex;flex-direction: column;align-items: center;justify-content: space-between;">
+                        <img style="width: 65px; height: 65px;" :src="user.share_code">
+                        <!--<span style="font-size: 8px; margin-top: 4px;">-->
+                        <!--扫码进入名片-->
+                        <!--</span>-->
+                    </div>
+                </div>
+            </div>
+
+            <div style="justify-content:center;display: flex;">
+
+                <button class="right" style="" onclick="saveImg()">保存海报</button>
+
+            </div>
+        </div>
+
+
+        <div class="first_loading_mask" style="z-index: 7; display: none;" v-show="loaded">
+            <div class="first_loading_box"><img
+                    src="./vue/img/logo1.png"
+                    alt="" id="in_loading"> <img
+                    src="data:image/png;base64,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"
+                    alt="" style="display: none;">
+                <p>正在加载</p>
+                <p style="display: none;">加载失败,点击重新加载</p></div>
+        </div>
+    </div>
+    <div v-show="show && type==2"  class="display:none">
+        <img id="img" src="" style="width: 100%;height: auto;">
+        <div style="width: 100%;height: 36px; line-height: 36px;text-align: center; font-size: 12px;" id="show_change">
+            长按保存到相册, 可分享给好友或朋友圈
+        </div>
+    </div>
+</div>
+<!--<form id="form">-->
+<!--<input type="hidden" id="img" name="img">-->
+<!--</form>-->
+
+<script src="vue/js/common.js"></script>
+<script src="vue/js/vue.js"></script>
+<script src="vue/js/vue-resource.js"></script>
+<script src="vue/js/jquery-2.1.1.min.js"></script>
+<script src="vue/js/poster.js?v=1.1"></script>
+
+<script src="vue/js/layer.js"></script>
+
+<script src="vue/js/html2canvas.js?v=1.0.0"></script>
+<script>
+
+</script>
+</body>
+</html>

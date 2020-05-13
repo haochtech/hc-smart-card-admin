@@ -1,0 +1,80 @@
+{extend name="base"/}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="/public/css/order.css">
+<style>
+    .silider-express{padding-left: 10px;background: #fff;font-size: 12px;}
+    .logistics-tracking{padding-left:5px;}
+    .popover-content{width:700px;}
+    .popover{max-width:900px;}
+    .n_tab_line a {padding: 0 20px;}
+</style>
+{/block}
+{block name="main"}
+<div class="mod-table">
+    <div class="n_tab_line">
+        <a onclick="load_page('{:url('group/collage')}')" class="n_tab_list02">拼团列表</a>
+        <a href="javascript:;" class="n_tab_add02">拼团详情</a>
+        <div class="cl"></div>
+    </div>
+    <div class="step-region clearfix">
+        <div class="state-region" style="padding: 13px 20px 0px 15px;width: 100%">
+            <div style="padding: 0px 0px 30px 40px;">
+                <div class="state-title"><span class="icon info">!</span>
+                 拼团商品
+                </div>
+                <div class="state-remind">
+                    <table class="ui-table ui-table-simple">
+                        <thead>
+                        <tr>
+                            <th style="width:15%;text-align:center;vertical-align:middle;">商品图片</th>
+                            <th style="width:15%;text-align:center;vertical-align:middle;">商品名称</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="test-item">
+                            <td style="text-align:center;vertical-align:middle;"><img style="width: 100px;height: 100px;" src="{:get_img_src($info[0]['img'])}"></td>
+                            <td style="text-align:center;vertical-align:middle;">{$info[0]['name']}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <table class="ui-table ui-table-simple goods-table order-detail-goods-table">
+        <thead>
+        <tr>
+            <th style="width:15%;text-align:center;vertical-align:middle;">姓名</th>
+            <th class="cell-10" style="width:10%;text-align:center;vertical-align:middle;">订单状态</th>
+            <th style="width:10%;text-align:center;vertical-align:middle;">数量</th>
+            <th style="width:10%;text-align:center;vertical-align:middle;">订单价格(元)</th>
+            <th style="width:10%;text-align:center;vertical-align:middle;">下单时间</th>
+            <th style="width:10%;text-align:center;vertical-align:middle;">收件人</th>
+            <th style="width:10%;text-align:center;vertical-align:middle;">收件电话</th>
+            <th style="width:10%;text-align:center;vertical-align:middle;">收件地址</th>
+            <th style="width:10%;text-align:center;vertical-align:middle;">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- 待发货商品 -->
+    {volist name="info" id="vo"}
+        <tr class="test-item">
+            <td style="text-align:center;vertical-align:middle;">{:getUserName($vo['uid'])}</td>
+            <td style="text-align:center;vertical-align:middle;">{:get_group_order_status($vo['order_status'])}</td>
+            <td style="text-align:center;vertical-align:middle;">{$vo['goodsNum']}</td>
+            <td style="text-align:center;vertical-align:middle;">￥{$vo['totalPrice']}</td>
+            <td style="text-align:center;vertical-align:middle;">{:date('Y-m-d H:i:s',$vo.createTime)}</td>
+            <?php $json=json_ecd_all($vo['address']); ?>
+            <td style="text-align:center;vertical-align:middle;">{$json['userName']}</td>
+            <td style="text-align:center;vertical-align:middle;">{$json['telNumber']}</td>
+            <td style="text-align:center;vertical-align:middle;">{$json['province']}{$json['county']}{$json['city']}{$json['address']}</td>
+            <td style="text-align:center;vertical-align:middle;">
+                <button type="button" onclick="load_page('__CONF_SITE__admin/group/OrderDetail&order_id={$vo.id}')" class="btn btn-default show_layer">查看订单详情</button>
+            </td>
+        </tr>
+        {/volist}
+        </tbody>
+    </table>
+</div>
+<input type="hidden" id="order_id" value="{$order['order_id']}" />
+{/block}

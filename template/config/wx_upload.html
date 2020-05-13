@@ -1,0 +1,30 @@
+{extend name="base"/}
+{block name="main"}
+<style>.form_message {display: block; height: 38px; line-height: 38px; text-align: left;color:#999;}
+.formControls .btn {float:left;margin-right:15px;}
+.clear{clear:both;}
+.form-label {font-weight: bold;}</style>
+<div class="Hui-article">
+<article class="cl pd-20">
+    <h3 id="dont_touch_this"></h3>
+    <div id="tab_demo" class="HuiTab" style="margin-bottom: 15px; position:relative;">
+        <div class="tabBar clearfix">
+            <span class="current">一键上传审核</span>
+            <span onclick="load_page('__CONF_SITE__admin/config/wx_xiao_logs&type=1')">操作日志</span>
+        </div>
+    </div>
+    <div class="form form-horizontal">
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-0" style="display: flex; justify-content: center; align-items: center; width: 100%;">
+                <iframe style="width: 100%; height: 840px;" frameborder="0" src="{$this_url}admin/Mingpian/wx_tijiao_mp?bus_id={$user_info['id']}&app_id={$wxappinfo.key}&app_secret={$wxappinfo.secret}&app_url={$un_url}"></iframe>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" value="{$info['id']}" id="id">
+    <input type="hidden" id="bus_id" value="{$user_info['id']}">
+    <input type="hidden" value="" id="fabu">
+</article>
+</div>
+{/block}
+{block name="script"}
+{/block}

@@ -1,0 +1,116 @@
+<html>
+	<head>
+		<script src="/public/js/jquery-2.1.1.js"></script>
+		<link rel="stylesheet" href="/public/static/bast/bootstrap.css">
+		<script src="/public/js/art_dialog.source.js"></script>
+		<script src="/public/js/iframe_tools.source.js"></script>
+		<script src="/public/js/bootstrap.js"></script>
+		<script src="/public/goods/js/material_managedialog.js"></script>
+		<link rel="stylesheet" type="text/css" href="/public/css/common.css">
+		<link rel="stylesheet" type="text/css" href="/public/css/seller_center.css">
+		<link rel="stylesheet" type="text/css" href="/public/static/simple-switch/css/simple.switch.three.css">
+		<link rel="stylesheet" type="text/css" href="/public/css/defau.css">
+		<script src="/public/static/simple-switch/js/simple.switch.js"></script>
+		<style type="text/css">
+			.error {padding-left: 5px !important;}
+			.table{width:98%;display:table;border-left: 1px dotted #e5e5e5;border-right: 1px dotted #e5e5e5;border-bottom: 1px dotted #e5e5e5;background: rgba(204, 204, 204, 0.09);padding: 0px 10px 10px 10px;}
+			.inline-block{display:inline-block;}
+			.w5{width:5%;}
+			.w75{width:84%;}
+			.w19{width:10%;text-align:center;}
+			.w100{width:100%;height: 40px;line-height: 40px;border-bottom: 1px dotted #e5e5e5;}
+			.add-spec{height: 40px;line-height: 40px;border-bottom:1px dotted #E6E6E6;}
+			input{vertical-align: initial;}
+			input[type="text"], input[type="password"], input.text, input.password {font: 12px/20px Arial;color: #777;background-color: #FFF;vertical-align: -webkit-baseline-middle;}
+			.set-style dl dt {text-align:left;width: 12%;}
+			.set-style dl dd input{height:30px !important;}
+			.main{width:95%;margin:20px auto;}
+			.display-mode input{vertical-align: middle;margin: 0 5px;}
+			.display-mode label{font-weight: normal;display: inline-block;margin: 0;vertical-align: middle;}
+		</style>
+
+	</head>
+</html>
+<body>
+<div class="main">
+	<div class="set-style">
+		<dl>
+			<dt><span class="color-red">*</span>规格名称:</dt>
+			<dd>
+				<input id="spec_name" type="text" placeholder="请输入规格名称" class="input-common"/>
+				<span class="error">请输入规格名称</span>
+			</dd>
+		</dl>
+		<dl>
+			<dt><span class="color-red">&nbsp;</span>规格排序:</dt>
+			<dd>
+				<input id="sort" type="text" class="input-common" />
+			</dd>
+		</dl>
+		<dl>
+			<dt><span class="color-red">&nbsp;</span>是否启用</dt>
+			<dd>
+				<input id="is_visible" type="checkbox" class="checkbox" checked="checked" />
+			</dd>
+		</dl>
+		<button class="edit_button" onclick="addGoodsSpec();">提交</button>
+	</div>
+</div>
+<input type="hidden" value="{$cate_id}" id="cate_id">
+<script>
+$(".checkbox").simpleSwitch({
+	"theme": "FlatRadius"
+});
+var flag = false;//防止重复提交
+function addGoodsSpec() {
+	if (!validation()) {
+		return;
+	}
+	var spec_name = $("#spec_name").val();
+	var sort = $("#sort").val();
+	if ($("#is_visible").prop("checked")) {
+		var is_visible = 1;
+	} else {
+		var is_visible = 0;
+	}
+	var show_type = $("input[name='show_type']:checked").val();
+	
+	if(flag){
+		return;
+	}
+	flag = true;
+	$.ajax({
+		type : "post",
+		url : "{:url('goods/goods_spec_add')}",
+		data : {
+			'spec_name' : spec_name,
+			'sort' : sort,
+			'is_visible' : is_visible,
+			'spec_value_str' : '',
+			"show_type":show_type,
+			"attr_id":"{$attr_id}",
+            "cate_id":"{$cate_id}"
+		},
+		success : function(data) {
+			if (data.code > 0) {
+				var win = art.dialog.open.origin;
+				win.location = "javascript:addGoodsSpecCallBack('"+data.code+"','"+spec_name+"','"+show_type+"')";
+				art.dialog.close();
+			} else {
+				flag = false;
+			}
+		}
+	});
+}
+function validation() {
+	var spec_name = $("#spec_name");
+	if (spec_name.val() == "") {
+		spec_name.focus().next("span").show();
+		return false;
+	} else {
+		spec_name.next("span").hide();
+	}
+	return true;
+}
+</script>
+</body>

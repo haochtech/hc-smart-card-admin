@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="/public/static/h-ui-{$skin}/css/H-ui.min.css"/>
+    <script src="/public/js/jquery-2.1.1.js"></script>
+    <script src="/public/static/layer/2.4/layer.js"></script>
+</head>
+<script src="/public/js/all.js"></script>
+<script src="/public/js/all.js"></script>
+<style type="text/css">
+    input {
+        vertical-align: initial;
+    }
+    .table input[type="text"], input[type="password"], input.text, input.password {
+        font: 12px/20px Arial;
+        color: #777;
+        background-color: #FFF;
+        vertical-align: baseline;
+        margin-bottom: 0px;
+    }
+    .set-style dl dt {
+        text-align: left;
+        width: 7%;
+    }
+    .attr-choose-wrap label, .relate-norm label {
+        cursor: pointer;
+        float: left;
+        margin: 0 15px 10px 0;
+        padding: 0 10px;
+        color: #636363;
+        line-height: 28px;
+    }
+    .attr-choose-wrap label.current, .relate-norm label.current {
+        color: #636363;
+        background: url(../images/icon_choose.gif) no-repeat right bottom;
+    }
+</style>
+
+<body>
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <table class="table table-border table-bordered table-hover table-bg">
+            <thead>
+            <tr class="text-c">
+                <th>序号</th>
+                <th>昵称</th>
+                <th>注册时间</th>
+                <th>累积佣金</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody id="tbody">
+            {foreach name="list" item="vo" key='k'}
+            <tr class="text-c">
+                <td>{$k+1}</td>
+                <td>{$vo['nick_name']}</td>
+                <td>{:date('Y-m-d H:i:s',$vo['reg_time'])}</td>
+                <td>{$vo['total_price']}</td>
+                <td><a href="javascript:;" onclick="recancel('{$vo.uid}')">取消从属</a></td>
+            </tr>
+            {/foreach}
+            </tbody>
+        </table>
+    </article>
+</div>
+<script>
+function recancel(id) {
+    $.ajax({
+        type: "post",
+        url: "{:url('admin/activity/recancel')}",
+        data:{id:id},
+        success: function (data) {
+            if (data['code'] > 0) {
+                layer.msg('操作成功', {icon: 1, time: 1000},function () {
+                    layer_close();
+                });
+            } else {
+                layer.msg(data["message"], {icon: 2, time: 3000});
+            }
+        }
+    });
+}
+
+</script>
+</body>
+</html>

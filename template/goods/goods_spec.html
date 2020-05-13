@@ -1,0 +1,148 @@
+﻿{extend name="base"/}
+{block name="main"}
+<div class="Hui-article">
+    <article class="cl pd-20">
+        <h3 id="dont_touch_this"></h3>
+        <div class="n_tab_line">
+        <div class="tabBar clearfix">
+            <span onclick="load_page('__CONF_SITE__admin/goods/goodslist')">商品列表</span>
+            <span onclick="load_page('__CONF_SITE__admin/order/orderlist2')">到店核销</span>
+            <span onclick="load_page('__CONF_SITE__admin/goods/goodsCategoryList')">商品分类</span>
+            <span class="current" onclick="load_page('__CONF_SITE__admin/goods/goods_attr_mod')">规格属性</span>
+            <span onclick="load_page('__CONF_SITE__admin/express/express_list')">物流模板</span>
+            <span onclick="load_page('__CONF_SITE__admin/Order/OrderList')">订单列表</span>
+            <span onclick="load_page('__CONF_SITE__admin/order/OrderRefund')">退款/退单</span>
+            <span onclick="layer_open('数据统计','__CONF_SITE__admin/count/OrderCount',1000,1000)">数据统计</span>
+        </div>
+            <div class="tabBar clearfix" style="margin-top:25px;">
+                <span onclick="load_page('__CONF_SITE__admin/goods/goods_attr_mod')">分类管理</span>
+                <span class="current" onclick="load_page('__CONF_SITE__admin/goods/goods_spec')">规格管理</span>
+                <span onclick="load_page('__CONF_SITE__admin/goods/attributelist')">属性管理</span>
+              </div>
+            <a onclick="layer_open('添加规格','__CONF_SITE__admin/goods/goods_spec_add',1000,600)" href="javascript:;" class="n_tab_add">添加规格</a>
+            <div class="cl"></div>
+        </div>
+ <div class="cl pd-5 bg-1 bk-gray mt-20">
+            <div class="text-c"> 规格名称：
+               <input type="text" class="input-text" value="{$search_text}" style="width:250px" placeholder="规格名称"  name="search_text">
+                <button onclick="send_submit()" class="btn btn-search radius"  name=""><i class="Hui-iconfont">&#xe665;</i> 搜规格</button>
+            </div>
+</div>
+        <table class="table table-border table-bordered table-bg">
+            <thead>
+            <tr>
+                <th scope="col" colspan="9">规格列表</th>
+            </tr>
+            <tr class="text-c">
+                <th width="40">规格名称</th>
+                <th width="150">规格属性</th>
+                <th width="150">状态</th>
+                <th width="100">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="vo"}
+            <tr class="text-c">
+                <td>{$vo['spec_name']}</td>
+                <td>{$vo['spec_value_name_list']}</td>
+                <td>
+                    {if $vo['is_visible']==1}
+                    <a style="text-decoration:none" onClick="goods_spec_stop(this,'{$vo.spec_id}','is_visible')" is_visible="0" href="javascript:;" title="已启用"><span class="label label-success radius">已启用</span></a>
+                    {/if}
+                    {if $vo['is_visible']==0}
+                    <a style="text-decoration:none" onClick="goods_spec_start(this,'{$vo.spec_id}','is_visible')" href="javascript:;" is_visible="1" title="已停用"><span class="label label-default radius">已停用</span></a>
+                    {/if}
+                </td>
+                <td>
+                    <a title="编辑" href="javascript:;" onclick="layer_open('规格编辑','__CONF_SITE__admin/goods/goods_spec_edit&spec_id={$vo.spec_id}','800','500')" class="ml-5" style="text-decoration:none"><i  style="font-size: 20px;" class="Hui-iconfont show_layer">&#xe6df;</i></a>
+                    <a title="删除" href="javascript:;" onclick="goods_spec_del(this,'{$vo.spec_id}')" class="ml-5" style="text-decoration:none"><i  style="font-size: 20px;" class="Hui-iconfont caozuo">&#xe6e2;</i></a>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </article>
+    <div class="n_page_no">
+        {$page}
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    function send_submit() {
+        load_page('__CONF_SITE__admin/goods/goods_spec', '', {
+            search_text: $("input[name=search_text]").val()
+        })
+    }
+	/*规格-删除*/
+    function goods_spec_del(obj,id){
+        layer.confirm('确认要删除吗？',function(index){
+            //此处请求后台程序
+            //后台处理
+            $.ajax({
+                type : "post",
+                url : "{:url('goods/deleteGoodsSpec')}",
+                data : { 'spec_id' : id.toString() },
+                dataType : "json",
+                success : function(data) {
+                    if (data['code'] > 0) {
+                        layer.msg(data['message'], {icon: 1, time: 1000},function () {
+                            parent_flash('__CONF_SITE__admin/goods/goods_spec');
+                        });
+                    }else if(data['code'] == 0){
+                        layer.msg(data['message'], {icon: 2, time: 1000});
+                    }else if(data['code'] == -1){
+                        layer.msg('当前规格正在使用中，不能删除！', {icon: 2, time: 1000});
+                    }
+                }
+            });
+        });
+    }
+	/*规格-停用*/
+    function goods_spec_stop(obj,id,name){
+        layer.confirm('确认要停用吗？',function(index){
+            var value = $(obj).attr("is_visible");
+            //后台处理
+            $.ajax({
+                type : "post",
+                url : "{:url('goods/setGoodsSpecField')}",
+                data : {
+                    "spec_id" : id,'value' : value,'name':name
+                },
+                success : function(data) {
+                    if (data['code'] > 0) {
+                        layer.msg('已停用!',{icon: 5,time:500},function () {
+                            parent_flash('__CONF_SITE__admin/goods/goods_spec');
+                        });
+                    }else{
+                        layer.msg(data['message'], {icon: 2, time: 1000});
+                    }
+                }
+            })
+        });
+    }
+	/*规格-启用*/
+    function goods_spec_start(obj,id,name){
+        layer.confirm('确认要启用吗？',function(index){
+            var value = $(obj).attr("is_visible");
+            //后台处理
+            $.ajax({
+                type : "post",
+                url : "{:url('goods/setgoodsspecfield')}",
+                data : {
+                    "spec_id" : id,'value' : value,'name':name
+                },
+                success : function(data) {
+                    if (data['code'] > 0) {
+                        layer.msg('已启用!',{icon: 1,time:500},function () {
+                            parent_flash('__CONF_SITE__admin/goods/goods_spec');
+                        });
+                    }else{
+                        layer.msg(data['message'], {icon: 2, time: 1000});
+                    }
+                }
+            })
+        });
+    }
+</script>
+{/block}

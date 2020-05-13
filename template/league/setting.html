@@ -1,0 +1,101 @@
+{extend name="base"/}
+{block name="main"}
+<link href="/public/static/umedito/themes/default/_css/umeditor.css" type="text/css" rel="stylesheet">
+<article class="cl pd-20">
+<style>
+    .form_li {
+        height: 50px;
+        line-height: 50px;
+        font-size: 14px;
+    }
+    .form_lt {
+        height: 500px;
+        font-size: 14px;
+    }
+    .form_li .form_input {
+        width: 220px;
+        height: 26px;
+        line-height: 26px;
+        padding: 3px 6px;
+        background: #fff;
+        border: 1px solid #ededed;
+    }
+    .form_about {
+        font-size: 13px;
+        color: #949494;
+        height: 50px;
+        line-height: 50px;
+    }
+</style>
+<div class="n_tab_line">
+            <a href="{:url('league/setting')}" class="n_tab_list">APP信息设置</a>
+            <div class="cl"></div>
+        </div>
+<div style="width: 800px;margin: 0px auto;">
+<!--<div class="form_about">手机端信息设置</div>-->
+<div class="form_li">
+    手机/微信：<input class="form_input" type="text" name="phone" value="{$list.phone}" />
+</div>
+<div class="form_li">
+    &nbsp;&nbsp;QQ号码：<input class="form_input" type="text" name="qq" value="{$list.qq}">
+</div>
+<div class="form_li">
+    &nbsp;公司地址：<input class="form_input" type="text" name="address" value="{$list.address}">
+</div>
+<div class="form_li">
+    &nbsp;关于我们：<input class="form_input" type="text" name="title" value="{$list.title}" placeholder="请输入标题 例如：关于我们XXXX">
+</div>
+<div class="form_lt">
+    <textarea id="editor" name="content" style="height: 450px;width:100%;">{$list.content}</textarea>
+</div>
+<div class="form_li" style="margin-top: 0px;">
+    <input class="btn btn-primary radius" onclick="comm('{$list.id}');" type="button" value="&nbsp;&nbsp;保存&nbsp;&nbsp;">
+</div>
+<div style="height:30px; line-height:30px;"></div>
+</div>
+</article>
+<script type="text/javascript" src="/public/static/umedito/third-party/jquery.min.js"></script>
+<script type="text/javascript" src="/public/static/umedito/third-party/template.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="/public/static/umedito/umeditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="/public/static/umedito/_examples/editor_api.js"></script>
+<script type="text/javascript" src="/public/static/umedito/lang/zh-cn/zh-cn.js"></script>
+<script>
+    var uen =UM.getEditor('editor',{
+        imageUrl:"__CONF_SITE__app/Umupload/uploadFile", //处理图片上传的接口
+        imageFieldName:"upfile", //上传图片的表单的name
+        imagePath: ""
+    });
+    var lock = false;
+    function comm(id) {
+        if (!lock) {
+            lock = true;
+            layer.confirm('确定要保存吗', function (index) {
+                $.ajax({
+                    type: "post",
+                    url: "__CONF_SITE__admin/league/setting",
+                    data: {
+                        id: id,
+                        phone: $("[name='phone']").val(),
+                        qq: $("[name='qq']").val(),
+                        address: $("[name='address']").val(),
+                        title: $("[name='title']").val(),
+                        content: uen.getContent(),
+                    },
+                    success: function (data) {
+                        if (data == 1) {
+                            layer.msg('保存成功', {icon: 1, time: 1000}, function () {
+                                location.reload();
+                            });
+                        } else {
+                            layer.msg('保存失败', {icon: 5, time: 1000});
+                            lock = false;
+                        }
+                    }
+                });
+            }, function () {
+                lock = false;
+            })
+        }
+    }
+</script>
+{/block}
